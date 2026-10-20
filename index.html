@@ -33,7 +33,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .menu{position:absolute;right:14px;top:62px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(31,45,74,.25);padding:6px;z-index:36;display:none;min-width:230px}
 .menu.on{display:block}
 .pill-fija{position:fixed;top:8px;right:8px;z-index:30;display:none;box-shadow:0 2px 10px rgba(31,45,74,.18)}.pill-fija.on{display:block}
-@media(min-width:900px){.pill-fija,.pill-fija.on{position:static;display:block;align-self:flex-start;white-space:nowrap;margin:6px 2px 0;box-shadow:none;min-width:122px;text-align:center}#save{display:none}}.menu button{display:block;width:100%;text-align:left;border:none;background:none;padding:11px 12px;border-radius:8px;font-size:.9em;color:var(--navy);cursor:pointer}
+@media(min-width:900px){.pill-fija,.pill-fija.on{position:static;display:block;align-self:flex-start;white-space:nowrap;margin:6px 2px 0;box-shadow:none;min-width:152px;text-align:center}#save{display:none}}.menu button{display:block;width:100%;text-align:left;border:none;background:none;padding:11px 12px;border-radius:8px;font-size:.9em;color:var(--navy);cursor:pointer}
 .menu button:hover{background:#f3eef0}
 .info{font-size:.78em;color:var(--mute);margin:2px 2px 10px}
 .hojas{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px}
@@ -1139,7 +1139,7 @@ function syncTxt(){if(!SY)return '';
   if(SY_EST==='llave')return ' · 🔒 llave apagada';
   if(SY_EST==='sin')return ' · 📴 sin señal';
   if(SY_EST==='error')return ' · ⚠️ reintento';
-  return (SY_BUSY||syncPend())?' · ☁️ subiendo…':' · ☁️ ✓';}
+  return (SY_BUSY||syncPend())?' · ☁️ …':' · ☁️ ✓';}
 function syncEstado(e){var antes=SY_EST;SY_EST=e;
   if(e==='sin'&&antes!=='sin'){SY_FUE_SIN=true;toast('📴 Sin señal: tu captura está guardada en este aparato, pero todavía NO llega a la bodega del director.');}
   pintaPill();}
