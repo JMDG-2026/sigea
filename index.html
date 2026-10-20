@@ -178,6 +178,12 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
   .rep *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 .stab.imp{background:#fff8e1;border:1px solid #c9b98a;color:#6b5a1a}
+/* Ladrillo432: las tres hermanas (Calificaciones, Inasistencias, Observaciones) son tarjetitas de color */
+#subtabs{gap:8px}
+#subtabs .stab{background:#e8eefb;border:1px solid #b3c3e6;color:#2a3b5e;box-shadow:0 2px 6px rgba(31,45,74,.14)}
+#subtabs .stab:nth-child(2){background:#fdeedd;border-color:#e4c39b;color:#7a4a14}
+#subtabs .stab:nth-child(3){background:#e6f4ec;border-color:#a9d4bb;color:#1f5a3c}
+#subtabs .stab.sel{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 3px 10px rgba(31,45,74,.35)}
 /* Ladrillo396: encabezados fijos al bajar (solo pantalla grande) */
 @media(min-width:900px){
 .hojasbar{position:sticky;top:0;z-index:30;background:rgb(239,236,243);backdrop-filter:blur(6px);padding-top:6px}
@@ -516,7 +522,7 @@ function vistaResumen(){
   var disp=[];if(r.semaforo['DIAG'])disp.push('DIAG');[1,2,3].forEach(function(p){if(r.semaforo[String(p)])disp.push(p)});
   var opts=['DIAG',1,2,3,'gen'];
   var h='<div class="chips">'+opts.map(function(p){return '<button class="chip'+(_espPerSel===p?' sel':'')+'" data-rp="'+p+'"><b>'+(p==='DIAG'?'Diagnóstico':p==='gen'?'Generales':'Periodo '+p)+'</b></button>'}).join('')+'</div>';
-  h+='<div class="subtabs" style="margin-bottom:10px"><button class="stab '+(_resVista==='tabla'?'sel':'')+'" data-rv="tabla">📋 Tabla</button><button class="stab '+(_resVista==='graf'?'sel':'')+'" data-rv="graf">📊 Gráficas</button><button class="stab imp" data-printall="1">🖨️ Imprimir reportes</button></div>';
+  h+='<div class="subtabs" style="margin-bottom:10px"><button class="stab '+(_resVista==='tabla'?'sel':'')+'" data-rv="tabla">📋 Tabla</button><button class="stab '+(_resVista==='graf'?'sel':'')+'" data-rv="graf">📊 Gráficas</button><button class="stab imp" data-printall="1">🖨️ Reportes de evaluación</button></div>';
   if(_resVista==='tabla')return h+tablaResumen(r)+boletasLista(r);
   if(!disp.length)return h+'<div class="card"><div class="hint">Todavía no hay promedios para graficar: un promedio de periodo se calcula cuando un alumno tiene <b>todas</b> sus calificaciones. Prueba el <b>Escenario B</b> o <b>C</b> del panel de maqueta.</div></div>'+boletasLista(r);
   var pe=_espPerEfectivo();if(disp.indexOf(pe)<0)pe=disp[disp.length-1];
