@@ -72,6 +72,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .al .nm{flex:1;font-size:.88em;font-weight:600;color:var(--navy);min-width:0}.al .nm small{display:block;color:var(--mute);font-weight:500;font-size:.78em}
 .tag{text-indent:0;display:inline-block;font-size:.66em;font-weight:800;border-radius:99px;padding:1px 7px;margin-left:4px;vertical-align:middle}
 .tag.alta{background:#dff2e6;color:#1e6b3f}.tag.baja{background:#e6e6ea;color:#666}
+.pgl{width:58px;text-align:center;font-size:1.05em;font-weight:800;color:var(--navy);background:#eef1f7;border-radius:11px;padding:9px 2px}/* Ladrillo454 */
 .gi{width:58px;text-align:center;font-size:1.12em;font-weight:800;border:2px solid var(--line);border-radius:11px;padding:8px 2px;font-family:inherit;color:var(--navy);background:#fff}
 .gi:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(63,120,208,.2)}
 .gi.v-ok{border-color:var(--verde);background:#effaf3}.gi.v-mid{border-color:var(--ambar);background:#fff8e8}.gi.v-bad{border-color:var(--rojo);background:#fff0f1}
@@ -486,11 +487,12 @@ function vistaCalifs(p){
     h+='<button class="chip'+(S.campo===c.id?' sel':'')+(f===0?' listo':'')+'" data-campo="'+c.id+'"><b>'+c.corto+'</b><span>'+(f===0?'✓ completo':'faltan '+f)+'</span></button>';});
   h+='</div><div class="vista-lista">';
   var mats=matsDeCampo(S.campo);
+  var cU=campos.filter(function(c){return matsDeCampo(c.id).length}),conPG=cU.length>0&&cU[cU.length-1].id===S.campo;/* Ladrillo454 */
   h+='<div class="hint">Calificación entera de 5 a 10. Verde arriba de '+D.cortes.satisfactorio_max+' · ámbar hasta '+D.cortes.satisfactorio_max+' · rojo hasta '+D.cortes.riesgo_max+'</div>';
   h+='<input class="search" id="q" placeholder="🔍 Buscar alumno…" value="'+esc(S.q)+'">';
-  h+='<div class="hdr"><div class="nm">Alumno</div>'+mats.map(function(m){return '<div class="c">'+m.corto+'</div>'}).join('')+'</div>';
+  h+='<div class="hdr"><div class="nm">Alumno</div>'+mats.map(function(m){return '<div class="c">'+m.corto+'</div>'}).join('')+(conPG?'<div class="c">Prom.</div>':'')+'</div>';
   D.alumnos.forEach(function(a){if(S.q&&a.nombre.toLowerCase().indexOf(S.q.toLowerCase())<0)return;var off=dis||a.es_baja;
-    h+='<div class="al"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div>'+mats.map(function(m){return inp('cal',p,a.id,m.id,getCal(p,a.id,m.id),off)}).join('')+'</div>';});
+    h+='<div class="al"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div>'+mats.map(function(m){return inp('cal',p,a.id,m.id,getCal(p,a.id,m.id),off)}).join('')+(conPG?(function(){var q_=promPeriodo(a,p);return '<div class="pgl" id="pl-'+p+'-'+a.id+'">'+(q_===''?'—':q_.toFixed(1))+'</div>'})():'')+'</div>';});
   h+='</div>';
   h+='<div class="vista-matriz"><table class="mx cal"><colgroup><col class="c-al">'+D.materias.map(function(){return '<col class="c-m">'}).join('')+'<col class="c-pr"></colgroup><tr class="g1"><th rowspan="2"><div class="hd">Alumno</div></th>';
   D.campos.forEach(function(c){h+='<th class="campo'+c.id+'" colspan="'+matsDeCampo(c.id).length+'"><div class="hd">'+esc(c.nombre)+'</div></th>'});
@@ -783,12 +785,13 @@ function gmPinta(){var m=document.getElementById('gmsg');if(!m)return;var c='gms
   else t=lvReposo(hayDic);
   lvHab();m.className=c;m.innerHTML=t;if(typeof fijaEnc==='function')fijaEnc()}
 function lvAviso(t){LV.aviso=t;gmPinta();clearTimeout(LV.tim);if(t)LV.tim=setTimeout(function(){LV.aviso='';gmPinta()},5000)}
-function lvCtx(){var h=String(S.hoja);if(h==='RES'){var okr=(_resVista==='tabla');return {ok:okr,leer:okr,dic:false}}if(h==='DIAG')return {ok:true,leer:true,dic:EST.DIAG==='abierto'};var per=['1','2','3'].indexOf(h)>=0,ok=per&&(S.sub==='cal'||S.sub==='obs');return {ok:ok,leer:ok,dic:ok&&EST[h]==='abierto'}}
+function lvCtx(){var h=String(S.hoja);if(h==='RES'){var okr=(_resVista==='tabla'&&_espPerSel==='gen');/* Ladrillo455 */return {ok:okr,leer:okr,dic:false}}if(h==='DIAG')return {ok:true,leer:true,dic:EST.DIAG==='abierto'};var per=['1','2','3'].indexOf(h)>=0,ok=per&&(S.sub==='cal'||S.sub==='obs');return {ok:ok,leer:ok,dic:ok&&EST[h]==='abierto'}}
 function lvHab(){var c=lvCtx(),d=document.getElementById('dicBtn'),l=document.getElementById('leerBtn');
   if(d){d.disabled=!!(LV.on||!(c.dic||DIC.on));d.title=d.disabled?'Dictar se activa en Calificaciones u Observaciones de un periodo abierto (y no mientras se lee)':'Dictar'}
   if(l){l.disabled=!!(DIC.on||!(c.leer||LV.on));l.title=l.disabled?'Leer se activa en Calificaciones u Observaciones de un periodo (y no mientras se dicta)':'Leer en voz alta lo capturado'}}
 function lvReposo(hayDic){var c=lvCtx(),h=String(S.hoja);
   if(h==='DIAG'){if(!c.dic)return 'El Diagnóstico está '+(EST.DIAG==='enviado'?'enviado':'blindado')+': puedes <b>🔊 Leer</b> lo capturado, pero no dictar.';return hayDic?'Toca una casilla del <b>diagnóstico</b> y luego <b>🎤 Dictar</b> (con decimal: <b>"ocho punto cinco"</b>). También puedes <b>🔊 Leer</b> lo capturado.':'Toca <b>🔊 Leer</b> para escuchar lo capturado.'}
+  if(h==='RES'&&_resVista==='tabla'&&_espPerSel!=='gen')return (_espPerSel==='DIAG'?'El <b>Diagnóstico</b> se lee en su botón de arriba (<b>Diagnóstico</b>).':'El <b>Periodo '+_espPerSel+'</b> se lee en su botón de arriba (<b>Periodo '+_espPerSel+'</b>, en Calificaciones).')+' Aquí en el Resumen solo se lee <b>Generales</b>, para comparar con las boletas finales.';
   if(h==='RES')return c.ok?'Toca <b>🔊 Leer</b> para escuchar la tabla que ves: cada alumno con el nombre de cada materia y su calificación, para compararla con la boleta.':'En <b>Gráficas</b> no se lee: abre la <b>📋 Tabla</b> para escuchar los resultados.';
   if(!c.ok){if(S.sub==='ina'&&['1','2','3'].indexOf(h)>=0)return 'En <b>Inasistencias</b> no se dicta ni se lee: abre <b>Calificaciones</b> u <b>Observaciones</b>.';return 'Aquí no se dicta ni se lee: abre <b>Calificaciones</b> u <b>Observaciones</b> de un periodo.'}
   if(!c.dic)return 'Este periodo no está abierto: puedes <b>🔊 Leer</b> lo capturado, pero no dictar.';
@@ -985,7 +988,7 @@ document.addEventListener('change',function(e){var el=e.target;if(!el.classList.
   guardado();
   document.querySelectorAll('.gi[data-k="'+k+'"][data-p="'+p+'"][data-a="'+a+'"][data-m="'+m+'"]').forEach(function(x){x.value=r.v===null?'':r.v;x.className='gi '+(k==='fal'?(r.v===null?'vacio':'v-ok'):cls(r.v));});
   if(k==='diag'){var pdv=promDiag(porId(a)),pdc=$('#pd-'+a);if(pdc)pdc.textContent=pdv===''?'—':pdv.toFixed(1);renderChrome();return}
-  var al=porId(a),pr=promPeriodo(al,p),prc=$('#pr-'+p+'-'+a);if(prc)prc.textContent=pr===''?'—':pr.toFixed(1);
+  var al=porId(a),pr=promPeriodo(al,p),prc=$('#pr-'+p+'-'+a);if(prc)prc.textContent=pr===''?'—':pr.toFixed(1);var plc=$('#pl-'+p+'-'+a);if(plc)plc.textContent=pr===''?'—':pr.toFixed(1);
   var ti=0;mesesP(p).forEach(function(me){var v=getFal(p,a,me.n);if(v!==null)ti+=v});var tc=$('#ti-'+p+'-'+a);if(tc)tc.textContent=ti;if(k==='fal'){var tm=$('#tm-'+p+'-'+m);if(tm)tm.textContent=totMes(p,parseInt(m,10));var gg=0;mesesP(p).forEach(function(me){gg+=totMes(p,me.n)});var tg=$('#tg-'+p);if(tg)tg.textContent=gg;}
   renderChrome();
   document.querySelectorAll('.chip[data-campo]').forEach(function(b){var c=b.dataset.campo;var f=faltanCal(p,parseInt(c,10));b.classList.toggle('listo',f===0);b.querySelector('span').textContent=f===0?'✓ completo':'faltan '+f;});});
