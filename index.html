@@ -150,7 +150,7 @@ table.bt{width:100%;border-collapse:collapse;margin:8px 0}
 .mx.cal{table-layout:fixed;min-width:1090px}.mx.cal col.c-al{width:370px}.mx.cal col.c-m{width:64px}.mx.cal col.c-pr{width:80px}.mx.cal td:first-child{white-space:normal}
 .mx.cal td>.gi,.mx.cal .hd.hm{position:relative;left:calc(var(--k,0)*-10px)}
 .rt-wrap{overflow-x:auto}table.rt{border-collapse:collapse;width:100%;font-size:.86em}.rt th{background:var(--navy);color:#fff;padding:8px 6px;font-size:.78em}
-.rt td{padding:6px;text-align:center;border-bottom:1px solid #f0e8eb}.rt .l{text-align:left;font-weight:600;color:var(--navy);white-space:nowrap}.rt th.l{text-align:left;color:#fff}.rt .pg{font-weight:800;border-left:2px solid #c9b98a}.rt tr.bj{opacity:.55}
+.rt td{padding:6px;text-align:center;border-bottom:1px solid #f0e8eb}.rt .l{text-align:left;font-weight:600;color:var(--navy);white-space:nowrap}.rt th.l{text-align:left;color:#fff}.rt .pg{font-weight:800;border-left:2px solid #c9b98a}.rt tr.bj{opacity:.55}.rt tr.lv-viva td{background:#fdf3d6!important;border-top:2px solid #c9a23f;border-bottom:2px solid #c9a23f}.rt th.l,.rt td.l{position:sticky;left:0;z-index:1;background:#fff}.rt th.l{background:var(--navy);z-index:2}.rt tr.bj td.l{background:#f4f4f4}
 .promgrupal{margin-top:10px;text-align:center;font-size:.95em;color:var(--mute)}.promgrupal b{font-size:1.2em}
 .mx.diag{width:auto;margin:0 auto}.mx.diag td{padding:8px 26px}.mx.diag td:first-child{padding-left:10px}
 .mx.ina{width:auto;margin:0 auto;min-width:640px}.mx.ina td{padding:6px 18px}
@@ -572,7 +572,7 @@ function tablaResumen(r){
     else if(esD){cols.forEach(function(c){var v=getDiag(a.id,c.id);cel+='<td>'+(v===null?'':v)+'</td>'});pg=promDiag(a);}
     else{cols.forEach(function(m){var v=getCal(_espPerSel,a.id,m.id);cel+='<td>'+(v===null?'':v)+'</td>'});pg=promPeriodo(a,_espPerSel);}
     if(pg!==''&&pg!=='- - -'&&!a.es_baja)gen.push(pg);
-    h+='<tr'+(a.es_baja?' class="bj"':'')+'><td>'+(typeof a.n==='number'?a.n:i+1)+'</td><td class="l">'+esc(a.nombre)+tagsAl(a)+'</td>'+cel+'<td class="pg" style="color:'+zonaCol(pg)+'">'+pg+'</td></tr>';});
+    h+='<tr data-aid="'+a.id+'"'+(a.es_baja?' class="bj"':'')+'><td>'+(typeof a.n==='number'?a.n:i+1)+'</td><td class="l">'+esc(a.nombre)+tagsAl(a)+'</td>'+cel+'<td class="pg" style="color:'+zonaCol(pg)+'">'+pg+'</td></tr>';});
   h+='</tbody></table></div>';
   var pgg=promOficial(gen);
   if(pgg!=='')h+='<div class="promgrupal">'+(esGen?'Promedio de grado del grupo':'Promedio grupal · '+(esD?'Diagnóstico':'Periodo '+_espPerSel))+': <b style="color:'+zonaCol(pgg)+'">'+pgg+'</b></div>';
@@ -783,12 +783,13 @@ function gmPinta(){var m=document.getElementById('gmsg');if(!m)return;var c='gms
   else t=lvReposo(hayDic);
   lvHab();m.className=c;m.innerHTML=t;if(typeof fijaEnc==='function')fijaEnc()}
 function lvAviso(t){LV.aviso=t;gmPinta();clearTimeout(LV.tim);if(t)LV.tim=setTimeout(function(){LV.aviso='';gmPinta()},5000)}
-function lvCtx(){var h=String(S.hoja);if(h==='DIAG')return {ok:true,leer:true,dic:EST.DIAG==='abierto'};var per=['1','2','3'].indexOf(h)>=0,ok=per&&(S.sub==='cal'||S.sub==='obs');return {ok:ok,leer:ok,dic:ok&&EST[h]==='abierto'}}
+function lvCtx(){var h=String(S.hoja);if(h==='RES'){var okr=(_resVista==='tabla');return {ok:okr,leer:okr,dic:false}}if(h==='DIAG')return {ok:true,leer:true,dic:EST.DIAG==='abierto'};var per=['1','2','3'].indexOf(h)>=0,ok=per&&(S.sub==='cal'||S.sub==='obs');return {ok:ok,leer:ok,dic:ok&&EST[h]==='abierto'}}
 function lvHab(){var c=lvCtx(),d=document.getElementById('dicBtn'),l=document.getElementById('leerBtn');
   if(d){d.disabled=!!(LV.on||!(c.dic||DIC.on));d.title=d.disabled?'Dictar se activa en Calificaciones u Observaciones de un periodo abierto (y no mientras se lee)':'Dictar'}
   if(l){l.disabled=!!(DIC.on||!(c.leer||LV.on));l.title=l.disabled?'Leer se activa en Calificaciones u Observaciones de un periodo (y no mientras se dicta)':'Leer en voz alta lo capturado'}}
 function lvReposo(hayDic){var c=lvCtx(),h=String(S.hoja);
   if(h==='DIAG'){if(!c.dic)return 'El Diagnóstico está '+(EST.DIAG==='enviado'?'enviado':'blindado')+': puedes <b>🔊 Leer</b> lo capturado, pero no dictar.';return hayDic?'Toca una casilla del <b>diagnóstico</b> y luego <b>🎤 Dictar</b> (con decimal: <b>"ocho punto cinco"</b>). También puedes <b>🔊 Leer</b> lo capturado.':'Toca <b>🔊 Leer</b> para escuchar lo capturado.'}
+  if(h==='RES')return c.ok?'Toca <b>🔊 Leer</b> para escuchar la tabla que ves: cada alumno con el nombre de cada materia y su calificación, para compararla con la boleta.':'En <b>Gráficas</b> no se lee: abre la <b>📋 Tabla</b> para escuchar los resultados.';
   if(!c.ok){if(S.sub==='ina'&&['1','2','3'].indexOf(h)>=0)return 'En <b>Inasistencias</b> no se dicta ni se lee: abre <b>Calificaciones</b> u <b>Observaciones</b>.';return 'Aquí no se dicta ni se lee: abre <b>Calificaciones</b> u <b>Observaciones</b> de un periodo.'}
   if(!c.dic)return 'Este periodo no está abierto: puedes <b>🔊 Leer</b> lo capturado, pero no dictar.';
   return hayDic?'Toca una casilla de <b>calificación</b> o una <b>observación</b> y luego <b>🎤 Dictar</b>. También puedes <b>🔊 Leer</b> en voz alta lo capturado.':'Toca <b>🔊 Leer</b> para escuchar lo capturado.'}
@@ -807,6 +808,7 @@ function lvColaDiag(){var cols=colsDiag(),fr=[];D.alumnos.forEach(function(a){if
 function lvTrozos(t){var r=[],s=String(t);while(s.length>170){var i=Math.max(s.lastIndexOf('. ',170),s.lastIndexOf(', ',170));if(i<40)i=s.lastIndexOf(' ',170);if(i<40)i=170;r.push(s.slice(0,i+1).trim());s=s.slice(i+1).trim()}if(s)r.push(s);return r}
 function lvCola(){var p=S.hoja;
   if(!lvCtx().ok)return {error:'🔊 Para leer, abre un periodo y Calificaciones u Observaciones.'};
+  if(p==='RES')return lvColaRes();
   if(p==='DIAG')return lvColaDiag();
   if(S.sub==='obs')return lvColaObs(parseInt(p,10));
   var pn=parseInt(p,10),mats=[];D.campos.forEach(function(c){matsDeCampo(c.id).forEach(function(m){mats.push(m)})});
@@ -815,8 +817,12 @@ function lvCola(){var p=S.hoja;
     if(!llenas.length)cuerpo='sin calificaciones';
     else if(llenas.length===vals.length&&vals.length>1&&vals.every(function(v){return v===vals[0]}))cuerpo='Todo '+vals[0];
     else cuerpo=vals.map(function(v){return v===null?'vacío':String(v)}).join(', ');
-    var pr=promPeriodo(a,pn);
-    fr.push({t:a.nombre.toLowerCase()+'. '+cuerpo+(pr!==''?'. Promedio '+lvDec(pr):''),aid:a.id,nom:a.nombre})});
+    var pr=promPeriodo(a,pn),pts=null;
+    if(llenas.length&&!(llenas.length===vals.length&&vals.length>1&&vals.every(function(v){return v===vals[0]}))){pts=[];
+      D.campos.filter(function(c){return matsDeCampo(c.id).length}).forEach(function(c,ci){var vv=matsDeCampo(c.id).map(function(m){var x=getCal(pn,a.id,m.id);return x===null?'vacío':String(x)}).join(', ');
+        pts.push({campo:c.id,t:(ci===0?a.nombre.toLowerCase()+'. ':'')+c.corto+': '+vv+'.'})});
+      if(pr!=='')pts.push({t:'Promedio '+lvDec(pr)})}
+    fr.push({t:a.nombre.toLowerCase()+'. '+cuerpo+(pr!==''?'. Promedio '+lvDec(pr):''),aid:a.id,nom:a.nombre,partes:pts})});
   if(!fr.length)return {error:'🔊 No hay alumnos que leer en este grupo.'};
   return {cab:'Se dará lectura al periodo '+pn+' del grupo '+D.grupo.grado+' '+D.grupo.letra+'.',frases:fr}}
 function lvPintar(){var b=document.getElementById('leerBtn'),s=document.getElementById('lvStop');if(!b)return;
@@ -829,20 +835,40 @@ function lvHablar(texto,alTerminar){var tr=lvTrozos(texto),k=0;
     var u=new SpeechSynthesisUtterance(tr[k++]);u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();u.onend=sig;u.onerror=sig;window.speechSynthesis.speak(u)}
   sig()}
 function lvMarcar(aid){document.querySelectorAll('.lv-viva').forEach(function(e){e.classList.remove('lv-viva')});if(aid==null)return;
+  if(LV.p==='RES'){var fr_=document.querySelector('.rt tr[data-aid="'+aid+'"]');if(fr_){fr_.classList.add('lv-viva');setTimeout(function(){try{filaBajoEnc(fr_)}catch(e){}},70)}return}
   var ins=document.querySelectorAll(LV.p==='DIAG'?'input.gi[data-k="diag"][data-a="'+aid+'"]':(LV.sub==='obs'?'textarea.ob[data-o="'+aid+'"]':'input.gi[data-k="cal"][data-a="'+aid+'"]')),el=null;
   for(var i=0;i<ins.length;i++){if(ins[i].offsetParent!==null){el=ins[i];break}}
   if(!el)return;var f=el.closest('tr')||el.closest('.al');if(!f)return;f.classList.add('lv-viva');
   setTimeout(function(){try{filaBajoEnc(f)}catch(e){}},70)}
+/* ===== Ladrillo451: lectura en el Resumen (Tabla) y lectura que sigue a los campos formativos ===== */
+function lvColaRes(){var sel=_espPerSel;
+  if(sel==='DIAG')return lvColaDiag();
+  var gen=(sel==='gen'),mats=D.materias,fr=[];
+  D.alumnos.forEach(function(a){if(a.es_baja)return;
+    var F=gen?finalesDe(a):null,cuerpo=mats.map(function(m){var v=gen?F.fin[m.id]:getCal(sel,a.id,m.id);return m.nombre.toLowerCase()+' '+((v===null||v===''||v===undefined)?'vacío':lvDec(v))}).join(', '),
+      pg=gen?promGrado(a):promPeriodo(a,sel),cola;
+    if(gen)cola=(pg!==''&&pg!=='- - -')?'. Promedio de grado '+lvDec(pg):'. Sin promedio de grado';
+    else cola=(pg!=='')?'. Promedio '+lvDec(pg):'';
+    fr.push({t:a.nombre.toLowerCase()+'. '+cuerpo+cola,aid:a.id,nom:a.nombre})});
+  if(!fr.length)return {error:'🔊 No hay alumnos que leer en este grupo.'};
+  return {cab:(gen?'Se dará lectura a los resultados generales del grupo '+D.grupo.grado+' '+D.grupo.letra+': la calificación final de cada materia y el promedio de grado.':'Se dará lectura a la tabla del periodo '+sel+' del grupo '+D.grupo.grado+' '+D.grupo.letra+'.'),frases:fr}}
+function lvHablarUna(it,fin){lvHablar(it.t,fin)}
+function lvHablarPartes(it,fin){var ps=it.partes,k=0;
+  function sig(){if(!LV.on||LV.pausa)return;if(k>=ps.length){fin();return}
+    var p=ps[k++];
+    if(p.campo!==undefined&&S.sub==='cal'&&String(S.hoja)===LV.p&&S.campo!==p.campo){S.campo=p.campo;render();lvMarcar(it.aid)}
+    lvHablar(p.t,sig)}
+  sig()}
 function lvSiguiente(){if(!LV.on||LV.pausa)return;
   if(LV.idx>=LV.cola.length){lvMarcar(null);lvHablar('Fin de la lectura.',function(){});LV.on=false;LV.pausa=false;LV.nom='';lvPintar();return}
   var it=LV.cola[LV.idx];LV.idx++;lvMarcar(it.aid);LV.nom=it.nom;gmPinta();
-  lvHablar(it.t,function(){LV.leidos++;lvPintar();
+  (it.partes?lvHablarPartes:lvHablarUna)(it,function(){LV.leidos++;lvPintar();
     if(LV.cada>0&&(LV.leidos%LV.cada)===0&&LV.idx<LV.cola.length){LV.pausa=true;lvPintar();return}
     lvSiguiente()})}
 function lvArrancar(){if(!lvOk()){lvAviso('Este navegador no trae voz para leer.');return}
   if(DIC.on)dicFin();
   var c=lvCola();if(c.error){lvAviso(c.error);return}
-  lvAviso('');LV.cola=c.frases;LV.sub=S.sub;LV.p=String(S.hoja);LV.idx=0;LV.leidos=0;LV.total=c.frases.length;LV.on=true;LV.pausa=false;
+  lvAviso('');LV.cola=c.frases;LV.sub=S.sub;LV.p=String(S.hoja);LV.k=String(_espPerSel)+_resVista;LV.idx=0;LV.leidos=0;LV.total=c.frases.length;LV.on=true;LV.pausa=false;
   LV.cada=parseInt(document.getElementById('lvPau').value||'0',10)||0;lvPintar();
   try{window.speechSynthesis.cancel()}catch(e){}
   lvHablar(c.cab,function(){lvSiguiente()})}
@@ -853,7 +879,7 @@ function lvDetener(avisar){var estaba=LV.on;LV.on=false;LV.pausa=false;LV.cola=[
   if(estaba){try{window.speechSynthesis.cancel()}catch(e){}}
   lvMarcar(null);lvPintar();
   if(avisar&&estaba&&lvOk()){try{var u=new SpeechSynthesisUtterance('Lectura detenida.');u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();window.speechSynthesis.speak(u)}catch(e){}}}
-function lvSiCambio(){var c=lvCtx();if(LV.on&&(!c.leer||String(S.hoja)!==LV.p||S.sub!==LV.sub))lvDetener(false);if(DIC.on&&!c.dic)dicFin();gmPinta()}
+function lvSiCambio(){var c=lvCtx();if(LV.on&&(!c.leer||String(S.hoja)!==LV.p||S.sub!==LV.sub||(LV.p==='RES'&&LV.k!==String(_espPerSel)+_resVista)))lvDetener(false);if(DIC.on&&!c.dic)dicFin();gmPinta()}
 function lvInit(){var b=document.getElementById('leerBtn');if(!b)return;
   if(lvOk()){b.style.display='';document.getElementById('lvCfg').style.display='';
     try{var g=JSON.parse(localStorage.getItem('sigea_lector')||'{}');if(g.vel)document.getElementById('lvVel').value=g.vel;if(g.pau)document.getElementById('lvPau').value=g.pau}catch(e){}
