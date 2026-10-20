@@ -95,6 +95,13 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:.86em}
 .step button:disabled{opacity:.35}.step .n{min-width:34px;text-align:center;font-weight:800;font-size:1.15em}.step .n.vac{color:#c9a13a}
 .cero{border:1px dashed #e3c677!important;background:#fffbea!important;width:auto!important;padding:0 10px;font-size:.8em!important;font-weight:700;color:#7a5a00!important}
 .warnf{font-size:.7em;color:#a8620a;font-weight:700}
+.ob-barra{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.ob-lim{float:right;border:1px solid var(--line);background:#fff;color:var(--mute);border-radius:10px;padding:5px 10px;font-size:.74em;font-weight:700;font-family:inherit;cursor:pointer}
+.ob-barra .ob-lim{float:none;font-size:.8em;padding:7px 12px}
+.ob-lim:disabled{opacity:.4;cursor:default}
+.ob-lim[data-listo="1"]{background:#fff0f1;border-color:var(--rojo);color:var(--rojo)}
+.ob-lim.ob-und{background:#eaf5f0;border-color:var(--verde);color:var(--verde)}
+@media print{.ob-lim,.ob-barra{display:none!important}}
 textarea.ob{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-family:inherit;font-size:.9em;min-height:74px;resize:vertical;margin-top:6px;background:#faf7f8}
 textarea.ob.pasa{border-color:var(--rojo);background:#fff0f1}textarea.ob:disabled{background:#f3f0f2}
 .cnt{font-size:.74em;color:var(--mute);text-align:right}.cnt.pasa{color:var(--rojo);font-weight:800}
@@ -505,10 +512,28 @@ function vistaDiag(){
   cols.forEach(function(c){h+='<th class="campo'+c.campo+'"><div class="hd">'+esc(c.nombre)+'</div></th>'});h+='<th><div class="hd">Promedio</div></th></tr>';
   D.alumnos.forEach(function(a){var pr=promDiag(a);h+='<tr><td>'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</td>'+cols.map(function(c){return '<td>'+inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')+'</td>'}).join('')+'<td class="prom" id="pd-'+a.id+'">'+(pr===''?'—':pr.toFixed(1))+'</td></tr>';});
   return h+'</table></div></div>';}
+/* ===== Ladrillo438: LIMPIAR observaciones (por alumno y todas) ===== */
+var OBUNDO=null;
+function obTexto(p,id){return (pcap(p).obs[id]||'')}
+function obBtn(p,a,off){if(off)return '';var hay=obTexto(p,a.id).trim()!=='';
+  return '<button class="ob-lim" data-olim="'+a.id+'" '+(hay?'':'disabled')+' title="Limpiar la observación de este alumno">🧹 Limpiar</button>';}
+function obBarra(p,dis){if(dis)return '';var n=obsEscritas(p);
+  return '<div class="ob-barra"><button class="ob-lim" data-olimall="1" '+(n?'':'disabled')+'>🧹 Limpiar todas ('+n+')</button>'+
+    (OBUNDO&&OBUNDO.p===p?'<button class="ob-lim ob-und" id="obUndo" data-oundo="1">↩ Deshacer limpieza</button>':'')+'</div>';}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-olim],[data-olimall],[data-oundo]');if(!b||b.disabled)return;
+  var p=S.hoja;if(!editable(p)){toast('🔒 Esta hoja ya no se puede modificar');return}
+  if(b.dataset.oundo){if(OBUNDO&&OBUNDO.p===p){Object.keys(OBUNDO.v).forEach(function(id){pcap(p).obs[id]=OBUNDO.v[id]});OBUNDO=null;guardado();render();toast('↩ Observaciones recuperadas')}return}
+  if(b.dataset.listo!=='1'){b.dataset.listo='1';b._t0=b.textContent;b.textContent='¿Seguro? Toca otra vez';clearTimeout(b._t);
+    b._t=setTimeout(function(){b.dataset.listo='';b.textContent=b._t0},4000);return}
+  clearTimeout(b._t);var v={};
+  if(b.dataset.olimall){activos().forEach(function(a){var t=obTexto(p,a.id);if(t.trim()!==''){v[a.id]=t;pcap(p).obs[a.id]=''}})}
+  else{var id=b.dataset.olim,t=obTexto(p,id);if(t.trim()!==''){v[id]=t;pcap(p).obs[id]=''}}
+  var n=Object.keys(v).length;if(!n)return;
+  OBUNDO={p:p,v:v};guardado();render();toast('🧹 Limpiado ('+n+') · puedes deshacerlo');});
 function vistaObs(p){
-  var dis=!editable(p),h='<div class="card"><div class="hint"><b>Observaciones</b> (opcionales): fortalezas · áreas de mejora · recomendaciones al alumno · recomendaciones al tutor. Máximo <b>'+D.tope_obs+' caracteres sin contar los espacios</b>: si te pasas, la página te avisa, pero no te corta.</div>';
+  var dis=!editable(p),h='<div class="card"><div class="hint"><b>Observaciones</b> (opcionales): fortalezas · áreas de mejora · recomendaciones al alumno · recomendaciones al tutor. Máximo <b>'+D.tope_obs+' caracteres sin contar los espacios</b>: si te pasas, la página te avisa, pero no te corta.</div>'+obBarra(p,dis);
   D.alumnos.forEach(function(a){var t=pcap(p).obs[a.id]||'',n=sinEsp(t),pasa=n>D.tope_obs,off=dis||a.es_baja;
-    h+='<div class="al" style="display:block"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div><textarea class="ob'+(pasa?' pasa':'')+'" data-o="'+a.id+'" placeholder="Sin observación" '+(off?'disabled':'')+'>'+esc(t)+'</textarea>'+
+    h+='<div class="al" style="display:block"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+obBtn(p,a,off)+'</div><textarea class="ob'+(pasa?' pasa':'')+'" data-o="'+a.id+'" placeholder="Sin observación" '+(off?'disabled':'')+'>'+esc(t)+'</textarea>'+
       '<div class="cnt'+(pasa?' pasa':'')+'" id="c-'+a.id+'">'+(pasa?'⚠️ TE PASASTE POR '+(n-D.tope_obs)+' — RECORTA':n+' / '+D.tope_obs)+'</div></div>';});
   return h+'</div>';}
 function zonaCol(v){return (v===''||v==='- - -')?'':(semNivel(Number(v))==='riesgo'?'#c0392b':semNivel(Number(v))==='satisf'?'#b07a14':'#1e8449');}
@@ -886,7 +911,7 @@ document.addEventListener('click',function(e){
   guardado();render();});
 document.addEventListener('input',function(e){var el=e.target;
   if(el.id==='q'){S.q=el.value;var pos=el.selectionStart;render();var q=$('#q');q.focus();q.setSelectionRange(pos,pos);return}
-  if(el.dataset.o!==undefined){var p=S.hoja;pcap(p).obs[el.dataset.o]=el.value;var n=sinEsp(el.value),pasa=n>D.tope_obs;
+  if(el.dataset.o!==undefined){OBUNDO=null;var _u=$('#obUndo');if(_u)_u.style.display='none';var p=S.hoja;pcap(p).obs[el.dataset.o]=el.value;var n=sinEsp(el.value),pasa=n>D.tope_obs;
     var c=$('#c-'+el.dataset.o);c.textContent=pasa?'⚠️ TE PASASTE POR '+(n-D.tope_obs)+' — RECORTA':n+' / '+D.tope_obs;c.className='cnt'+(pasa?' pasa':'');el.className='ob'+(pasa?' pasa':'');guardado();}});
 function dhTxt(n){return n===1?'1 día hábil':n+' días hábiles'}
 function falExcede(p){var n=0;activos().forEach(function(a){mesesP(p).forEach(function(me){var v=getFal(p,a.id,me.n);if(v!==null&&v>me.dias)n++})});return n}
