@@ -204,6 +204,9 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
 .av-p{font-size:.72em;color:var(--mute);margin-top:4px;text-align:right}
 .av-ck{font-weight:700;color:#8a93a6}.av-ck.vis{color:#2f6fed}
 .av-vacio{padding:18px;text-align:center;color:var(--mute);font-size:.88em}
+.av-m.bor .av-t{font-style:italic;color:var(--mute)}.av-m.bor{box-shadow:none;background:#ecebf0}
+.av-del{border:0;background:none;color:var(--mute);font-size:1em;font-family:inherit;cursor:pointer;padding:0 0 0 8px;text-decoration:underline}
+.av-del[data-listo="1"]{color:var(--rojo);font-weight:700}
 #avTxt{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;font-size:.92em;resize:vertical;margin-bottom:8px}
 /* Ladrillo396: encabezados fijos al bajar (solo pantalla grande) */
 @media(min-width:900px){
@@ -1201,9 +1204,22 @@ function avHora(s){try{var d=new Date(s);if(isNaN(d.getTime()))return '';var p=f
 function avPinta(){var b=$('#avBtn');if(!b)return;if(!avActivo()){b.style.display='none';return;}
   var n=AV?AV.sin_ver:0;b.style.display='';b.className='dic'+(n>0?' av-on':'');
   b.innerHTML='💬 Avisos'+(n>0?'<span class="av-n">'+n+'</span>':'');}
+/* ===== Ladrillo441: eliminar mis mensajes en Avisos ===== */
+function avBurbuja(x){var yo=x.de==='maestro';
+  if(x.borrado){var q=(x.borrado==='director'&&yo)?'Eliminado por el director':'Mensaje eliminado';
+    return '<div class="av-m bor '+(yo?'yo':'dir')+'"><div class="av-t">🚫 '+q+'</div><div class="av-p">'+(yo?'Tú':'Director')+' · '+avHora(x.creado)+'</div></div>';}
+  return '<div class="av-m '+(yo?'yo':'dir')+'"><div class="av-t">'+esc(x.texto).replace(/\n/g,'<br>')+'</div><div class="av-p">'+(yo?'Tú':'Director')+' · '+avHora(x.creado)+(yo?' <span class="av-ck'+(x.visto?' vis':'')+'">'+(x.visto?'✓✓':'✓')+'</span>'+(x.id?'<button class="av-del" data-avdel="'+esc(x.id)+'">Eliminar</button>':''):'')+'</div></div>';}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-avdel]');if(!b||b.disabled)return;
+  if(b.dataset.listo!=='1'){b.dataset.listo='1';b._t0=b.textContent;b.textContent='¿Seguro? Toca otra vez';clearTimeout(b._t);
+    b._t=setTimeout(function(){b.dataset.listo='';b.textContent=b._t0},4000);return}
+  clearTimeout(b._t);b.disabled=true;var id=b.dataset.avdel;
+  syncLlama({op:'aviso_borrar_mio',clave:SIGEA_WEB.k,id:id}).then(function(r){
+    if(r&&r.ok){if(AV&&AV.mensajes)AV.mensajes.forEach(function(x){if(String(x.id)===String(id)){x.borrado='maestro';x.texto='';}});avDibuja();toast('🚫 Mensaje eliminado');return avTrae();}
+    b.disabled=false;b.dataset.listo='';b.textContent='Eliminar';toast('No se pudo eliminar: '+((r&&r.error)||'intenta de nuevo'));
+  }).catch(function(){b.disabled=false;b.dataset.listo='';b.textContent='Eliminar';toast('📴 Sin señal: no se eliminó');});});
 function avDibuja(){var el=$('#avLista');if(!el)return;var m=(AV&&AV.mensajes)||[];
   el.innerHTML=m.length?m.map(function(x){var yo=x.de==='maestro';
-    return '<div class="av-m '+(yo?'yo':'dir')+'"><div class="av-t">'+esc(x.texto).replace(/\n/g,'<br>')+'</div><div class="av-p">'+(yo?'Tú':'Director')+' · '+avHora(x.creado)+(yo?' <span class="av-ck'+(x.visto?' vis':'')+'">'+(x.visto?'✓✓':'✓')+'</span>':'')+'</div></div>';}).join('')
+    return avBurbuja(x);}).join('')
     :'<div class="av-vacio">Todavía no hay avisos. Aquí te escribe el director y tú le puedes contestar o sugerir.</div>';
   el.scrollTop=el.scrollHeight;}
 function avTrae(){if(!avActivo()||AV_BUSY)return Promise.resolve();AV_BUSY=true;
