@@ -153,7 +153,7 @@ table.bt{width:100%;border-collapse:collapse;margin:8px 0}
 .rt-wrap{overflow-x:auto}table.rt{border-collapse:collapse;width:100%;font-size:.86em}.rt th{background:var(--navy);color:#fff;padding:8px 6px;font-size:.78em}
 .rt td{padding:6px;text-align:center;border-bottom:1px solid #f0e8eb}.rt .l{text-align:left;font-weight:600;color:var(--navy);white-space:nowrap}.rt th.l{text-align:left;color:#fff}.rt .pg{font-weight:800;border-left:2px solid #c9b98a}.rt tr.bj{opacity:.55}.rt tr.lv-viva td{background:#fdf3d6!important;border-top:2px solid #c9a23f;border-bottom:2px solid #c9a23f}/* Ladrillo453: sin columna fija */
 .promgrupal{margin-top:10px;text-align:center;font-size:.95em;color:var(--mute)}.promgrupal b{font-size:1.2em}
-.mx.diag{width:auto;margin:0 auto}.mx.diag td{padding:8px 26px}.mx.diag td:first-child{padding-left:10px}
+.mx.diag{width:auto;margin:0 auto}.mx.diag td{padding:6px 4px}.mx.diag td:first-child{padding-left:10px;min-width:250px}.mx.diag th{min-width:58px;padding:6px 3px}.mx.diag th:first-child{min-width:250px}/* Ladrillo459 */
 .mx.ina{width:auto;margin:0 auto;min-width:640px}.mx.ina td{padding:6px 18px}
 .mx tr.tot td{background:#f3eef6;font-weight:800;border-top:2px solid #d9c9e3}
 
@@ -436,6 +436,7 @@ function getFal(p,a,mes){var o=pcap(p).fal[a];return o&&o[mes]!==undefined?o[mes
 function setFal(p,a,mes,v){var c=pcap(p).fal;if(!c[a])c[a]={};c[a][mes]=v}
 function getDiag(a,r){var o=CAP.DIAG&&CAP.DIAG[a];return o&&o[r]!==undefined?o[r]:null}
 function setDiag(a,r,v){if(!CAP.DIAG)CAP.DIAG={};if(!CAP.DIAG[a])CAP.DIAG[a]={};CAP.DIAG[a][r]=v}
+function faltanDiagCampo(cid){var n=0;activos().forEach(function(a){colsDiag().forEach(function(c){if((cid===undefined||c.campo===cid)&&getDiag(a.id,c.id)===null)n++})});return n}
 function colsDiag(){if(D.diag.cols)return D.diag.cols;return D.diag.tipo==='CAMPO'?D.campos.map(function(c){return {id:c.id,nombre:c.nombre,corto:c.corto,campo:c.id}}):D.materias.map(function(m){return {id:m.id,nombre:m.nombre,corto:m.corto,campo:m.campo_id}});}
 function editable(p){return EST[p]==='abierto'}
 function pNum(p){return p==='DIAG'?'DIAG':parseInt(p,10)}
@@ -526,8 +527,14 @@ function vistaIna(p){
   h+='</table></div></div>';return h;}
 function vistaDiag(){
   var cols=colsDiag(),h='<div class="card"><div class="hint">Diagnóstico de '+D.grupo.grado+'°: '+(D.diag.tipo==='CAMPO'?'se califica por <b>campo formativo</b>':'se califica por <b>asignatura</b>')+'. De 5 a 10, con un decimal.'+(EST.DIAG==='abierto'?' Captura con calma: tu avance se guarda solo.':' Está blindado: solo lectura.')+'</div>';
-  h+='<div class="vista-lista"><div class="hdr"><div class="nm">Alumno</div>'+cols.map(function(c){return '<div class="c">'+c.corto+'</div>'}).join('')+'</div>';
-  D.alumnos.forEach(function(a){h+='<div class="al"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div>'+cols.map(function(c){return inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')}).join('')+'</div>';});
+  var cv=cols;
+  if(D.diag.tipo!=='CAMPO'&&cols.length>4){var cs=[];cols.forEach(function(c){if(cs.indexOf(c.campo)<0)cs.push(c.campo)});
+    if(S.dcampo===undefined||cs.indexOf(S.dcampo)<0)S.dcampo=cs[0];
+    cv=cols.filter(function(c){return c.campo===S.dcampo});
+    h+='<div class="vista-lista"><div class="chips solotel">'+cs.map(function(cid){var f=faltanDiagCampo(cid),cc=D.campos.filter(function(x){return x.id===cid})[0];return '<button class="chip'+(S.dcampo===cid?' sel':'')+(f===0?' listo':'')+'" data-dcampo="'+cid+'"><b>'+(cc?cc.corto:cid)+'</b><span>'+(f===0?'✓ completo':'faltan '+f)+'</span></button>'}).join('')+'</div>';
+  }else h+='<div class="vista-lista">';
+  h+='<div class="hdr"><div class="nm">Alumno</div>'+cv.map(function(c){return '<div class="c">'+c.corto+'</div>'}).join('')+'</div>';
+  D.alumnos.forEach(function(a){h+='<div class="al"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div>'+cv.map(function(c){return inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')}).join('')+'</div>';});
   h+='</div><div class="vista-matriz"><table class="mx diag"><tr class="g1"><th><div class="hd">Alumno</div></th>';
   cols.forEach(function(c){h+='<th class="campo'+c.campo+'"><div class="hd">'+esc(c.nombre)+'</div></th>'});h+='<th><div class="hd">Promedio</div></th></tr>';
   D.alumnos.forEach(function(a){var pr=promDiag(a);h+='<tr><td>'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</td>'+cols.map(function(c){return '<td>'+inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')+'</td>'}).join('')+'<td class="prom" id="pd-'+a.id+'">'+(pr===''?'—':pr.toFixed(1))+'</td></tr>';});
@@ -626,7 +633,7 @@ function imprimir(ids){var pa=document.getElementById('printArea');pa.innerHTML=
 /* ===== Ladrillo380: dictado por voz (EXPERIMENTO). El boton solo aparece si el navegador sabe dictar; si no, la pagina queda como siempre. ===== */
 var DIC={rec:null,on:false,ta:null,base:'',tim:null};
 function dicBtn(){return document.getElementById('dicBtn')}
-function encBajo(){var b=0;['.hojasbar','.subtabs','.mx tr.g1 th','.mx tr.g2 th'].forEach(function(s){var e=document.querySelector(s);if(!e)return;var cs=getComputedStyle(e);if(cs.position!=='sticky'&&cs.position!=='fixed')return;var t=parseFloat(cs.top);if(isNaN(t))t=0;var x=t+e.offsetHeight;if(x>b)b=x});return b}
+function encBajo(){var b=0;['.hojasbar','.subtabs','.mx tr.g1 th','.mx tr.g2 th'].forEach(function(s){document.querySelectorAll(s).forEach(function(e){var cs=getComputedStyle(e);if(cs.position!=='sticky'&&cs.position!=='fixed')return;if(!e.offsetHeight)return;var t=parseFloat(cs.top);if(isNaN(t))t=0;var x=t+e.offsetHeight;if(x>b)b=x})});return b}/* Ladrillo458 */
 function filaBajoEnc(f){var g=f.previousElementSibling;if(g&&(g.tagName==='TR'?!!g.querySelector('td'):g.classList.contains('al'))&&g.getBoundingClientRect().height>0)f=g;var y=f.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0)-(encBajo()+6);window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}
 function dicSube(){if(!DIC.on){DIC._sub=null;return}var c=DIC.cal?DIC.cur:DIC.ta;if(!c||!document.body.contains(c))return;var k=c.dataset.a||c.dataset.o;if(k===DIC._sub)return;DIC._sub=k;
   var f=c.closest('tr')||c.closest('.al');if(f)setTimeout(function(){try{filaBajoEnc(f)}catch(e){}},60)}
@@ -805,7 +812,11 @@ function lvColaDiag(){var cols=colsDiag(),fr=[];D.alumnos.forEach(function(a){if
     if(!llenas.length)cuerpo='sin calificaciones';
     else if(llenas.length===vals.length&&vals.length>1&&vals.every(function(v){return v===vals[0]}))cuerpo='Todo '+lvDec(vals[0]);
     else cuerpo=vals.map(function(v){return v===null?'vacío':lvDec(v)}).join(', ');
-    var pr=promDiag(a);fr.push({t:a.nombre.toLowerCase()+'. '+cuerpo+(pr!==''?'. Promedio '+lvDec(pr):''),aid:a.id,nom:a.nombre})});
+    var pr=promDiag(a),pts=null;
+    if(D.diag.tipo!=='CAMPO'&&cols.length>4&&llenas.length&&!(llenas.length===vals.length&&vals.every(function(v){return v===vals[0]}))){pts=[];var cs_=[];cols.forEach(function(c){if(cs_.indexOf(c.campo)<0)cs_.push(c.campo)});
+      cs_.forEach(function(cid,ci){var cc=D.campos.filter(function(x){return x.id===cid})[0],vv=cols.filter(function(c){return c.campo===cid}).map(function(c){var x=getDiag(a.id,c.id);return x===null?'vacío':lvDec(x)}).join(', ');pts.push({dcampo:cid,t:(ci===0?a.nombre.toLowerCase()+'. ':'')+(cc?cc.corto:'')+': '+vv+'.'})});
+      if(pr!=='')pts.push({t:'Promedio '+lvDec(pr)})}
+    fr.push({t:a.nombre.toLowerCase()+'. '+cuerpo+(pr!==''?'. Promedio '+lvDec(pr):''),aid:a.id,nom:a.nombre,partes:pts})});
   if(!fr.length)return {error:'🔊 No hay alumnos que leer en este grupo.'};
   return {cab:'Se dará lectura al diagnóstico del grupo '+D.grupo.grado+' '+D.grupo.letra+'.',frases:fr}}
 function lvTrozos(t){var r=[],s=String(t);while(s.length>170){var i=Math.max(s.lastIndexOf('. ',170),s.lastIndexOf(', ',170));if(i<40)i=s.lastIndexOf(' ',170);if(i<40)i=170;r.push(s.slice(0,i+1).trim());s=s.slice(i+1).trim()}if(s)r.push(s);return r}
@@ -868,6 +879,7 @@ function lvHablarPartes(it,fin){var ps=it.partes,k=0;
     var p=ps[k++];
     if(p.scr!==undefined)lvScrollRes(p.scr);
     if(p.campo!==undefined&&S.sub==='cal'&&String(S.hoja)===LV.p&&S.campo!==p.campo){S.campo=p.campo;render();lvMarcar(it.aid)}
+    if(p.dcampo!==undefined&&LV.p==='DIAG'&&S.dcampo!==p.dcampo){S.dcampo=p.dcampo;render();lvMarcar(it.aid)}
     lvHablar(p.t,sig)}
   sig()}
 function lvSiguiente(){if(!LV.on||LV.pausa)return;
@@ -950,11 +962,12 @@ function render(){lvSiCambio();persistir();renderChrome();var h=S.hoja,v='';
 function guardado(){var s=$("#save");s.textContent="guardando…";clearTimeout(guardado.t);guardado.t=setTimeout(function(){persistir()},300)}
 /* ===== eventos ===== */
 document.addEventListener('click',function(e){
-  var t=e.target.closest('[data-h],[data-s],[data-campo],[data-mes],[data-ci],[data-ip],[data-im],[data-rp],[data-rv],[data-bol],[data-print],[data-printall],[data-d]');
+  var t=e.target.closest('[data-h],[data-s],[data-campo],[data-dcampo],[data-mes],[data-ci],[data-ip],[data-im],[data-rp],[data-rv],[data-bol],[data-print],[data-printall],[data-d]');
   if(!t){if(!e.target.closest('#menu,#dots'))$("#menu").classList.remove('on');return}
   var p=S.hoja;
   if(t.dataset.h){var hv=t.dataset.h;if(hv!=='RES'&&hv!=='DIAG'&&EST[hv]==='apagado'){toast('🔒 '+D.razon[hv]);return}S.hoja=hv;S.sub='cal';render();return}
   if(t.dataset.s){S.sub=t.dataset.s;render();return}
+  if(t.dataset.dcampo!==undefined){S.dcampo=parseInt(t.dataset.dcampo,10);render();return}/* Ladrillo459 */
   if(t.dataset.campo!==undefined){S.campo=parseInt(t.dataset.campo,10);render();return}
   if(t.dataset.mes!==undefined){S.mes=+t.dataset.mes;render();return}
   if(t.dataset.rp!==undefined){_espPerSel=(t.dataset.rp==='DIAG'||t.dataset.rp==='gen')?t.dataset.rp:parseInt(t.dataset.rp,10);render();return}
@@ -988,7 +1001,7 @@ document.addEventListener('change',function(e){var el=e.target;if(!el.classList.
   if(k==='cal')setCal(p,a,parseInt(m,10),r.v);else if(k==='fal')setFal(p,a,parseInt(m,10),r.v);else if(k==='diag')setDiag(a,parseInt(m,10),r.v);
   guardado();
   document.querySelectorAll('.gi[data-k="'+k+'"][data-p="'+p+'"][data-a="'+a+'"][data-m="'+m+'"]').forEach(function(x){x.value=r.v===null?'':r.v;x.className='gi '+(k==='fal'?(r.v===null?'vacio':'v-ok'):cls(r.v));});
-  if(k==='diag'){var pdv=promDiag(porId(a)),pdc=$('#pd-'+a);if(pdc)pdc.textContent=pdv===''?'—':pdv.toFixed(1);renderChrome();return}
+  if(k==='diag'){var pdv=promDiag(porId(a)),pdc=$('#pd-'+a);if(pdc)pdc.textContent=pdv===''?'—':pdv.toFixed(1);document.querySelectorAll('.chip[data-dcampo]').forEach(function(b){var f=faltanDiagCampo(parseInt(b.dataset.dcampo,10));b.classList.toggle('listo',f===0);b.querySelector('span').textContent=f===0?'✓ completo':'faltan '+f});renderChrome();return}
   var al=porId(a),pr=promPeriodo(al,p),prc=$('#pr-'+p+'-'+a);if(prc)prc.textContent=pr===''?'—':pr.toFixed(1);var plc=$('#pl-'+p+'-'+a);if(plc)plc.textContent=pr===''?'—':pr.toFixed(1);
   var ti=0;mesesP(p).forEach(function(me){var v=getFal(p,a,me.n);if(v!==null)ti+=v});var tc=$('#ti-'+p+'-'+a);if(tc)tc.textContent=ti;if(k==='fal'){var tm=$('#tm-'+p+'-'+m);if(tm)tm.textContent=totMes(p,parseInt(m,10));var gg=0;mesesP(p).forEach(function(me){gg+=totMes(p,me.n)});var tg=$('#tg-'+p);if(tg)tg.textContent=gg;}
   renderChrome();
