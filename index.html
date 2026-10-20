@@ -854,13 +854,14 @@ function lvColaRes(){var sel=_espPerSel;
     else cola=(pg!=='')?'Promedio '+lvDec(pg):'';
     D.campos.filter(function(c){return matsDeCampo(c.id).length}).forEach(function(c,ci){var ms=matsDeCampo(c.id);
       pts.push({scr:(ci===0?0:mats.indexOf(ms[0])),t:(ci===0?a.nombre.toLowerCase()+'. ':'')+(gen?'':c.corto+': ')+ms.map(function(m){return vv(a,F,m)}).join(', ')+'.'})});
+    if(gen){var vs_=mats.map(function(m){return F.fin[m.id]});if(vs_.length>1&&vs_.every(function(v){return v!==null&&v!==''&&v!==undefined&&v===vs_[0]}))pts=[{scr:0,t:a.nombre.toLowerCase()+'. Todo '+lvDec(vs_[0])+'.'}]}
     if(cola)pts.push({scr:'fin',t:cola});
     fr.push({t:a.nombre.toLowerCase()+'. '+mats.map(function(m){return vv(a,F,m)}).join(', ')+(cola?'. '+cola:''),aid:a.id,nom:a.nombre,partes:pts})});
   if(!fr.length)return {error:'🔊 No hay alumnos que leer en este grupo.'};
   return {cab:(gen?'Se dará lectura a los resultados generales del grupo '+D.grupo.grado+' '+D.grupo.letra+': la calificación final de cada materia y el promedio de grado.':'Se dará lectura a la tabla del periodo '+sel+' del grupo '+D.grupo.grado+' '+D.grupo.letra+'.'),frases:fr}}
 function lvScrollRes(k){var w=document.querySelector('.rt-wrap');if(!w)return;var x=0;
-  if(k==='fin')x=w.scrollWidth;else if(k>0){var th=w.querySelectorAll('thead th')[k+2];if(th)x=Math.max(0,th.offsetLeft-4)}
-  try{w.scrollTo({left:x,behavior:'smooth'})}catch(e){w.scrollLeft=x}}
+  if(k==='fin')x=w.scrollWidth;else if(typeof k==='number'){var th=w.querySelectorAll('thead th')[k+2];if(th)x=Math.max(0,th.offsetLeft-4)}/* Ladrillo457 */
+  w.scrollLeft=x}
 function lvHablarUna(it,fin){lvHablar(it.t,fin)}
 function lvHablarPartes(it,fin){var ps=it.partes,k=0;
   function sig(){if(!LV.on||LV.pausa)return;if(k>=ps.length){fin();return}
