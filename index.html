@@ -33,7 +33,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .menu{position:absolute;right:14px;top:62px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(31,45,74,.25);padding:6px;z-index:36;display:none;min-width:230px}
 .menu.on{display:block}
 .pill-fija{position:fixed;top:8px;right:8px;z-index:30;display:none;box-shadow:0 2px 10px rgba(31,45,74,.18)}.pill-fija.on{display:block}
-@media(min-width:900px){.pill-fija,.pill-fija.on{position:static;display:block;align-self:flex-start;white-space:nowrap;margin:6px 2px 0;box-shadow:none}#save{display:none}}.menu button{display:block;width:100%;text-align:left;border:none;background:none;padding:11px 12px;border-radius:8px;font-size:.9em;color:var(--navy);cursor:pointer}
+@media(min-width:900px){.pill-fija,.pill-fija.on{position:static;display:block;align-self:flex-start;white-space:nowrap;margin:6px 2px 0;box-shadow:none;min-width:122px;text-align:center}#save{display:none}}.menu button{display:block;width:100%;text-align:left;border:none;background:none;padding:11px 12px;border-radius:8px;font-size:.9em;color:var(--navy);cursor:pointer}
 .menu button:hover{background:#f3eef0}
 .info{font-size:.78em;color:var(--mute);margin:2px 2px 10px}
 .hojas{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px}
@@ -520,11 +520,14 @@ function obBtn(p,a,off){if(off)return '';var hay=obTexto(p,a.id).trim()!=='';
 function obBarra(p,dis){if(dis)return '';var n=obsEscritas(p);
   return '<div class="ob-barra"><button class="ob-lim" data-olimall="1" '+(n?'':'disabled')+'>🧹 Limpiar todas ('+n+')</button>'+
     (OBUNDO&&OBUNDO.p===p?'<button class="ob-lim ob-und" id="obUndo" data-oundo="1">↩ Deshacer limpieza</button>':'')+'</div>';}
+function obRefresca(){var p=S.hoja,n=obsEscritas(p),a=$('[data-olimall]');
+  if(a){a.disabled=!n;if(a.dataset.listo!=='1')a.textContent='🧹 Limpiar todas ('+n+')'}
+  document.querySelectorAll('[data-olim]').forEach(function(x){x.disabled=obTexto(p,x.dataset.olim).trim()===''})}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-olim],[data-olimall],[data-oundo]');if(!b||b.disabled)return;
   var p=S.hoja;if(!editable(p)){toast('🔒 Esta hoja ya no se puede modificar');return}
   if(b.dataset.oundo){if(OBUNDO&&OBUNDO.p===p){Object.keys(OBUNDO.v).forEach(function(id){pcap(p).obs[id]=OBUNDO.v[id]});OBUNDO=null;guardado();render();toast('↩ Observaciones recuperadas')}return}
   if(b.dataset.listo!=='1'){b.dataset.listo='1';b._t0=b.textContent;b.textContent='¿Seguro? Toca otra vez';clearTimeout(b._t);
-    b._t=setTimeout(function(){b.dataset.listo='';b.textContent=b._t0},4000);return}
+    b._t=setTimeout(function(){b.dataset.listo='';b.textContent=b._t0;obRefresca()},4000);return}
   clearTimeout(b._t);var v={};
   if(b.dataset.olimall){activos().forEach(function(a){var t=obTexto(p,a.id);if(t.trim()!==''){v[a.id]=t;pcap(p).obs[a.id]=''}})}
   else{var id=b.dataset.olim,t=obTexto(p,id);if(t.trim()!==''){v[id]=t;pcap(p).obs[id]=''}}
@@ -912,7 +915,7 @@ document.addEventListener('click',function(e){
 document.addEventListener('input',function(e){var el=e.target;
   if(el.id==='q'){S.q=el.value;var pos=el.selectionStart;render();var q=$('#q');q.focus();q.setSelectionRange(pos,pos);return}
   if(el.dataset.o!==undefined){OBUNDO=null;var _u=$('#obUndo');if(_u)_u.style.display='none';var p=S.hoja;pcap(p).obs[el.dataset.o]=el.value;var n=sinEsp(el.value),pasa=n>D.tope_obs;
-    var c=$('#c-'+el.dataset.o);c.textContent=pasa?'⚠️ TE PASASTE POR '+(n-D.tope_obs)+' — RECORTA':n+' / '+D.tope_obs;c.className='cnt'+(pasa?' pasa':'');el.className='ob'+(pasa?' pasa':'');guardado();}});
+    var c=$('#c-'+el.dataset.o);c.textContent=pasa?'⚠️ TE PASASTE POR '+(n-D.tope_obs)+' — RECORTA':n+' / '+D.tope_obs;c.className='cnt'+(pasa?' pasa':'');el.className='ob'+(pasa?' pasa':'');obRefresca();guardado();}});
 function dhTxt(n){return n===1?'1 día hábil':n+' días hábiles'}
 function falExcede(p){var n=0;activos().forEach(function(a){mesesP(p).forEach(function(me){var v=getFal(p,a.id,me.n);if(v!==null&&v>me.dias)n++})});return n}
 function topeFaltas(k,p,m,r){if(k!=='fal'||!r.ok||r.v===null)return r;var me=null;mesesP(p).forEach(function(x){if(String(x.n)===String(m))me=x});
