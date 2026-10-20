@@ -70,7 +70,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .al{display:flex;align-items:center;gap:6px;padding:8px 2px;border-bottom:1px solid #f0e8eb}
 .al:last-child{border-bottom:none}
 .al .nm{flex:1;font-size:.88em;font-weight:600;color:var(--navy);min-width:0}.al .nm small{display:block;color:var(--mute);font-weight:500;font-size:.78em}
-.tag{display:inline-block;font-size:.66em;font-weight:800;border-radius:99px;padding:1px 7px;margin-left:4px;vertical-align:middle}
+.tag{text-indent:0;display:inline-block;font-size:.66em;font-weight:800;border-radius:99px;padding:1px 7px;margin-left:4px;vertical-align:middle}
 .tag.alta{background:#dff2e6;color:#1e6b3f}.tag.baja{background:#e6e6ea;color:#666}
 .gi{width:58px;text-align:center;font-size:1.12em;font-weight:800;border:2px solid var(--line);border-radius:11px;padding:8px 2px;font-family:inherit;color:var(--navy);background:#fff}
 .gi:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(63,120,208,.2)}
@@ -188,6 +188,8 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
 .dic.av-on{border-color:#2f6fed;background:#eaf1ff;color:#1d4fc4;animation:avp 1.8s ease-out infinite}
 @keyframes avp{0%{box-shadow:0 0 0 0 rgba(47,111,237,.55)}70%{box-shadow:0 0 0 9px rgba(47,111,237,0)}100%{box-shadow:0 0 0 0 rgba(47,111,237,0)}}
 .av-n{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:99px;background:#d6336c;color:#fff;font-size:.78em;margin-left:6px;padding:0 5px;text-align:center}
+/* Ladrillo435: leyenda de las palomitas */
+.av-ley{font-size:.74em;color:#7b8498;text-align:center;margin:-4px 0 10px}
 .av-lista{max-height:46vh;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:8px;margin-bottom:10px;background:#f4f1f7;border-radius:14px}
 .av-m{max-width:84%;border-radius:14px;padding:8px 11px;box-shadow:0 1px 3px rgba(31,45,74,.12)}
 .av-m.dir{align-self:flex-start;background:#fff}.av-m.yo{align-self:flex-end;background:#dcf5e3}
@@ -1190,7 +1192,7 @@ function avEnvia(){var t=$('#avTxt');if(!t||AV_ENV)return;var txt=t.value.replac
     toast(r&&r.error==='llave no valida'?'🔒 Tu llave está apagada: avisa al director':'No se pudo enviar: '+((r&&r.error)||'intenta de nuevo'));
   }).catch(function(){AV_ENV=false;var b3=$('#avEnv');if(b3)b3.disabled=false;toast('📴 Sin señal: no se envió. Tu mensaje sigue escrito.');});}
 function avAbre(){
-  sheet('<h2>💬 Avisos del director</h2><p>Tus mensajes con el director de la escuela.</p><div class="av-lista" id="avLista"></div><textarea id="avTxt" maxlength="2000" rows="3" placeholder="Escribe tu respuesta o sugerencia…"></textarea><div class="bs2"><button class="btn" id="avEnv">Enviar</button><button class="btn gris" id="avX">Cerrar</button></div>');
+  sheet('<h2>💬 Avisos del director</h2><p>Tus mensajes con el director de la escuela.</p><div class="av-lista" id="avLista"></div><div class="av-ley">✓ enviado · ✓✓ ya lo vio el director</div><textarea id="avTxt" maxlength="2000" rows="3" placeholder="Escribe tu respuesta o sugerencia…"></textarea><div class="bs2"><button class="btn" id="avEnv">Enviar</button><button class="btn gris" id="avX">Cerrar</button></div>');
   avDibuja();$('#avX').onclick=cerrar;$('#avEnv').onclick=avEnvia;
   avTrae().then(avVisto);avVisto();}
 function avInicia(){if(!avActivo())return;
