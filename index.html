@@ -527,7 +527,7 @@ function vistaResumen(){
     '<div><span class="dot" style="background:#1e8449"></span>Sobresaliente <b>'+pct[0]+'%</b></div><div><span class="dot" style="background:#e0a020"></span>Satisfactorio <b>'+pct[1]+'%</b></div><div><span class="dot" style="background:#c0392b"></span>Riesgo <b>'+pct[2]+'%</b></div></div></div></div></div>';
   h+='<div class="gcard"><div class="gt">📊 Promedio de cada alumno · '+petx+'</div><div class="gs">Barra y color según el semáforo</div>'+svgAlumnos(r,pe)+'</div>';
   return h+boletasLista(r);}
-function boletasLista(r){var h='<div class="gcard"><div class="gt">🧾 Reportes de evaluación</div><div class="gs">Toca un alumno para ver su reporte. En el celular, «Imprimir» te deja guardarlo como PDF.</div><button class="btn" data-printall="1" style="width:100%;margin:6px 0 4px">🖨️ Imprimir reportes de todo el grupo</button>';
+function boletasLista(r){var h='<div class="gcard"><div class="gt">🧾 Reportes de evaluación</div><div class="gs">Toca un alumno para ver su reporte. En el celular, «Imprimir» te deja guardarlo como PDF.</div><button class="btn" data-printall="1" style="width:100%;margin:6px 0 4px">🖨️ Imprimir reporte individual</button>';
   D.alumnos.forEach(function(a){var pg=promGrado(a);var col=(pg==='- - -')?'var(--mute)':(semNivel(pg)==='riesgo'?'#c0392b':semNivel(pg)==='satisf'?'#b07a14':'#1e8449');
     h+='<div class="bol-row" data-bol="'+a.id+'"><span>'+esc(a.nombre)+tagsAl(a)+'</span><span>Prom. de grado <b style="color:'+col+'">'+pg+'</b> ›</span></div>';});
   return h+'</div>';}
