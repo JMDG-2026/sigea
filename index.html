@@ -150,7 +150,7 @@ table.bt{width:100%;border-collapse:collapse;margin:8px 0}
 .mx.cal{table-layout:fixed;min-width:1090px}.mx.cal col.c-al{width:370px}.mx.cal col.c-m{width:64px}.mx.cal col.c-pr{width:80px}.mx.cal td:first-child{white-space:normal}
 .mx.cal td>.gi,.mx.cal .hd.hm{position:relative;left:calc(var(--k,0)*-10px)}
 .rt-wrap{overflow-x:auto}table.rt{border-collapse:collapse;width:100%;font-size:.86em}.rt th{background:var(--navy);color:#fff;padding:8px 6px;font-size:.78em}
-.rt td{padding:6px;text-align:center;border-bottom:1px solid #f0e8eb}.rt .l{text-align:left;font-weight:600;color:var(--navy);white-space:nowrap}.rt th.l{text-align:left;color:#fff}.rt .pg{font-weight:800;border-left:2px solid #c9b98a}.rt tr.bj{opacity:.55}.rt tr.lv-viva td{background:#fdf3d6!important;border-top:2px solid #c9a23f;border-bottom:2px solid #c9a23f}.rt th.l,.rt td.l{position:sticky;left:0;z-index:1;background:#fff}.rt th.l{background:var(--navy);z-index:2}.rt tr.bj td.l{background:#f4f4f4}
+.rt td{padding:6px;text-align:center;border-bottom:1px solid #f0e8eb}.rt .l{text-align:left;font-weight:600;color:var(--navy);white-space:nowrap}.rt th.l{text-align:left;color:#fff}.rt .pg{font-weight:800;border-left:2px solid #c9b98a}.rt tr.bj{opacity:.55}.rt tr.lv-viva td{background:#fdf3d6!important;border-top:2px solid #c9a23f;border-bottom:2px solid #c9a23f}/* Ladrillo453: sin columna fija */
 .promgrupal{margin-top:10px;text-align:center;font-size:.95em;color:var(--mute)}.promgrupal b{font-size:1.2em}
 .mx.diag{width:auto;margin:0 auto}.mx.diag td{padding:8px 26px}.mx.diag td:first-child{padding-left:10px}
 .mx.ina{width:auto;margin:0 auto;min-width:640px}.mx.ina td{padding:6px 18px}
@@ -844,18 +844,25 @@ function lvMarcar(aid){document.querySelectorAll('.lv-viva').forEach(function(e)
 function lvColaRes(){var sel=_espPerSel;
   if(sel==='DIAG')return lvColaDiag();
   var gen=(sel==='gen'),mats=D.materias,fr=[];
+  function vv(a,F,m){var v=gen?F.fin[m.id]:getCal(sel,a.id,m.id);return m.nombre.toLowerCase()+' '+((v===null||v===''||v===undefined)?'vacío':lvDec(v))}
   D.alumnos.forEach(function(a){if(a.es_baja)return;
-    var F=gen?finalesDe(a):null,cuerpo=mats.map(function(m){var v=gen?F.fin[m.id]:getCal(sel,a.id,m.id);return m.nombre.toLowerCase()+' '+((v===null||v===''||v===undefined)?'vacío':lvDec(v))}).join(', '),
-      pg=gen?promGrado(a):promPeriodo(a,sel),cola;
-    if(gen)cola=(pg!==''&&pg!=='- - -')?'. Promedio de grado '+lvDec(pg):'. Sin promedio de grado';
-    else cola=(pg!=='')?'. Promedio '+lvDec(pg):'';
-    fr.push({t:a.nombre.toLowerCase()+'. '+cuerpo+cola,aid:a.id,nom:a.nombre})});
+    var F=gen?finalesDe(a):null,pg=gen?promGrado(a):promPeriodo(a,sel),cola,pts=[];
+    if(gen)cola=(pg!==''&&pg!=='- - -')?'Promedio de grado '+lvDec(pg):'Sin promedio de grado';
+    else cola=(pg!=='')?'Promedio '+lvDec(pg):'';
+    D.campos.filter(function(c){return matsDeCampo(c.id).length}).forEach(function(c,ci){var ms=matsDeCampo(c.id);
+      pts.push({scr:(ci===0?0:mats.indexOf(ms[0])),t:(ci===0?a.nombre.toLowerCase()+'. ':'')+c.corto+': '+ms.map(function(m){return vv(a,F,m)}).join(', ')+'.'})});
+    if(cola)pts.push({scr:'fin',t:cola});
+    fr.push({t:a.nombre.toLowerCase()+'. '+mats.map(function(m){return vv(a,F,m)}).join(', ')+(cola?'. '+cola:''),aid:a.id,nom:a.nombre,partes:pts})});
   if(!fr.length)return {error:'🔊 No hay alumnos que leer en este grupo.'};
   return {cab:(gen?'Se dará lectura a los resultados generales del grupo '+D.grupo.grado+' '+D.grupo.letra+': la calificación final de cada materia y el promedio de grado.':'Se dará lectura a la tabla del periodo '+sel+' del grupo '+D.grupo.grado+' '+D.grupo.letra+'.'),frases:fr}}
+function lvScrollRes(k){var w=document.querySelector('.rt-wrap');if(!w)return;var x=0;
+  if(k==='fin')x=w.scrollWidth;else if(k>0){var th=w.querySelectorAll('thead th')[k+2];if(th)x=Math.max(0,th.offsetLeft-4)}
+  try{w.scrollTo({left:x,behavior:'smooth'})}catch(e){w.scrollLeft=x}}
 function lvHablarUna(it,fin){lvHablar(it.t,fin)}
 function lvHablarPartes(it,fin){var ps=it.partes,k=0;
   function sig(){if(!LV.on||LV.pausa)return;if(k>=ps.length){fin();return}
     var p=ps[k++];
+    if(p.scr!==undefined)lvScrollRes(p.scr);
     if(p.campo!==undefined&&S.sub==='cal'&&String(S.hoja)===LV.p&&S.campo!==p.campo){S.campo=p.campo;render();lvMarcar(it.aid)}
     lvHablar(p.t,sig)}
   sig()}
