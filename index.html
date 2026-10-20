@@ -847,13 +847,13 @@ function lvMarcar(aid){document.querySelectorAll('.lv-viva').forEach(function(e)
 function lvColaRes(){var sel=_espPerSel;
   if(sel==='DIAG')return lvColaDiag();
   var gen=(sel==='gen'),mats=D.materias,fr=[];
-  function vv(a,F,m){var v=gen?F.fin[m.id]:getCal(sel,a.id,m.id);return m.nombre.toLowerCase()+' '+((v===null||v===''||v===undefined)?'vacío':lvDec(v))}
+  function vv(a,F,m){var v=gen?F.fin[m.id]:getCal(sel,a.id,m.id);var s_=((v===null||v===''||v===undefined)?'vacío':lvDec(v));return gen?s_:m.nombre.toLowerCase()+' '+s_}/* Ladrillo456 */
   D.alumnos.forEach(function(a){if(a.es_baja)return;
     var F=gen?finalesDe(a):null,pg=gen?promGrado(a):promPeriodo(a,sel),cola,pts=[];
     if(gen)cola=(pg!==''&&pg!=='- - -')?'Promedio de grado '+lvDec(pg):'Sin promedio de grado';
     else cola=(pg!=='')?'Promedio '+lvDec(pg):'';
     D.campos.filter(function(c){return matsDeCampo(c.id).length}).forEach(function(c,ci){var ms=matsDeCampo(c.id);
-      pts.push({scr:(ci===0?0:mats.indexOf(ms[0])),t:(ci===0?a.nombre.toLowerCase()+'. ':'')+c.corto+': '+ms.map(function(m){return vv(a,F,m)}).join(', ')+'.'})});
+      pts.push({scr:(ci===0?0:mats.indexOf(ms[0])),t:(ci===0?a.nombre.toLowerCase()+'. ':'')+(gen?'':c.corto+': ')+ms.map(function(m){return vv(a,F,m)}).join(', ')+'.'})});
     if(cola)pts.push({scr:'fin',t:cola});
     fr.push({t:a.nombre.toLowerCase()+'. '+mats.map(function(m){return vv(a,F,m)}).join(', ')+(cola?'. '+cola:''),aid:a.id,nom:a.nombre,partes:pts})});
   if(!fr.length)return {error:'🔊 No hay alumnos que leer en este grupo.'};
