@@ -32,7 +32,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .btn-dots{border:none;background:#fff;border-radius:10px;width:38px;height:38px;font-size:20px;color:var(--navy);box-shadow:0 2px 8px rgba(31,45,74,.12);cursor:pointer}
 .menu{position:absolute;right:14px;top:62px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(31,45,74,.25);padding:6px;z-index:36;display:none;min-width:230px}
 .menu.on{display:block}
-.pill-fija{position:fixed;top:8px;right:8px;z-index:30;display:none;box-shadow:0 2px 10px rgba(31,45,74,.18)}.pill-fija.on{display:block}
+.pill-fija{position:fixed;top:8px;right:8px;z-index:30;display:none;box-shadow:0 2px 10px rgba(31,45,74,.18)}.pill-fija.on{display:block}.pill-fija{pointer-events:none;transition:opacity .4s}.pill-fija.quieta{opacity:0}@media(min-width:900px){.pill-fija.quieta{opacity:1}}/* Ladrillo461: el letrero guardado se esconde solo y no estorba */
 @media(min-width:900px){.pill-fija,.pill-fija.on{position:static;display:block;align-self:flex-start;white-space:nowrap;margin:6px 2px 0;box-shadow:none;min-width:152px;text-align:center}#save{display:none}}.menu button{display:block;width:100%;text-align:left;border:none;background:none;padding:11px 12px;border-radius:8px;font-size:.9em;color:var(--navy);cursor:pointer}
 .menu button:hover{background:#f3eef0}
 .info{font-size:.78em;color:var(--mute);margin:2px 2px 10px}
@@ -97,6 +97,7 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:.86em}
 .cero{border:1px dashed #e3c677!important;background:#fffbea!important;width:auto!important;padding:0 10px;font-size:.8em!important;font-weight:700;color:#7a5a00!important}
 .warnf{font-size:.7em;color:#a8620a;font-weight:700}
 .ob-barra{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.ort{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;margin:6px 0 10px;font-size:.82em;color:var(--navy)}.ort label{font-weight:700;display:flex;gap:6px;align-items:center}.ort input{width:18px;height:18px}.ort span{color:var(--mute);font-size:.92em}@media print{.ort{display:none!important}}/* Ladrillo461: corrector de ortografia con switch */
 .ob-lim{float:right;border:1px solid var(--line);background:#fff;color:var(--mute);border-radius:10px;padding:5px 10px;font-size:.74em;font-weight:700;font-family:inherit;cursor:pointer}
 .ob-barra .ob-lim{float:none;font-size:.8em;padding:7px 12px}
 .ob-lim:disabled{opacity:.4;cursor:default}
@@ -187,10 +188,10 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
 .acu .acu-tx2{font-size:.74em;line-height:1.4;text-align:justify;margin:6px 0 8px}
 .acu .acu-fi{margin-top:8px;text-align:center;page-break-inside:avoid;break-inside:avoid;font-size:.78em}
 .acu .acu-fs{display:flex;justify-content:center;align-items:flex-end;margin-top:9mm}
-.acu .acu-sl{width:38mm;margin-right:0;position:relative;left:21mm;top:-5mm}.acu .acu-sl img{max-height:29mm;max-width:38mm;display:block;margin-left:auto}
+.acu .acu-sl{width:38mm;margin-right:0;position:relative;left:24mm;top:-5mm}/* Ladrillo460 */.acu .acu-sl img{max-height:29mm;max-width:38mm;display:block;margin-left:auto}
 .acu .acu-fb{width:78mm;text-align:center}.acu .acu-fb img{max-height:13mm;max-width:48mm;display:block;margin:0 auto -10.5mm;position:relative}
 .acu .acu-ln{border-top:1.4px solid #000;margin-top:8mm}.acu .acu-nm{font-weight:800;margin-top:3px}.acu .acu-cg{font-size:.9em;color:#333}
-@media screen and (max-width:520px){.acu{overflow-x:auto}.acu .rec-t{min-width:600px}.acu .rep-top{min-width:600px}.acu .rep-top .li{height:40px}.acu .rep-top .ld{height:30px}.acu .rep-h b{font-size:.95em}.acu .acu-fb{width:52mm}.acu .acu-sl{width:29mm;left:14mm}.acu .acu-sl img{max-width:29mm;max-height:22mm}.acu .acu-fb img{max-width:36mm;max-height:11mm}}
+@media screen and (max-width:520px){.acu{overflow-x:auto}.acu .rec-t{min-width:600px}.acu .rep-top{min-width:600px}.acu .rep-top .li{height:40px}.acu .rep-top .ld{height:30px}.acu .rep-h b{font-size:.95em}.acu .acu-fb{width:52mm}.acu .acu-sl{width:29mm;left:16.5mm}.acu .acu-sl img{max-width:29mm;max-height:22mm}.acu .acu-fb img{max-width:36mm;max-height:11mm}}
 #printArea{display:none}
 @media print{
   @page{size:letter portrait;margin:0}
@@ -560,10 +561,13 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-olim
   else{var id=b.dataset.olim,t=obTexto(p,id);if(t.trim()!==''){v[id]=t;pcap(p).obs[id]=''}}
   var n=Object.keys(v).length;if(!n)return;
   OBUNDO={p:p,v:v};guardado();render();toast('🧹 Limpiado ('+n+') · puedes deshacerlo');});
+var ORT=true;try{ORT=localStorage.getItem('sigea_ort')!=='0'}catch(e){}
+function ortBarra(){return '<div class="ort"><label><input type="checkbox" id="ortSw" '+(ORT?'checked':'')+'> ✍️ Revisar ortografía</label><span>Subraya las palabras dudosas mientras escribes. Tú decides si las corriges.</span></div>'}
+document.addEventListener('change',function(e){var c=e.target;if(c&&c.id==='ortSw'){ORT=!!c.checked;try{localStorage.setItem('sigea_ort',ORT?'1':'0')}catch(x){}document.querySelectorAll('textarea.ob').forEach(function(t){t.spellcheck=ORT})}});
 function vistaObs(p){
-  var dis=!editable(p),h='<div class="card"><div class="hint"><b>Observaciones</b> (opcionales): fortalezas · áreas de mejora · recomendaciones al alumno · recomendaciones al tutor. Máximo <b>'+D.tope_obs+' caracteres sin contar los espacios</b>: si te pasas, la página te avisa, pero no te corta.</div>'+obBarra(p,dis);
+  var dis=!editable(p),h='<div class="card"><div class="hint"><b>Observaciones</b> (opcionales): fortalezas · áreas de mejora · recomendaciones al alumno · recomendaciones al tutor. Máximo <b>'+D.tope_obs+' caracteres sin contar los espacios</b>: si te pasas, la página te avisa, pero no te corta.</div>'+obBarra(p,dis)+ortBarra();
   D.alumnos.forEach(function(a){var t=pcap(p).obs[a.id]||'',n=sinEsp(t),pasa=n>D.tope_obs,off=dis||a.es_baja;
-    h+='<div class="al" style="display:block"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+obBtn(p,a,off)+'</div><textarea class="ob'+(pasa?' pasa':'')+'" data-o="'+a.id+'" placeholder="Sin observación" '+(off?'disabled':'')+'>'+esc(t)+'</textarea>'+
+    h+='<div class="al" style="display:block"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+obBtn(p,a,off)+'</div><textarea class="ob'+(pasa?' pasa':'')+'" data-o="'+a.id+'" placeholder="Sin observación" spellcheck="'+(ORT?'true':'false')+'" lang="es-MX" autocapitalize="sentences" '+(off?'disabled':'')+'>'+esc(t)+'</textarea>'+
       '<div class="cnt'+(pasa?' pasa':'')+'" id="c-'+a.id+'">'+(pasa?'⚠️ TE PASASTE POR '+(n-D.tope_obs)+' — RECORTA':n+' / '+D.tope_obs)+'</div></div>';});
   return h+'</div>';}
 function zonaCol(v){return (v===''||v==='- - -')?'':(semNivel(Number(v))==='riesgo'?'#c0392b':semNivel(Number(v))==='satisf'?'#b07a14':'#1e8449');}
@@ -1464,7 +1468,7 @@ function confirmaEnviar(p){var t=(String(p)==='DIAG'?'del Diagnóstico':'del Per
 
 /* ===== DETALLES DE LA WEB (Ladrillo 413): guardado siempre a la vista; sin archivitos de avance en la web ===== */
 (function(){var s=$('#save'),f=$('#save2');
-  if(s&&f){var cp=function(){f.textContent=s.textContent;f.className='pill-save pill-fija'+(s.classList.contains('mal')?' mal':'')+(f.dataset.on?' on':'');};
+  if(s&&f){var cp=function(){f.textContent=s.textContent;f.className='pill-save pill-fija'+(s.classList.contains('mal')?' mal':'')+(f.dataset.on?' on':'');clearTimeout(cp.t);if(f.dataset.on&&!s.classList.contains('mal')&&/^guardado/.test(s.textContent))cp.t=setTimeout(function(){f.classList.add('quieta')},2500);};
     try{new MutationObserver(cp).observe(s,{childList:true,characterData:true,subtree:true,attributes:true});}catch(e){}
     var h=document.querySelector('header.top');
     if(h&&'IntersectionObserver' in window){new IntersectionObserver(function(es){f.dataset.on=es[0].isIntersecting?'':'1';cp();},{threshold:0}).observe(h);}
