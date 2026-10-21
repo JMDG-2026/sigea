@@ -23,7 +23,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(
 @media(min-width:900px){.app{max-width:1180px;padding:0 24px}}
 header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
 .brand{display:flex;gap:10px;align-items:center}.brand .ico{font-size:30px}
-.sala-b{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;text-decoration:none;border:1px solid #9cc4ea;background:linear-gradient(180deg,#b4d6f6,#e3eef9);color:var(--navy);font-weight:700;font-size:.84em;border-radius:99px;padding:6px 12px 6px 9px;box-shadow:0 2px 8px rgba(31,45,74,.14)}.sala-b i{font-style:normal;color:var(--oro);font-size:1.2em;line-height:1}.sala-b:active{transform:scale(.97)}.sala-b[hidden]{display:none}@media print{.sala-b{display:none}}
+.sala-b{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;text-decoration:none;border:1px solid #9cc4ea;background:linear-gradient(180deg,#b4d6f6,#e3eef9);color:var(--navy);font-weight:700;font-size:.84em;border-radius:99px;padding:6px 12px 6px 9px;box-shadow:0 2px 8px rgba(31,45,74,.14)}.sala-b i{font-style:normal;color:var(--oro);font-size:1.2em;line-height:1}.sala-b:active{transform:scale(.97)}.sala-b[hidden]{display:none}.menu button[hidden]{display:none}@media print{.sala-b{display:none}}
 .brand .ico{display:flex;align-items:center;justify-content:center;line-height:1;height:36px;transform:translateY(-4.5px)}.sala-b{height:36px;padding-top:0;padding-bottom:0}
 .brand h1{margin:0;font-size:1.02em;color:var(--navy);line-height:1.15}
 @media(min-width:900px){.brand h1{font-size:1.3em}}
@@ -261,6 +261,7 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
     <button data-m="resp">💾 Guardar mi avance (archivito)</button>
     <button data-m="carg">📂 Cargar mi avance</button>
     <button data-m="actu">🔄 Recibir actualización del director</button>
+    <button data-m="salir" id="salirB" hidden>🚪 Cerrar sesión</button>
   </div>
   <div class="info" id="info"></div>
   <div class="hojasbar"><div class="hojas" id="hojas"></div><button class="dic" id="avBtn" style="display:none" title="Avisos del director: escribele o contestale">💬 Avisos</button><span class="pill-save pill-fija" id="save2"></span><button class="dic" id="lvCfg" style="display:none" title="Voz, velocidad y pausas del lector">⚙</button><button class="dic" id="leerBtn" style="display:none" title="Leer en voz alta las calificaciones capturadas">🔊 Leer</button><button class="dic" id="lvStop" style="display:none" title="Detener la lectura">⏹</button><button class="dic" id="dicBtn" style="display:none" title="Dictar en la observación que tengas abierta (necesita internet)">🎤 Dictar</button><div class="gmsg" id="gmsg"></div><div class="lvpanel" id="lvPanel" style="display:none"><span class="lvl">Velocidad</span><select id="lvVel"><option value="0.75">Lento</option><option value="1" selected>Normal</option><option value="1.4">Rápido</option></select><span class="lvl">Voz</span><select id="lvVoz"><option value="">Automática</option></select><span class="lvl">Pausas</span><select id="lvPau"><option value="0" selected>Continuo</option><option value="5">Cada 5 alumnos</option><option value="10">Cada 10 alumnos</option></select></div></div>
@@ -929,7 +930,7 @@ function fijaEnc(){var hb=document.querySelector('.hojasbar'),g=document.querySe
   try{var mo=new MutationObserver(fijaEnc);['vista','hojas','subtabs'].forEach(function(i){var e=document.getElementById(i);if(e)mo.observe(e,{childList:true,subtree:true})})}catch(e){}})();
 /* ===== armazón ===== */
 function renderChrome(){
-  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k);sb.hidden=false;}}catch(e){}
+  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k);sb.hidden=false;var cs=$("#salirB");if(cs)cs.hidden=false;}}catch(e){}
   $("#info").textContent=D.docente+' · Ciclo '+D.ciclo+' · Página '+D.pagina+' · actualización '+D.actualizacion+' · generada desde el SIGEA el '+D.generada;
   var hh='',ph=['DIAG',1,2,3];
   ph.forEach(function(p){var e=EST[p],lab=(p==='DIAG')?'Diagnóstico':'Periodo '+p,sel=(S.hoja===String(p)),c='hoja';
@@ -1014,11 +1015,15 @@ document.addEventListener('change',function(e){var el=e.target;if(!el.classList.
   document.querySelectorAll('.chip[data-campo]').forEach(function(b){var c=b.dataset.campo;var f=faltanCal(p,parseInt(c,10));b.classList.toggle('listo',f===0);b.querySelector('span').textContent=f===0?'✓ completo':'faltan '+f;});});
 $("#dots").onclick=function(){$("#menu").classList.toggle('on')};
 $("#menu").onclick=function(e){var b=e.target.closest('button');if(!b)return;$("#menu").classList.remove('on');
+  if(b.dataset.m==='salir')salirSesion();
   if(b.dataset.m==='resp')bajarAvance();
   if(b.dataset.m==='carg')pedirArchivito();
   if(b.dataset.m==='actu')guiaArchivo('🔄 Recibir actualización','Toca <b>Escoger archivo</b>. Se abre tu lista de archivos: toca <b>Descargas</b>, ordena por <b>más reciente</b> y escoge el de hasta arriba, que se llama <b>SIGEA_'+D.grupo.grado+D.grupo.letra+'_actualizacion_…</b>. Si no sale en Descargas, búscalo en <b>Documentos</b>; si aún así no está, baja el archivo desde el chat de WhatsApp tocando la flechita y vuelve a intentar.',verActualizacion);};
 function sheet(h){$("#sheet").innerHTML=h;$("#sheetBg").classList.add('on')}
 function cerrar(){$("#sheetBg").classList.remove('on')}
+function salirSesion(){sheet('<h3 style="margin:0 0 8px">🚪 Cerrar sesión</h3><p>Se cerrará tu sala en este aparato. Lo que ya capturaste y todavía no has enviado se queda guardado. Para volver, abre tu enlace de WhatsApp.</p><div class="bs2"><button class="btn" id="csSi">Cerrar sesión</button><button class="btn gris" id="csNo">Cancelar</button></div>');
+  $('#csNo').onclick=cerrar;
+  $('#csSi').onclick=function(){try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('sigea_web_')===0||k.indexOf('sigea_av_')===0||k.indexOf('sigea_sala_')===0))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);});sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}location.replace('index.html#adios');};}
 $("#sheetBg").onclick=function(e){if(e.target.id==='sheetBg')cerrar()};
 $("#barBtn").onclick=function(){var h=S.hoja;if(EST[h]==='enviado')return recibo(h);if(EST[h]==='blindado'&&h!=='RES')return reciboOficial(h);revisar(h);};
 function revisar(p){if(p==='DIAG')return revisarDiag();var f=faltanCal(p),iv=falVacias(p),oe=obsEscritas(p),ex=falExcede(p);

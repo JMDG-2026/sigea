@@ -152,6 +152,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .entrar{margin:26px auto 0;display:block;border:1px solid #8d6a1d;background:linear-gradient(180deg,#3a2a14,#2a1d10);color:#f7e7a8;font:inherit;font-weight:900;font-size:1.15rem;border-radius:16px;padding:15px 38px;cursor:pointer}
 .it{display:flex;gap:12px;align-items:center;width:100%;text-align:left;color:inherit;font:inherit;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid var(--borde);border-radius:14px;padding:12px;margin:0 0 9px;cursor:pointer}
 .it .pt{flex:0 0 12px;height:12px;border-radius:50%}.it b{display:block;font-size:.95rem}.it small{color:var(--suave)}.it .fl{margin-left:auto;color:var(--suave);font-size:1.2rem}
+.salir-b{display:block;margin:22px auto 0;background:none;border:0;color:#8a7a96;font:inherit;font-size:.85rem;text-decoration:underline;cursor:pointer;padding:8px 14px}
 .sala-tit{margin:34px 4px 0;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);text-align:center}
 </style>
 </head>
@@ -176,15 +177,15 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 <div class="fondo" id="fondo"></div>
 <div class="hoja" id="hoja" role="dialog" aria-modal="true"><div class="asa"></div><div id="cont"></div></div>
 <script>
-/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464 y 469): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
+/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470 y 471): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
 (function(){
 var SIGEA_BODEGA='https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec';
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-var K='',B=SIGEA_BODEGA;
-try{var h=(location.hash||'').replace(/^#/,'');
+var K='',B=SIGEA_BODEGA,S1=false,ADIOS=false;
+try{var h=(location.hash||'').replace(/^#/,'');if(h==='adios')ADIOS=true;
   if(h.indexOf('=')<0)K=decodeURIComponent(h);
-  else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=v;});
+  else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=v;if(n==='s'&&v==='1')S1=true;});
 }catch(e){}
 function hh(s){var a=0x811c9dc5,b=0x1b873593;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b^c,2246822519);}return (a>>>0).toString(36)+(b>>>0).toString(36);}
 var CK='sigea_sala_'+hh(K);
@@ -235,23 +236,19 @@ function traeAvisos(){
   if(!B||!K)return;
   fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({op:'aviso_traer',clave:K})})
   .then(function(r){return r.json();}).then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;pintaAtn();}}).catch(function(){});}
+function limpia(){try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('sigea_web_')===0||k.indexOf('sigea_av_')===0||k.indexOf('sigea_sala_')===0))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);});}catch(e){}marca(false);}
+function despedida(){estado('👋','Hasta pronto','Tu sala quedó cerrada en este aparato. Para volver, abre tu enlace de WhatsApp.');}
+function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>Cerrar sesión</h2><p class="nota">Se cerrará tu sala en este aparato. Para volver, abre tu enlace de WhatsApp.</p></div><button class="btn" id="csSi">Cerrar sesión</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  $('csSi').onclick=function(){limpia();K='';QQ=null;cerrar();try{history.replaceState(null,'','#adios');}catch(e){}despedida();};}
+var VISTA=null;
+function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
+function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
+function irA(v){VISTA=v;marca(v==='sala');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}}
 function pinta(q,aviso){
-  QQ=q;var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
+  QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
+  var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
-  var hrn=new Date().getHours(),ico=hrn<12?'🌅':hrn<19?'☀️':'🌙';
-  var tot=q.tot,al=q.altas||0,ba=q.bajas||0,has=(typeof tot==='number');
-  var ini=has?tot-al:'–',act=has?tot-ba:'–';
-  sala.innerHTML=
-   '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
-   '<p class="fecha">'+esc(fechaHoy())+'</p><p class="ciclo">'+esc((q.ciclo?'Ciclo '+q.ciclo.replace('-',' — ')+(gtxt?' · ':''):'')+gtxt)+'</p>'+
-   (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
-   '<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>'+
-   '<button class="atn" id="atn"></button>'+
-   '<div class="accesos"><a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>'+
-   '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button>'+
-   '<button class="acc" data-o="avisos"><span class="i">💬</span><small>Avisos</small></button></div>'+
-   '<button class="entrar" id="entrar">Entrar →</button>'+
-   '<div class="sala-tit" id="salaTit">Tu sala</div>'+
+  var cofres=
    '<div class="cofres" id="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
    '<button class="cofre c-nar apagado" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-esc apagado" data-o="avisos"><span class="ico">💬</span><h3>Avisos</h3><span class="et">En construcción</span></button>'+
@@ -260,9 +257,29 @@ function pinta(q,aviso){
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca SIGEP</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
+  if(VISTA==='sala'){
+    sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
+     '<button class="entrar" id="atras" style="font-size:1rem;padding:12px 28px;margin-top:28px">‹ Volver a la bienvenida</button><button class="salir-b" id="salir">Cerrar sesión</button>';
+    $('atras').onclick=function(){irA('bv');};
+  }else{
+    var hrn=new Date().getHours(),ico=hrn<12?'🌅':hrn<19?'☀️':'🌙';
+    var tot=q.tot,al=q.altas||0,ba=q.bajas||0,has=(typeof tot==='number');
+    var ini=has?tot-al:'–',act=has?tot-ba:'–';
+    sala.innerHTML=
+     '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
+     '<p class="fecha">'+esc(fechaHoy())+'</p><p class="ciclo">'+esc((q.ciclo?'Ciclo '+q.ciclo.replace('-',' — ')+(gtxt?' · ':''):'')+gtxt)+'</p>'+
+     (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
+     '<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>'+
+     '<button class="atn" id="atn"></button>'+
+     '<div class="accesos"><a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>'+
+     '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button>'+
+     '<button class="acc" data-o="avisos"><span class="i">💬</span><small>Avisos</small></button></div>'+
+     '<button class="entrar" id="entrar">Entrar →</button><button class="salir-b" id="salir">Cerrar sesión</button>';
+    $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};
+    pintaAtn();
+  }
+  var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
   Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){enObra(b.getAttribute('data-o'))}});
-  $('atn').onclick=abreAtn;$('entrar').onclick=function(){$('salaTit').scrollIntoView({behavior:'smooth',block:'start'})};
-  pintaAtn();
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
@@ -282,7 +299,8 @@ function busca(){
   .catch(function(){
     if(c)pinta(c,'📴 Sin señal: esta es la copia guardada en este aparato');
     else estado('📴','Sin señal','Necesito internet la primera vez. Revisa tu conexión.',true);});}
-if(!K){estado('🔑','Falta tu llave','Abre esta página desde el enlace que te mandó el director.');}
+if(ADIOS){despedida();}
+else if(!K){estado('🔑','Falta tu llave','Abre esta página desde el enlace que te mandó el director.');}
 else busca();
 })();
 </script>
