@@ -1468,7 +1468,7 @@ function confirmaEnviar(p){var t=(String(p)==='DIAG'?'del Diagnóstico':'del Per
 
 /* ===== DETALLES DE LA WEB (Ladrillo 413): guardado siempre a la vista; sin archivitos de avance en la web ===== */
 (function(){var s=$('#save'),f=$('#save2');
-  if(s&&f){var cp=function(){f.textContent=s.textContent;f.className='pill-save pill-fija'+(s.classList.contains('mal')?' mal':'')+(f.dataset.on?' on':'');clearTimeout(cp.t);if(f.dataset.on&&!s.classList.contains('mal')&&/^guardado/.test(s.textContent))cp.t=setTimeout(function(){f.classList.add('quieta')},2500);};
+  if(s&&f){var cp=function(){f.textContent=s.textContent;f.className='pill-save pill-fija'+(s.classList.contains('mal')?' mal':'')+(f.dataset.on?' on':'');clearTimeout(cp.t);if(typeof LV!=='undefined'&&LV.on&&!s.classList.contains('mal'))f.classList.add('quieta');/* Ladrillo462: en lectura no sale el letrero */else if(f.dataset.on&&!s.classList.contains('mal')&&/^guardado/.test(s.textContent))cp.t=setTimeout(function(){f.classList.add('quieta')},2500);};
     try{new MutationObserver(cp).observe(s,{childList:true,characterData:true,subtree:true,attributes:true});}catch(e){}
     var h=document.querySelector('header.top');
     if(h&&'IntersectionObserver' in window){new IntersectionObserver(function(es){f.dataset.on=es[0].isIntersecting?'':'1';cp();},{threshold:0}).observe(h);}
