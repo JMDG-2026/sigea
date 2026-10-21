@@ -123,16 +123,45 @@ a.cofre{color:#fff}
 .obra{text-align:center;padding:6px 0 4px}.obra .gr{font-size:2.4rem}
 .obra svg{display:block;margin:6px auto 2px;animation:paso 6s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.corona::after,.chispa,.pie svg{animation:none}.chispa{opacity:0}.hoja{transition:none}}
+
+/* --- bienvenida de la corona (Ladrillo 469) --- */
+body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),transparent 62%),linear-gradient(180deg,#1a1119,#150f16 45%,#120d14)!important}
+.estrellas{display:none}
+.sello{display:none}
+.bv{text-align:center;padding-top:6px}
+.bv .escu{margin:18px 0 0;color:#8a7a96;font-size:.78rem;letter-spacing:.06em}
+.bv .corona{font-size:3.4rem;margin-top:14px}
+.bv h1{margin:14px 0 4px;font-size:1.6rem;color:#e8cd7a;font-weight:900;text-shadow:0 2px 12px rgba(201,164,58,.25);line-height:1.15}
+.bv h1 span{font-size:1.3rem;margin-right:8px}
+.bv .fecha{color:#b9a7c9;font-size:1rem;margin:0}.bv .ciclo{color:#7f6e92;margin:3px 0 0;font-size:.9rem}
+.bv .nom{color:#8a7a96;font-size:.8rem;margin:8px 0 0}
+.cuatro,.num{text-align:center}
+.cuatro{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
+.num{background:#1c141d;border:1px solid #3a2c2a;border-radius:16px;padding:14px 4px 11px}
+.num b{display:block;font-size:1.9rem;color:#f4e3a8;line-height:1}.num small{display:block;margin-top:6px;color:#b9a7c9;letter-spacing:.1em;font-size:.62rem}
+.num.v{border-color:#4f9b83;background:linear-gradient(180deg,#1b2420,#171219)}.num.v b{color:#a9f0cf}
+.atn{display:flex;align-items:center;gap:12px;width:100%;margin-top:16px;border:1px solid #b99635;border-radius:18px;padding:16px;font:inherit;color:#fff7de;font-weight:800;font-size:1.05rem;text-align:left;cursor:pointer;background:linear-gradient(100deg,#c4a03e,#a07c2a 55%,#7f6120);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.atn .p{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,#e0b83a 60%,#a47d1b);flex:0 0 22px}
+.atn .n{margin-left:auto;background:rgba(255,255,255,.22);border-radius:99px;padding:3px 13px;font-size:.95rem}
+.atn .f{opacity:.8;font-size:1.3rem}
+.atn.bien-todo{background:linear-gradient(100deg,#2f7d63,#256a54 55%,#1d5443);border-color:#4f9b83}
+.accesos{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:20px}
+.acc{display:block;text-decoration:none;text-align:center;background:#1c141d;border:1px solid #3a2c2a;border-radius:16px;padding:14px 4px 11px;color:#f1e7f4;font:inherit;cursor:pointer}
+.acc .i{display:block;font-size:1.9rem;line-height:1}.acc small{display:block;margin-top:8px;letter-spacing:.09em;font-weight:800;font-size:.66rem;text-transform:uppercase;color:#e1d3ea}
+.acc:active{transform:scale(.97)}
+.entrar{margin:26px auto 0;display:block;border:1px solid #8d6a1d;background:linear-gradient(180deg,#3a2a14,#2a1d10);color:#f7e7a8;font:inherit;font-weight:900;font-size:1.15rem;border-radius:16px;padding:15px 38px;cursor:pointer}
+.it{display:flex;gap:12px;align-items:center;width:100%;text-align:left;color:inherit;font:inherit;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid var(--borde);border-radius:14px;padding:12px;margin:0 0 9px;cursor:pointer}
+.it .pt{flex:0 0 12px;height:12px;border-radius:50%}.it b{display:block;font-size:.95rem}.it small{color:var(--suave)}.it .fl{margin-left:auto;color:var(--suave);font-size:1.2rem}
+.sala-tit{margin:34px 4px 0;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);text-align:center}
 </style>
 </head>
 <body>
 <div class="estrellas"></div>
 <div class="app">
-  <header class="sello">
+  <div class="bv">
     <div class="corona" aria-hidden="true">&#128081;<span class="chispa a"></span><span class="chispa b"></span><span class="chispa c"></span></div>
-    <h1 id="hEsc">Telesecundaria 171 «24 de Febrero»</h1>
-    <p>Ocotepec, Chiapas · SIGEA</p>
-  </header>
+    <p class="escu" id="hEsc">Telesecundaria 171 «24 de Febrero» · Ocotepec, Chiapas · SIGEA</p>
+  </div>
   <div id="sala"></div>
   <footer class="pie">
     <svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true">
@@ -147,7 +176,7 @@ a.cofre{color:#fff}
 <div class="fondo" id="fondo"></div>
 <div class="hoja" id="hoja" role="dialog" aria-modal="true"><div class="asa"></div><div id="cont"></div></div>
 <script>
-/* SALA DE COFRES (Ladrillo 464): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
+/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464 y 469): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
 (function(){
 var SIGEA_BODEGA='https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec';
 var $=function(i){return document.getElementById(i)};
@@ -189,15 +218,41 @@ function enObra(id){var o=OBRA[id];if(!o)return;
   abrir('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
   '<p class="nota"><em style="font-style:normal;color:var(--oro)">Paso a paso</em>: pronto se abre.</p></div><button class="btn sec2" onclick="cerrarSala()">Volver a la sala</button>');}
+var AT=[],AVN=0,HR='',QQ=null;
+function atItems(){
+  var it=[],q=QQ||{};
+  if(q.abierto){var nom=q.abierto==='DIAG'?'Diagnóstico abierto':'Periodo '+q.abierto+' abierto';
+    it.push({pt:'#e0b83a',t:nom,s:'Captura las calificaciones de tu grupo',h:'calificaciones.html'+HR});}
+  if(AVN>0)it.push({pt:'#ff5577',t:AVN+(AVN===1?' aviso sin leer':' avisos sin leer'),s:'Del director · ábrelos en Mis calificaciones, botón Avisos',h:'calificaciones.html'+HR});
+  return it;}
+function pintaAtn(){var bt=$('atn');if(!bt)return;var it=atItems();
+  if(it.length){bt.className='atn';bt.innerHTML='<span class="p"></span>Lo que pide tu atención<span class="n">'+it.length+'</span><span class="f">›</span>';}
+  else{bt.className='atn bien-todo';bt.innerHTML='<span class="p" style="background:radial-gradient(circle at 35% 30%,#d9fff0,#6fe0b4 60%,#2f9c76)"></span>Todo al día<span class="f">›</span>';}}
+function abreAtn(){var it=atItems();
+  if(!it.length){abrir('<div class="obra"><div class="gr">✅</div><h2>Todo al día</h2><p class="nota">No hay nada pendiente por ahora, maestra.</p><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg></div><button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');return;}
+  abrir('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it" href="'+x.h+'"><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');}
+function traeAvisos(){
+  if(!B||!K)return;
+  fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({op:'aviso_traer',clave:K})})
+  .then(function(r){return r.json();}).then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;pintaAtn();}}).catch(function(){});}
 function pinta(q,aviso){
-  var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
-  var hr='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
+  QQ=q;var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
+  HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
+  var hrn=new Date().getHours(),ico=hrn<12?'🌅':hrn<19?'☀️':'🌙';
+  var tot=q.tot,al=q.altas||0,ba=q.bajas||0,has=(typeof tot==='number');
+  var ini=has?tot-al:'–',act=has?tot-ba:'–';
   sala.innerHTML=
-   '<section class="cristal bien"><p class="hola">'+esc(saludoHora()+', '+w.saludo)+'</p>'+
-   '<p class="cuando">'+esc(fechaHoy()+(gtxt?' · '+gtxt:''))+'</p>'+
-   (w.completo?'<p class="nota" style="margin:0">'+esc(w.completo)+'</p>':'')+
-   '<p class="nota" style="margin:8px 0 2px">Tu sala está creciendo. Por ahora tus calificaciones ya están listas.</p></section>'+
-   '<div class="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+hr+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
+   '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
+   '<p class="fecha">'+esc(fechaHoy())+'</p><p class="ciclo">'+esc((q.ciclo?'Ciclo '+q.ciclo.replace('-',' — ')+(gtxt?' · ':''):'')+gtxt)+'</p>'+
+   (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
+   '<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>'+
+   '<button class="atn" id="atn"></button>'+
+   '<div class="accesos"><a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>'+
+   '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button>'+
+   '<button class="acc" data-o="avisos"><span class="i">💬</span><small>Avisos</small></button></div>'+
+   '<button class="entrar" id="entrar">Entrar →</button>'+
+   '<div class="sala-tit" id="salaTit">Tu sala</div>'+
+   '<div class="cofres" id="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
    '<button class="cofre c-nar apagado" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-esc apagado" data-o="avisos"><span class="ico">💬</span><h3>Avisos</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-ver apagado" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et">En construcción</span></button>'+
@@ -206,18 +261,22 @@ function pinta(q,aviso){
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca SIGEP</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){enObra(b.getAttribute('data-o'))}});
+  $('atn').onclick=abreAtn;$('entrar').onclick=function(){$('salaTit').scrollIntoView({behavior:'smooth',block:'start'})};
+  pintaAtn();
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
-  if(c)pinta(c);else estado('⏳','Abriendo tu sala…','Un momento.');
+  if(c){pinta(c);traeAvisos();}else estado('⏳','Abriendo tu sala…','Un momento.');
   if(!B){if(!c)estado('⚠️','Falta la dirección de la bodega','Esta página no está preparada. Avísale al director.');return;}
   fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({op:'traer',clave:K})})
   .then(function(r){return r.json();})
   .then(function(r){
     if(r&&r.ok===true){
       if(!r.paquete){if(!c)estado('📭','Tu grupo todavía no está listo','El director aún no lo ha publicado. Intenta más tarde.',true);return;}
-      var p=r.paquete,q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,escuela:p.escuela?{nombre:p.escuela.nombre}:null};
-      guardaCache(q);pinta(q);return;}
+      var p=r.paquete,al=p.alumnos||[],es=p.estados||{},ab='';
+      ['DIAG','1','2','3'].forEach(function(k){if(!ab&&es[k]==='abierto')ab=k;});
+      var q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,ciclo:p.ciclo,tot:al.length,altas:al.filter(function(x){return x.es_alta}).length,bajas:al.filter(function(x){return x.es_baja}).length,abierto:ab};
+      guardaCache(q);pinta(q);traeAvisos();return;}
     if(r&&r.error==='llave no valida'){borraCache();estado('🔒','Esta llave ya no está activa','Pídele al director tu enlace nuevo.');return;}
     if(!c)estado('⚠️','No se pudo abrir',esc(String((r&&r.error)||'respuesta rara')),true);})
   .catch(function(){
