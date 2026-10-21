@@ -313,20 +313,21 @@ function svgAvance(r){ // ACUMULATIVA: solo periodos HASTA el elegido
   var _pe=_espPerEfectivo();
   var datos=r.avance.filter(function(x){
     if(x.periodo==='DIAG') return true;              // el diagnostico siempre va de primero
-    return (_pe==='DIAG') ? false : (x.periodo<=_pe);
+    if(x.periodo==='GRADO') return _pe==='GRADO';    // la barra final solo en Generales
+    return (_pe==='DIAG') ? false : (_pe==='GRADO' ? true : (x.periodo<=_pe));
   });
-  var W=420,H=240,pt=26,pb=40,pl=34,bw=64,gap=54,x0=pl+14;
+  var W=420,H=240,pt=26,pb=40,pl=34,bw=64,gap=(datos.length>=5?34:54),x0=pl+14;
   // el lienzo CRECE segun cuantas barras haya (3 periodos, o 4 con el
   // diagnostico). Como el svg va a width:100%, se reescala solito.
   W=Math.max(W, x0+datos.length*(bw+gap)-gap+22);
   function y(v){ return pt+(H-pt-pb)*(1-(v-5)/5); }
-  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gbav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a5488"/><stop offset="1" stop-color="#1f2d4a"/></linearGradient></defs>';
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gbav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a5488"/><stop offset="1" stop-color="#1f2d4a"/></linearGradient><linearGradient id="gbgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b44a"/><stop offset="1" stop-color="#8d6a1d"/></linearGradient></defs>';
   [5,6,7,8,9,10].forEach(function(gv){ var yy=y(gv); s+='<line x1="'+pl+'" y1="'+yy.toFixed(0)+'" x2="'+(W-14)+'" y2="'+yy.toFixed(0)+'" stroke="#eef1f7"/><text x="'+(pl-6)+'" y="'+(yy+3).toFixed(0)+'" font-size="9" fill="#9aa5b8" text-anchor="end">'+gv+'</text>'; });
   var pts=[];
-  datos.forEach(function(x,i){ var bx=x0+i*(bw+gap),by=y(x.promedio); pts.push([bx+bw/2,by]);
-    s+='<rect x="'+bx.toFixed(0)+'" y="'+by.toFixed(0)+'" width="'+bw+'" height="'+((H-pb)-by).toFixed(0)+'" rx="7" fill="url(#gbav)"/>';
+  datos.forEach(function(x,i){ var bx=x0+i*(bw+gap),by=y(x.promedio); if(x.periodo!=='GRADO')pts.push([bx+bw/2,by]);
+    s+='<rect x="'+bx.toFixed(0)+'" y="'+by.toFixed(0)+'" width="'+bw+'" height="'+((H-pb)-by).toFixed(0)+'" rx="7" fill="url(#'+(x.periodo==='GRADO'?'gbgr':'gbav')+')"/>';
     s+='<text x="'+(bx+bw/2).toFixed(0)+'" y="'+(by-7).toFixed(0)+'" font-size="15" font-weight="800" fill="#1f2d4a" text-anchor="middle">'+x.promedio+'</text>';
-    s+='<text x="'+(bx+bw/2).toFixed(0)+'" y="'+(H-pb+16).toFixed(0)+'" font-size="11" font-weight="700" fill="#8c4655" text-anchor="middle">'+(x.periodo==='DIAG'?'DIAG':'P'+x.periodo)+'</text>'; });
+    s+='<text x="'+(bx+bw/2).toFixed(0)+'" y="'+(H-pb+16).toFixed(0)+'" font-size="11" font-weight="700" fill="#8c4655" text-anchor="middle">'+(x.periodo==='DIAG'?'DIAG':(x.periodo==='GRADO'?'GRADO':'P'+x.periodo))+'</text>'; });
   if(pts.length>1){ var path='M'+pts.map(function(p){return p[0].toFixed(0)+' '+p[1].toFixed(0);}).join(' L');
     s+='<path d="'+path+'" fill="none" stroke="#8c4655" stroke-width="2.5" stroke-dasharray="4 3" opacity=".65"/>';
     pts.forEach(function(p){ s+='<circle cx="'+p[0].toFixed(0)+'" cy="'+p[1].toFixed(0)+'" r="4" fill="#8c4655"/>'; }); }
@@ -357,7 +358,7 @@ function svgDona(r,p){
 }
 
 function svgAlumnos(r,p){
-  var act=r.alumnos.filter(function(a){ return !a.es_baja && a.periodos[String(p)].promedio!==''; });
+  var act=r.alumnos.filter(function(a){ return !a.es_baja && a.periodos[String(p)].promedio!=='' && a.periodos[String(p)].promedio!=='- - -'; });
   var rowh=19,W=440,H=act.length*rowh+16,pl=140,bwmax=W-pl-40;
   var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg">';
   act.forEach(function(a,i){ var pr=a.periodos[String(p)].promedio,y=12+i*rowh,bw=(pr-5)/5*bwmax,col=espColor(pr);
@@ -372,6 +373,7 @@ function svgAlumnos(r,p){
 var D=/*DATA*/;
 var _espCalifData=null,_espPerSel=1,_resVista='tabla';
 function _espPerEfectivo(){var r=_espCalifData;if(_espPerSel!=='gen')return _espPerSel;
+  if(r.semaforo&&r.semaforo['GRADO'])return 'GRADO';   // Generales: las graficas son del PROMEDIO DE GRADO
   var ps=r.avance.filter(function(x){return x.periodo!=='DIAG'}).map(function(x){return x.periodo});return ps.length?ps[ps.length-1]:'DIAG';}
 var S={hoja:'1',sub:'cal',campo:null,mes:0,q:'',esc:'A'};
 var EST={},CAP={};
@@ -459,18 +461,21 @@ function promGrado(a){var F=finalesDe(a);
   return promOficial(F.lista);}
 function datosResumen(){
   var r={alumnos:[],avance:[],semaforo:{},riesgo_max:D.cortes.riesgo_max,satisfactorio_max:D.cortes.satisfactorio_max};
-  var porP={1:[],2:[],3:[]},pd=[];
+  var porP={1:[],2:[],3:[]},pd=[],pgr=[];
   D.alumnos.forEach(function(a){var f={id:a.id,nombre:a.nombre,es_baja:!!a.es_baja,periodos:{}};
     [1,2,3].forEach(function(p){var pr=promPeriodo(a,p);f.periodos[String(p)]={promedio:pr};if(pr!==''&&!a.es_baja)porP[p].push(pr);});
     var d=promDiag(a);f.periodos['DIAG']={promedio:d};if(d!==''&&!a.es_baja)pd.push(d);
+    var g=promGrado(a);f.periodos['GRADO']={promedio:g};if(g!==''&&g!=='- - -'&&!a.es_baja)pgr.push(g);
     r.alumnos.push(f);});
   [1,2,3].forEach(function(p){if(porP[p].length)r.avance.push({periodo:p,promedio:promOficial(porP[p])});});
   if(pd.length)r.avance.unshift({periodo:'DIAG',promedio:promOficial(pd)});
+  if(pgr.length)r.avance.push({periodo:'GRADO',promedio:promOficial(pgr)});
   function cuenta(ps){return {riesgo:ps.filter(function(x){return x<=D.cortes.riesgo_max}).length,
     satisf:ps.filter(function(x){return x>D.cortes.riesgo_max&&x<=D.cortes.satisfactorio_max}).length,
     sobre:ps.filter(function(x){return x>D.cortes.satisfactorio_max}).length};}
   [1,2,3].forEach(function(p){if(porP[p].length)r.semaforo[String(p)]=cuenta(porP[p]);});
   if(pd.length)r.semaforo['DIAG']=cuenta(pd);
+  if(pgr.length)r.semaforo['GRADO']=cuenta(pgr);
   return r;}
 /* ===== conteos de lo que falta ===== */
 function faltanCal(p,cid){var n=0;activos().forEach(function(a){D.materias.forEach(function(m){if((cid===undefined||m.campo_id===cid)&&getCal(p,a.id,m.id)===null)n++})});return n}
@@ -595,19 +600,19 @@ function tablaResumen(r){
   return h+'</div>';}
 function vistaResumen(){
   var r=datosResumen();_espCalifData=r;
-  var disp=[];if(r.semaforo['DIAG'])disp.push('DIAG');[1,2,3].forEach(function(p){if(r.semaforo[String(p)])disp.push(p)});
+  var disp=[];if(r.semaforo['DIAG'])disp.push('DIAG');[1,2,3].forEach(function(p){if(r.semaforo[String(p)])disp.push(p)});if(r.semaforo['GRADO'])disp.push('GRADO');
   var opts=['DIAG',1,2,3,'gen'];
   var h='<div class="chips">'+opts.map(function(p){return '<button class="chip'+(_espPerSel===p?' sel':'')+'" data-rp="'+p+'"><b>'+(p==='DIAG'?'Diagnóstico':p==='gen'?'Generales':'Periodo '+p)+'</b></button>'}).join('')+'</div>';
   h+='<div class="subtabs" style="margin-bottom:10px"><button class="stab '+(_resVista==='tabla'?'sel':'')+'" data-rv="tabla">📋 Tabla</button><button class="stab '+(_resVista==='graf'?'sel':'')+'" data-rv="graf">📊 Gráficas</button><button class="stab imp" data-printall="1">🖨️ Reportes de evaluación</button></div>';
   if(_resVista==='tabla')return h+tablaResumen(r)+boletasLista(r);
   if(!disp.length)return h+'<div class="card"><div class="hint">Todavía no hay promedios para graficar: un promedio de periodo se calcula cuando un alumno tiene <b>todas</b> sus calificaciones. Prueba el <b>Escenario B</b> o <b>C</b> del panel de maqueta.</div></div>'+boletasLista(r);
   var pe=_espPerEfectivo();if(disp.indexOf(pe)<0)pe=disp[disp.length-1];
-  var petx=(pe==='DIAG')?'Diagnóstico':'Periodo '+pe;
+  var petx=(pe==='DIAG')?'Diagnóstico':(pe==='GRADO'?'Promedio de grado':'Periodo '+pe);
   var sm=r.semaforo[String(pe)]||{riesgo:0,satisf:0,sobre:0},tot=sm.riesgo+sm.satisf+sm.sobre,pct=porcentajes100([sm.sobre,sm.satisf,sm.riesgo],tot);
-  h+='<div class="graf-top"><div class="gcard"><div class="gt">📈 Avance del grupo</div><div class="gs">Promedio general por periodo (hasta '+(pe==='DIAG'?'el diagnóstico':'P'+pe)+')</div>'+svgAvance(r)+'</div>';
+  h+='<div class="graf-top"><div class="gcard"><div class="gt">📈 Avance del grupo</div><div class="gs">'+(pe==='GRADO'?'Promedio general por periodo y promedio de grado':'Promedio general por periodo (hasta '+(pe==='DIAG'?'el diagnóstico':'P'+pe)+')')+'</div>'+svgAvance(r)+'</div>';
   h+='<div class="gcard"><div class="gt">🚦 Semáforo · '+petx+'</div><div class="gs">Distribución por nivel</div><div class="dona-row"><div>'+svgDona(r,pe)+'</div><div class="leg">'+
     '<div><span class="dot" style="background:#1e8449"></span>Sobresaliente <b>'+pct[0]+'%</b></div><div><span class="dot" style="background:#e0a020"></span>Satisfactorio <b>'+pct[1]+'%</b></div><div><span class="dot" style="background:#c0392b"></span>Riesgo <b>'+pct[2]+'%</b></div></div></div></div></div>';
-  h+='<div class="gcard"><div class="gt">📊 Promedio de cada alumno · '+petx+'</div><div class="gs">Barra y color según el semáforo</div>'+svgAlumnos(r,pe)+'</div>';
+  h+='<div class="gcard"><div class="gt">📊 '+(pe==='GRADO'?'Promedio de grado de cada alumno':'Promedio de cada alumno · '+petx)+'</div><div class="gs">Barra y color según el semáforo</div>'+svgAlumnos(r,pe)+'</div>';
   return h+boletasLista(r);}
 function boletasLista(r){var h='<div class="gcard"><div class="gt">🧾 Reportes de evaluación</div><div class="gs">Toca un alumno para ver su reporte. En el celular, «Imprimir» te deja guardarlo como PDF.</div><button class="btn" data-printall="1" style="width:100%;margin:6px 0 4px">🖨️ Imprimir reporte individual</button>';
   D.alumnos.forEach(function(a){var pg=promGrado(a);var col=(pg==='- - -')?'var(--mute)':(semNivel(pg)==='riesgo'?'#c0392b':semNivel(pg)==='satisf'?'#b07a14':'#1e8449');
