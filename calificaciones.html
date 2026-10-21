@@ -23,6 +23,7 @@ body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(
 @media(min-width:900px){.app{max-width:1180px;padding:0 24px}}
 header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
 .brand{display:flex;gap:10px;align-items:center}.brand .ico{font-size:30px}
+.sala-b{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;text-decoration:none;border:1px solid #9cc4ea;background:linear-gradient(180deg,#b4d6f6,#e3eef9);color:var(--navy);font-weight:700;font-size:.84em;border-radius:99px;padding:6px 12px 6px 9px;box-shadow:0 2px 8px rgba(31,45,74,.14)}.sala-b i{font-style:normal;color:var(--oro);font-size:1.2em;line-height:1}.sala-b:active{transform:scale(.97)}.sala-b[hidden]{display:none}@media print{.sala-b{display:none}}
 .brand h1{margin:0;font-size:1.02em;color:var(--navy);line-height:1.15}
 @media(min-width:900px){.brand h1{font-size:1.3em}}
 .brand small{display:block;color:var(--wine);font-weight:600;font-size:.82em;margin-top:2px}
@@ -251,7 +252,7 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
 <div class="ribbon" id="ribbon">🧪 PÁGINA DE PRUEBA · alumnos y datos inventados · el guardado es de verdad en este teléfono</div>
 <div class="app">
   <header class="top">
-    <div class="brand"><div class="ico">👑</div>
+    <div class="brand"><div class="ico">👑</div><a class="sala-b" id="salaB" href="index.html" hidden><i>‹</i> Sala</a>
       <div><h1 id="hEsc"></h1><small id="hGrp"></small></div></div>
     <div class="hd-right"><span class="pill-save" id="save">…</span><button class="btn-dots" id="dots" aria-label="Menú">⋯</button></div>
   </header>
@@ -927,7 +928,7 @@ function fijaEnc(){var hb=document.querySelector('.hojasbar'),g=document.querySe
   try{var mo=new MutationObserver(fijaEnc);['vista','hojas','subtabs'].forEach(function(i){var e=document.getElementById(i);if(e)mo.observe(e,{childList:true,subtree:true})})}catch(e){}})();
 /* ===== armazón ===== */
 function renderChrome(){
-  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;
+  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k);sb.hidden=false;}}catch(e){}
   $("#info").textContent=D.docente+' · Ciclo '+D.ciclo+' · Página '+D.pagina+' · actualización '+D.actualizacion+' · generada desde el SIGEA el '+D.generada;
   var hh='',ph=['DIAG',1,2,3];
   ph.forEach(function(p){var e=EST[p],lab=(p==='DIAG')?'Diagnóstico':'Periodo '+p,sel=(S.hoja===String(p)),c='hoja';
