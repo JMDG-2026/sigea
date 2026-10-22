@@ -211,7 +211,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 <div class="fondo" id="fondo"></div>
 <div class="hoja" id="hoja" role="dialog" aria-modal="true"><div class="asa"></div><div id="cont"></div></div>
 <script>
-/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470, 471, 474, 482 y 485): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
+/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470, 471, 474, 482, 485 y 486): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
 (function(){
 var SIGEA_BODEGA='https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec';
 var $=function(i){return document.getElementById(i)};
@@ -239,7 +239,7 @@ function quien(q){
   if(t.length>1&&(TIT.test(t[0])||/\.$/.test(t[0]))){tit=t[0];nom=t.slice(1);}
   var pri=(nom[0]||'');pri=pri.charAt(0).toUpperCase()+pri.slice(1).toLowerCase();
   var rot=String(q.rotulo||'').toUpperCase(),gen=rot.indexOf('LA ')===0?'maestra':(rot.indexOf('EL ')===0&&rot.indexOf('/')<0?'maestro':'maestro(a)');
-  if(q.perfil==='personal'){var pu=String(q.rotulo||'').trim().toLowerCase();return {saludo:(pu?pu+' ':'')+pri,completo:doc};}
+  if(q.perfil==='personal'){var pu=tit?tit.charAt(0).toUpperCase()+tit.slice(1).toLowerCase():String(q.rotulo||'').trim().toLowerCase();return {saludo:(pu?pu+' ':'')+pri,completo:doc};}
   return {saludo:gen+(pri?' '+pri:''),completo:doc};}
 function saludoHora(){var hr=new Date().getHours();return hr<12?'Buenos días':hr<19?'Buenas tardes':'Buenas noches';}
 function fechaHoy(){var f=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});return f.charAt(0).toUpperCase()+f.slice(1);}
