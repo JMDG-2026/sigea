@@ -211,7 +211,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 <div class="fondo" id="fondo"></div>
 <div class="hoja" id="hoja" role="dialog" aria-modal="true"><div class="asa"></div><div id="cont"></div></div>
 <script>
-/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470, 471 y 474): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
+/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470, 471, 474 y 482): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
 (function(){
 var SIGEA_BODEGA='https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec';
 var $=function(i){return document.getElementById(i)};
@@ -239,6 +239,7 @@ function quien(q){
   if(t.length>1&&(TIT.test(t[0])||/\.$/.test(t[0]))){tit=t[0];nom=t.slice(1);}
   var pri=(nom[0]||'');pri=pri.charAt(0).toUpperCase()+pri.slice(1).toLowerCase();
   var rot=String(q.rotulo||'').toUpperCase(),gen=rot.indexOf('LA ')===0?'maestra':(rot.indexOf('EL ')===0&&rot.indexOf('/')<0?'maestro':'maestro(a)');
+  if(q.perfil==='personal')return {saludo:pri,completo:doc};
   return {saludo:gen+(pri?' '+pri:''),completo:doc};}
 function saludoHora(){var hr=new Date().getHours();return hr<12?'Buenos días':hr<19?'Buenas tardes':'Buenas noches';}
 function fechaHoy(){var f=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});return f.charAt(0).toUpperCase()+f.slice(1);}
@@ -337,6 +338,7 @@ function irA(v){VISTA=v;marca(v==='sala'||v==='piz');pinta(QQ);try{window.scroll
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
+  var PER=(q.perfil==='personal');if(PER)gtxt=String(q.rotulo||'').trim();
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
   var cofres=
    '<div class="cofres" id="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
@@ -347,6 +349,8 @@ function pinta(q,aviso){
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca SIGEP</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
+  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar apagado" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
@@ -360,9 +364,9 @@ function pinta(q,aviso){
      '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
      '<p class="fecha">'+esc(fechaHoy())+'</p><p class="ciclo">'+esc((q.ciclo?'Ciclo '+q.ciclo.replace('-',' — ')+(gtxt?' · ':''):'')+gtxt)+'</p>'+
      (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
-     '<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>'+
+     (PER?'':'<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>')+
      '<button class="atn" id="atn"></button>'+
-     '<div class="accesos"><a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>'+
+     '<div class="accesos">'+(PER?'':'<a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>')+
      '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button>'+
      '<button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button></div>'+
      '<button class="entrar" id="entrar">Entrar →</button><button class="salir-b" id="salir">Cerrar sesión</button>';
@@ -384,7 +388,7 @@ function busca(){
       if(!r.paquete){if(!c)estado('📭','Tu grupo todavía no está listo','El director aún no lo ha publicado. Intenta más tarde.',true);return;}
       var p=r.paquete,al=p.alumnos||[],es=p.estados||{},ab='';
       ['DIAG','1','2','3'].forEach(function(k){if(!ab&&es[k]==='abierto')ab=k;});
-      var q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,ciclo:p.ciclo,tot:al.length,altas:al.filter(function(x){return x.es_alta}).length,bajas:al.filter(function(x){return x.es_baja}).length,abierto:ab};
+      var q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,ciclo:p.ciclo,tot:al.length,altas:al.filter(function(x){return x.es_alta}).length,bajas:al.filter(function(x){return x.es_baja}).length,abierto:ab,perfil:p.perfil||''};
       guardaCache(q);pinta(q);traeAvisos();return;}
     if(r&&r.error==='llave no valida'){borraCache();estado('🔒','Esta llave ya no está activa','Pídele al director tu enlace nuevo.');return;}
     if(!c)estado('⚠️','No se pudo abrir',esc(String((r&&r.error)||'respuesta rara')),true);})
