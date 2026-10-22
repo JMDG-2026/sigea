@@ -154,6 +154,40 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .it .pt{flex:0 0 12px;height:12px;border-radius:50%}.it b{display:block;font-size:.95rem}.it small{color:var(--suave)}.it .fl{margin-left:auto;color:var(--suave);font-size:1.2rem}
 .salir-b{display:block;margin:22px auto 0;background:none;border:0;color:#8a7a96;font:inherit;font-size:.85rem;text-decoration:underline;cursor:pointer;padding:8px 14px}
 .sala-tit{margin:34px 4px 0;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);text-align:center}
+/* --- PIZARRON DE AVISOS (Ladrillo 474) --- */
+.volv{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:12px;border:1px solid rgba(191,230,255,.5);background:rgba(191,230,255,.14);color:#bfe6ff;font:inherit;font-weight:700;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.pz-top{display:flex;align-items:center;gap:10px;margin:16px 0 12px}
+.pz-marco{padding:9px;border-radius:16px;background:linear-gradient(135deg,#a8743a,#7a4d22 45%,#98652f 70%,#6b4220);box-shadow:0 16px 34px rgba(0,0,0,.5),inset 0 2px 0 rgba(255,255,255,.25),inset 0 -3px 0 rgba(0,0,0,.3)}
+.pz-pizarra{position:relative;border-radius:7px;padding:16px 12px 24px;min-height:360px;background:radial-gradient(500px 260px at 30% 0,rgba(255,255,255,.07),transparent 70%),linear-gradient(160deg,#21594a,#173f35 60%,#1b4a3d);box-shadow:inset 0 0 36px rgba(0,0,0,.55),inset 0 0 0 2px rgba(0,0,0,.25)}
+.pz-tit{text-align:center;margin:0;font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive;font-weight:400;font-size:1.7rem;color:#f5f1e3;text-shadow:0 0 1px rgba(255,255,255,.6)}
+.pz-sub{text-align:center;font-family:"Segoe Print","Bradley Hand",cursive;font-size:.85rem;color:#cfe3d6;opacity:.85;margin:2px 0 4px}
+.pz-raya{height:2px;margin:8px auto 14px;width:62%;background:linear-gradient(90deg,transparent,rgba(245,241,227,.55),transparent)}
+.pz-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.pz-pill{font-size:.76rem;padding:3px 11px;border-radius:99px;border:1px dashed rgba(245,241,227,.5);color:#f5f1e3}
+.pz-pill b{color:#ffd0d9}
+.pz-lista{display:grid;gap:24px}
+.pz-nota{position:relative;padding:20px 15px 13px;border-radius:3px;background:linear-gradient(180deg,#fdf6df,#f6ecc9);color:#35290f;box-shadow:0 6px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.7);transform:rotate(var(--g,0deg))}
+.pz-nota.ya{opacity:.82;background:linear-gradient(180deg,#f3efdc,#e9e3c6)}
+.pz-nota.nueva{box-shadow:0 8px 18px rgba(0,0,0,.45),0 0 0 2px rgba(224,38,77,.55)}
+.pz-tach{position:absolute;top:-8px;left:50%;margin-left:-11px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8aa0,var(--esc) 45%,var(--esc2));box-shadow:0 3px 5px rgba(0,0,0,.45)}
+.pz-nota.ya .pz-tach{background:radial-gradient(circle at 35% 30%,#7ee6b9,var(--ver) 45%,var(--ver2))}
+.pz-cab{display:flex;justify-content:space-between;gap:8px;font-size:.72rem;color:#7a6a3c;margin-bottom:6px}
+.pz-cab b{color:#6d2440}
+.pz-h{margin:0 0 6px;font-size:1.02rem;line-height:1.25;color:#2b1f07}
+.pz-p{margin:0;font-size:.9rem;line-height:1.5;word-break:break-word}
+.pz-leer{margin-top:6px;background:none;border:0;padding:0;font:inherit;font-weight:700;font-size:.8rem;color:#6d2440;text-decoration:underline;cursor:pointer}
+.pz-acc{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.pz-b{height:36px;padding:0 15px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:.84rem;cursor:pointer}
+.pz-b.ent{background:linear-gradient(180deg,#e8335a,var(--esc2));color:#fff;box-shadow:0 3px 8px rgba(156,18,54,.4)}
+.pz-b.res{background:transparent;color:#5a4a1e;border:1px solid rgba(90,74,30,.45)}
+.pz-b.env{margin-top:6px;background:#12234a;color:#fff}
+.pz-ok{font-size:.8rem;color:var(--ver2);font-weight:800}
+.pz-resp{margin-top:12px;padding:8px 10px;border-radius:3px;background:#dfeefc;color:#13294d;font-size:.84rem;transform:rotate(-.6deg);box-shadow:0 3px 7px rgba(0,0,0,.25);word-break:break-word}
+.pz-resp small{display:block;color:#4a6285;margin-bottom:2px}
+.pz-caja{margin-top:10px}
+.pz-caja textarea{width:100%;min-height:62px;border-radius:8px;border:1px solid rgba(90,74,30,.4);padding:8px;font:inherit;font-size:.9rem;background:#fffdf3;color:#35290f}
+.pz-repisa{height:12px;margin:22px -4px 0;border-radius:3px;background:linear-gradient(180deg,#a8743a,#6b4220);box-shadow:0 5px 8px rgba(0,0,0,.45)}
+.pz-vacio{text-align:center;font-family:"Segoe Print","Bradley Hand",cursive;color:#e6efe8;padding:50px 10px}
 </style>
 </head>
 <body>
@@ -177,7 +211,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 <div class="fondo" id="fondo"></div>
 <div class="hoja" id="hoja" role="dialog" aria-modal="true"><div class="asa"></div><div id="cont"></div></div>
 <script>
-/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470 y 471): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
+/* SALA DE COFRES con la BIENVENIDA (Ladrillos 464, 469, 470, 471 y 474): la puerta de la plataforma. Pide a la bodega el paquete con la llave que va despues del # y muestra los cofres. */
 (function(){
 var SIGEA_BODEGA='https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec';
 var $=function(i){return document.getElementById(i)};
@@ -219,23 +253,79 @@ function enObra(id){var o=OBRA[id];if(!o)return;
   abrir('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
   '<p class="nota"><em style="font-style:normal;color:var(--oro)">Paso a paso</em>: pronto se abre.</p></div><button class="btn sec2" onclick="cerrarSala()">Volver a la sala</button>');}
-var AT=[],AVN=0,HR='',QQ=null;
+var AT=[],AVN=0,HR='',QQ=null,MSG=[],PEND=0,OPEN={},CAJA={},DRAFT={},ENV=false,PZNOTA='';
 function atItems(){
   var it=[],q=QQ||{};
   if(q.abierto){var nom=q.abierto==='DIAG'?'Diagnóstico abierto':'Periodo '+q.abierto+' abierto';
     it.push({pt:'#e0b83a',t:nom,s:'Captura las calificaciones de tu grupo',h:'calificaciones.html'+HR});}
-  if(AVN>0)it.push({pt:'#ff5577',t:AVN+(AVN===1?' aviso sin leer':' avisos sin leer'),s:'Del director · ábrelos en Mis calificaciones, botón Avisos',h:'calificaciones.html'+HR});
+  if(PEND>0)it.push({pt:'#ff5577',t:PEND+(PEND===1?' aviso por confirmar':' avisos por confirmar'),s:'Del director · ábrelos en el Pizarrón de avisos',p:1});
   return it;}
 function pintaAtn(){var bt=$('atn');if(!bt)return;var it=atItems();
   if(it.length){bt.className='atn';bt.innerHTML='<span class="p"></span>Lo que pide tu atención<span class="n">'+it.length+'</span><span class="f">›</span>';}
   else{bt.className='atn bien-todo';bt.innerHTML='<span class="p" style="background:radial-gradient(circle at 35% 30%,#d9fff0,#6fe0b4 60%,#2f9c76)"></span>Todo al día<span class="f">›</span>';}}
 function abreAtn(){var it=atItems();
   if(!it.length){abrir('<div class="obra"><div class="gr">✅</div><h2>Todo al día</h2><p class="nota">No hay nada pendiente por ahora, maestra.</p><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg></div><button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');return;}
-  abrir('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it" href="'+x.h+'"><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');}
+  abrir('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});}
 function traeAvisos(){
   if(!B||!K)return;
-  fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({op:'aviso_traer',clave:K})})
-  .then(function(r){return r.json();}).then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;pintaAtn();}}).catch(function(){});}
+  llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
+function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
+  return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
+function clavePz(a){var t=String(a.texto||''),i=t.indexOf('\n'),tit=i>=0?t.slice(0,i).trim():'',cu=i>=0?t.slice(i+1).trim():t.trim();return {tit:tit,cu:cu,k:(tit||cu).slice(0,40)};}
+function horaPz(iso){var d=new Date(iso);if(isNaN(d))return '';var m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return d.getDate()+' '+m[d.getMonth()]+' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function armaPz(){
+  var dir=[],mae=[];
+  MSG.forEach(function(m){if(m.borrado)return;if(m.de==='director')dir.push(m);else if(m.de==='maestro')mae.push(m);});
+  dir.sort(function(a,b){return a.creado<b.creado?1:(a.creado>b.creado?-1:0);});
+  mae.sort(function(a,b){return a.creado<b.creado?-1:(a.creado>b.creado?1:0);});
+  return dir.map(function(a){var c=clavePz(a),ent=null,res=[],pre='Re: «'+c.k+'»: ';
+    mae.forEach(function(r){if(!(r.creado>a.creado))return;
+      if(r.texto==='✓ Enterado: «'+c.k+'»'){if(!ent)ent=r;}
+      else if(String(r.texto).indexOf(pre)===0)res.push(r);});
+    return {id:a.id,tit:c.tit,cu:c.cu,k:c.k,pre:pre,creado:a.creado,ent:ent,res:res};});}
+function guardaBorr(){Array.prototype.forEach.call(sala.querySelectorAll('textarea[data-i]'),function(t){DRAFT[t.getAttribute('data-i')]=t.value;});}
+function quitaPz(o){MSG=MSG.filter(function(m){return m!==o;});}
+function mandaPz(x,texto,fin){
+  if(!B||!K||ENV)return;ENV=true;PZNOTA='';
+  var opt={id:'l'+Date.now(),de:'maestro',texto:texto,creado:new Date(Math.max(Date.now(),Date.parse(x.creado)+1)).toISOString(),visto:'',borrado:''};
+  MSG.push(opt);if(fin)fin();pintaPiz();
+  llama('aviso_responder',{texto:texto}).then(function(r){ENV=false;
+    if(!(r&&r.ok)){quitaPz(opt);PZNOTA='No se pudo enviar: '+((r&&r.error)||'intenta otra vez');pintaPiz();return;}
+    traeAvisos();})
+  .catch(function(){ENV=false;quitaPz(opt);PZNOTA='Sin señal: no se pudo enviar. Intenta otra vez.';pintaPiz();});}
+function pintaCofrePz(){var e=$('cPizEt');if(e)e.textContent=PEND?PEND+' por confirmar':'Al día';}
+function refrescaPz(){var L=armaPz();PEND=L.filter(function(x){return !x.ent;}).length;pintaAtn();pintaCofrePz();if(VISTA==='piz')pintaPiz();}
+function pintaPiz(){
+  guardaBorr();
+  var L=armaPz(),pend=L.filter(function(x){return !x.ent;}).length,rot=[-1.1,.9,-.6];PEND=pend;
+  var h='<div class="pz-top"><button class="volv" id="pzAtras">‹ Sala</button></div><div class="pz-marco"><div class="pz-pizarra">'+
+   '<h1 class="pz-tit">Pizarrón de avisos</h1><p class="pz-sub">de la Dirección para ti</p><div class="pz-raya"></div>'+
+   '<div class="pz-pills"><span class="pz-pill">Por confirmar: <b>'+pend+'</b></span><span class="pz-pill">Total: '+L.length+'</span></div>';
+  if(!L.length)h+='<p class="pz-vacio">Hoy no hay avisos. ¡Pizarrón limpio!</p>';
+  else{h+='<div class="pz-lista">';
+    L.forEach(function(x,i){var id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?x.cu.slice(0,150).replace(/\s+\S*$/,'')+'…':x.cu;
+      h+='<div class="pz-nota '+(x.ent?'ya':'nueva')+'" style="--g:'+rot[i%3]+'deg"><span class="pz-tach"></span>'+
+        '<div class="pz-cab"><b>Dirección</b><span>'+esc(horaPz(x.creado))+'</span></div>'+
+        (x.tit?'<h3 class="pz-h">'+esc(x.tit)+'</h3>':'')+
+        '<p class="pz-p">'+esc(cu).replace(/\n/g,'<br>')+'</p>'+
+        (largo?'<button class="pz-leer" data-pz="mas" data-i="'+id+'">'+(ab?'Leer menos':'Leer más')+'</button>':'')+
+        '<div class="pz-acc">'+(x.ent?'<span class="pz-ok">✓ Enterado · '+esc(horaPz(x.ent.creado))+'</span>':'<button class="pz-b ent" data-pz="ent" data-i="'+id+'">Enterado</button>')+
+        '<button class="pz-b res" data-pz="res" data-i="'+id+'">Responder</button></div>'+
+        (CAJA[x.id]?'<div class="pz-caja"><textarea data-i="'+id+'" maxlength="1500" placeholder="Escribe tu respuesta…">'+esc(DRAFT[x.id]||'')+'</textarea><button class="pz-b env" data-pz="env" data-i="'+id+'">Enviar respuesta</button></div>':'')+
+        x.res.map(function(r){return '<div class="pz-resp"><small>Tu respuesta · '+esc(horaPz(r.creado))+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join('')+'</div>';});
+    h+='</div>';}
+  h+='<div class="pz-repisa"></div></div></div>'+(PZNOTA?'<p class="nota" style="text-align:center;margin-top:12px">'+esc(PZNOTA)+'</p>':'');
+  sala.innerHTML=h;
+  $('pzAtras').onclick=function(){irA('sala');};
+  sala.onclick=function(e){var b=e.target.closest?e.target.closest('[data-pz]'):null;if(!b)return;
+    var id=b.getAttribute('data-i'),k=b.getAttribute('data-pz'),x=armaPz().filter(function(y){return String(y.id)===id;})[0];
+    if(k==='mas'){OPEN[id]=!OPEN[id];pintaPiz();return;}
+    if(k==='res'){CAJA[id]=!CAJA[id];pintaPiz();return;}
+    if(!x||ENV)return;
+    if(k==='ent')mandaPz(x,'✓ Enterado: «'+x.k+'»');
+    if(k==='env'){var t=sala.querySelector('textarea[data-i="'+id+'"]'),v=t?t.value.trim():'';if(!v)return;
+      mandaPz(x,(x.pre+v).slice(0,1900),function(){CAJA[id]=false;DRAFT[id]='';});}
+  };}
 function limpia(){try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('sigea_web_')===0||k.indexOf('sigea_av_')===0||k.indexOf('sigea_sala_')===0))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);});}catch(e){}marca(false);}
 function despedida(){estado('👋','Hasta pronto','Tu sala quedó cerrada en este aparato. Para volver, abre tu enlace de WhatsApp.');}
 function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>Cerrar sesión</h2><p class="nota">Se cerrará tu sala en este aparato. Para volver, abre tu enlace de WhatsApp.</p></div><button class="btn" id="csSi">Cerrar sesión</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
@@ -243,20 +333,21 @@ function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;marca(v==='sala');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}}
+function irA(v){VISTA=v;marca(v==='sala'||v==='piz');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
-  QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
+  sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
   var cofres=
    '<div class="cofres" id="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
    '<button class="cofre c-nar apagado" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et">En construcción</span></button>'+
-   '<button class="cofre c-esc apagado" data-o="avisos"><span class="ico">💬</span><h3>Avisos</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
    '<button class="cofre c-ver apagado" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-mor apagado" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et">En construcción</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca SIGEP</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
+  if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
      '<button class="entrar" id="atras" style="font-size:1rem;padding:12px 28px;margin-top:28px">‹ Volver a la bienvenida</button><button class="salir-b" id="salir">Cerrar sesión</button>';
@@ -273,17 +364,18 @@ function pinta(q,aviso){
      '<button class="atn" id="atn"></button>'+
      '<div class="accesos"><a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>'+
      '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button>'+
-     '<button class="acc" data-o="avisos"><span class="i">💬</span><small>Avisos</small></button></div>'+
+     '<button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button></div>'+
      '<button class="entrar" id="entrar">Entrar →</button><button class="salir-b" id="salir">Cerrar sesión</button>';
     $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){enObra(b.getAttribute('data-o'))}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
-  if(c){pinta(c);traeAvisos();}else estado('⏳','Abriendo tu sala…','Un momento.');
+  try{MSG=JSON.parse(localStorage.getItem(CK+'_piz'))||[];}catch(e){MSG=[];}
+  if(c){PEND=armaPz().filter(function(x){return !x.ent;}).length;pinta(c);traeAvisos();}else estado('⏳','Abriendo tu sala…','Un momento.');
   if(!B){if(!c)estado('⚠️','Falta la dirección de la bodega','Esta página no está preparada. Avísale al director.');return;}
   fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({op:'traer',clave:K})})
   .then(function(r){return r.json();})
