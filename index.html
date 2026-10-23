@@ -208,6 +208,12 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pm-bt .i{font-size:1.7rem}.pm-bt small{display:block;font-weight:600;font-size:.76rem;opacity:.9;margin-top:2px}
 .pm-bt.a{background:linear-gradient(145deg,#ffab4a,var(--nar) 45%,var(--nar2))}
 .pm-bt.b{background:linear-gradient(145deg,#a98aff,var(--mor) 45%,var(--mor2))}
+.pm-bt.c{position:relative;background:linear-gradient(145deg,#2a3563,#18213f);border:1px solid #f3d388;box-shadow:0 8px 20px rgba(0,0,0,.3),0 0 0 2px rgba(243,211,136,.18)}
+.pm-bds{position:absolute;top:-9px;right:14px;display:flex;gap:6px}
+.pm-bd{border-radius:99px;padding:2px 9px;font-size:.74rem;font-weight:800;color:#fff;background:#e8335a}
+.pm-bd.am{background:#e0b83a;color:#2b1c00}
+.pz-f i.am{background:#e0b83a;color:#2b1c00}
+.sl-lbl{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);margin:10px 4px 6px}
 .pm-bt[disabled]{opacity:.42;cursor:not-allowed;box-shadow:none}
 .pm-aviso{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(226,187,98,.14);border:1px solid rgba(226,187,98,.45);color:#f1deaa;font-size:.88rem;line-height:1.4}
 .pm-sec{margin:22px 4px 8px;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave)}
@@ -413,7 +419,7 @@ function pintaPiz(){
       mandaPz(x,(x.pre+v).slice(0,1900),function(){CAJA[id]=false;DRAFT[id]='';});}
   };}
 /* ---- MIS PERMISOS (Ladrillo 498): el calendario, el historial, cancelar y bajar la ficha ---- */
-var PM={info:null,mis:null,cargando:false,err:'',nota:'',paso:0,tipo:'permiso',mes:null,ini:null,n:1,motivo:'',envio:false,atras:false};
+var PM={sol:false,ft:'todas',fe:'',vi:false,nv:[],info:null,mis:null,cargando:false,err:'',nota:'',paso:0,tipo:'permiso',mes:null,ini:null,n:1,motivo:'',envio:false,atras:false};
 var PM_MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function pmD(f){var p=String(f).slice(0,10).split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
 function pmIso(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
@@ -441,7 +447,7 @@ function pmHabil(d,D){var f=pmIso(d);if(d.getDay()===0||d.getDay()===6)return fa
 function pmRango(ini,n,D){var r=[],d=pmD(ini),v=0;
   while(r.length<n&&v<400){if(pmHabil(d,D))r.push(pmIso(d));d=pmSuma(d,1);v++;}
   return r.length===n?r:null;}
-function pmMaxN(D){return PM.tipo==='permiso'?Math.min(3,D.rest):10;}
+function pmMaxN(D){return PM.tipo==='permiso'?Math.min(3,D.rest):3;}
 function pmNOk(ini,n,D){var r=pmRango(ini,n,D);if(!r)return false;
   return r.every(function(f){return !D.oc[f]&&!D.pe[f];});}
 function pmCarga(){
@@ -480,9 +486,46 @@ function pmLista(){
   D.tipoTmp=PM.tipo;PM.tipo='permiso';var Dp=pmDatos();PM.tipo=D.tipoTmp;
   var restP=Dp.rest;
   h+='<div class="pm-bts"><button class="pm-bt a" data-pm="nuevo" data-t="permiso"'+(restP<1?' disabled':'')+'><span class="i">🗓️</span><span>Solicitar un permiso<small>'+(restP<1?'Ya no te quedan días por solicitar':'Hasta 3 días seguidos · te quedan '+restP)+'</small></span></button>'+
-    '<button class="pm-bt b" data-pm="nuevo" data-t="gestoria"><span class="i">📄</span><span>Solicitar una gestoría<small>Para un trámite · no cuenta de tus 9 días</small></span></button></div>';
+    '<button class="pm-bt b" data-pm="nuevo" data-t="gestoria"><span class="i">📄</span><span>Solicitar una gestoría<small>Para un trámite · no cuenta de tus 9 días</small></span></button>'+
+    '<button class="pm-bt c" data-pm="sol"><span class="i">🗂️</span><span>Mis solicitudes<small>Ver todas · filtrar · anteriores</small></span>'+pmBadges(lista)+'</button></div>';
   if(PM.nota)h+='<div class="pm-aviso">'+esc(PM.nota)+'</div>';
-  return h+pmHist(lista);}
+  return h+pmUltima(lista);}
+function pmNoApr(s){return s.estado==='rechazado'||s.estado==='revertido';}
+function pmVistas(){try{return JSON.parse(localStorage.getItem('sigea_sala_sol_vistas')||'[]');}catch(e){return [];}}
+function pmNoVistas(l){var v=pmVistas();return (l||[]).filter(function(s){return pmNoApr(s)&&v.indexOf(s.id)<0;}).map(function(s){return s.id;});}
+function pmMarcaVistas(){try{localStorage.setItem('sigea_sala_sol_vistas',JSON.stringify((PM.mis||[]).filter(pmNoApr).map(function(s){return s.id;})));}catch(e){}}
+function pmBadges(l){var a=compCuenta(l),r=pmNoVistas(l).length,h='';
+  if(a)h+='<span class="pm-bd am">📎 '+a+'</span>';if(r)h+='<span class="pm-bd">'+r+'</span>';
+  return h?'<span class="pm-bds">'+h+'</span>':'';}
+function pmUltima(lista){
+  var h='<div class="pm-sec">Tu última solicitud</div>';
+  if(!lista.length)return h+'<div class="pm-card"><p class="pm-vacio">Todavía no has solicitado nada.</p></div>';
+  return h+pmPedido(lista[0]);}
+var SOL_RECIENTES=8,SOL_MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function pmSolVista(){
+  var lista=(PM.mis||[]).filter(function(s){return s.tipo!=='constancia';});
+  if(PM.cargando&&!PM.mis)return '<div class="pm-card"><p class="pm-vacio">Cargando tus solicitudes…</p></div>';
+  var nG=compCuenta(lista),nN=lista.filter(function(s){return pmNoApr(s)&&PM.nv.indexOf(s.id)>=0;}).length;
+  var T=[['todas','Todas',0],['permiso','Permisos',0],['gestoria','Gestorías',nG]],E=[['pendiente','En revisión',0],['aprobado','Aprobadas',0],['no','No aprobadas',nN]];
+  var h='<div class="sl-lbl">Tipo</div><div class="pz-filtros" style="margin:0 0 4px">'+T.map(function(f){
+    return '<button class="pz-f'+(PM.ft===f[0]?' on':'')+'" data-pm="sft" data-v="'+f[0]+'">'+f[1]+(f[2]?'<i class="am">'+f[2]+'</i>':'')+'</button>';}).join('')+'</div>'+
+    '<div class="sl-lbl">Estado</div><div class="pz-filtros" style="margin:0 0 14px">'+E.map(function(f){
+    return '<button class="pz-f'+(PM.fe===f[0]?' on':'')+'" data-pm="sfe" data-v="'+f[0]+'">'+f[1]+(f[2]?'<i>'+f[2]+'</i>':'')+'</button>';}).join('')+'</div>';
+  var LF=lista.filter(function(s){
+    var okT=PM.ft==='todas'||s.tipo===PM.ft;
+    var okE=!PM.fe||(PM.fe==='no'?pmNoApr(s):s.estado===PM.fe);
+    return okT&&okE;});
+  if(!lista.length)return h+'<div class="pm-card"><p class="pm-vacio">Todavía no has solicitado nada.</p></div>';
+  if(!LF.length)return h+'<div class="pm-card"><p class="pm-vacio">No hay solicitudes con esos filtros.</p></div>';
+  var rec=LF.slice(0,SOL_RECIENTES),ant=LF.slice(SOL_RECIENTES);
+  h+=rec.map(pmPedido).join('');
+  if(ant.length){
+    h+='<div style="text-align:center;margin:8px 0"><button class="pz-viej" data-pm="svi">'+(PM.vi?'Ocultar las anteriores':'Ver las anteriores ('+ant.length+')')+'</button></div>';
+    if(PM.vi){var mes='';ant.forEach(function(s){var d=new Date(s.creado),m=isNaN(d)?'':SOL_MESES[d.getMonth()]+' '+d.getFullYear();
+      if(m!==mes){mes=m;h+='<div class="pz-mes">'+esc(m)+'</div>';}h+=pmPedido(s);});
+      h+='<div style="text-align:center;margin:8px 0"><button class="pz-viej" data-pm="svi">Ocultar las anteriores</button></div>';}
+  }
+  return h;}
 function pmHist(lista){
   var h='<div class="pm-sec">Mis solicitudes</div>';
   if(!lista.length)return h+'<div class="pm-card"><p class="pm-vacio">Todavía no has solicitado nada.</p></div>';
@@ -543,9 +586,10 @@ function pintaPerm(){
   sala.onclick=null;
   var enc='<div class="bv"><h1 style="font-size:1.4rem">🗓️ Mis permisos</h1></div>';
   if(PM.paso===1){sala.innerHTML=pmPedirVista();}
+  else if(PM.sol){sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Mis permisos</button></div>'+'<div class="bv"><h1 style="font-size:1.4rem">🗂️ Mis solicitudes</h1></div>'+pmSolVista();}
   else{sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Sala</button></div>'+enc+pmLista();}
   var q=function(i){return $(i);};
-  if(q('pmSala'))q('pmSala').onclick=function(){irA('sala');};
+  if(q('pmSala'))q('pmSala').onclick=function(){if(PM.sol){PM.sol=false;pintaPerm();try{window.scrollTo(0,0);}catch(e){}return;}irA('sala');};
   if(q('pmRei'))q('pmRei').onclick=pmCarga;
   if(q('pmAtras'))q('pmAtras').onclick=function(){PM.paso=0;PM.ini=null;PM.motivo='';PM.atras=false;pintaPerm();};
   if(q('pmPrev'))q('pmPrev').onclick=function(){PM.mes=new Date(PM.mes.getFullYear(),PM.mes.getMonth()-1,1);pintaPerm();};
@@ -559,6 +603,10 @@ function pintaPerm(){
     if(n){PM.n=+n;pintaPerm();return;}
     if(a==='atras'){PM.atras=!PM.atras;PM.ini=null;PM.n=1;pintaPerm();return;}
     if(a==='nuevo'){var tp=t.getAttribute('data-t');if(tp==='gestoria'){pmAvisoGestoria();return;}pmNuevo(tp);return;}
+    if(a==='sol'){PM.sol=true;PM.ft='todas';PM.fe='';PM.vi=false;PM.nv=pmNoVistas(PM.mis);pmMarcaVistas();pintaPerm();try{window.scrollTo(0,0);}catch(e2){}return;}
+    if(a==='sft'){PM.ft=t.getAttribute('data-v')||'todas';PM.vi=false;pintaPerm();return;}
+    if(a==='sfe'){var ve=t.getAttribute('data-v')||'';PM.fe=PM.fe===ve?'':ve;PM.vi=false;pintaPerm();return;}
+    if(a==='svi'){PM.vi=!PM.vi;pintaPerm();return;}
     if(a==='cancela'){pmCancela(t.getAttribute('data-i'));return;}
     if(a==='pdf'){pmPdf(t.getAttribute('data-i'),t);return;}
   };}
@@ -594,7 +642,7 @@ function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;marca(v==='sala'||v==='piz'||v==='perm');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA(v){VISTA=v;marca(v==='sala'||v==='piz'||v==='perm');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
