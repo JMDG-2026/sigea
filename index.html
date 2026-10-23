@@ -184,6 +184,8 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pz-b.res{background:transparent;color:#5a4a1e;border:1px solid rgba(90,74,30,.45)}
 .pz-b.env{margin-top:6px;background:#12234a;color:#fff}
 .pz-ok{font-size:.8rem;color:var(--ver2);font-weight:800}
+.pz-resp{position:relative;padding-right:34px !important;}
+.pz-chev2{position:absolute;top:2px;right:2px;width:34px;height:30px;border:0;background:none;font:inherit;font-weight:800;font-size:1.05rem;color:#4a6285;cursor:pointer}
 .pz-resp{margin-top:12px;padding:8px 10px;border-radius:3px;background:#dfeefc;color:#13294d;font-size:.84rem;transform:rotate(-.6deg);box-shadow:0 3px 7px rgba(0,0,0,.25);word-break:break-word}
 .pz-resp small{display:block;color:#4a6285;margin-bottom:2px}
 .pz-caja{margin-top:10px}
@@ -394,7 +396,7 @@ function pzNota(x,i,enCesto){
     (largo?'<button class="pz-leer" data-pz="mas" data-i="'+id+'">'+(ab?'Leer menos':'Leer más')+'</button>':'')+
     '<div class="pz-acc">'+(x.ent?'<span class="pz-ok">'+pzPal(x.ent)+'Enterado · '+esc(horaPz(x.ent.creado))+'</span>':'<button class="pz-b ent" data-pz="ent" data-i="'+id+'">Enterado</button>')+'</div>'+
     (enCesto?'':(CAJA[x.id]?'<div class="pz-caja"><textarea data-i="'+id+'" maxlength="1500" placeholder="Escribe tu respuesta…">'+esc(DRAFT[x.id]||'')+'</textarea><button class="pz-b env" data-pz="env" data-i="'+id+'">Enviar respuesta</button></div>':'')+
-      x.res.map(function(r){return '<div class="pz-resp"><small>Tu respuesta · '+esc(horaPz(r.creado))+' '+pzPal(r)+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join(''))+'</div>';}
+      x.res.map(function(r){return '<div class="pz-resp"><button class="pz-chev2" data-pz="menur" data-i="'+esc(r.id)+'" aria-label="Más opciones">⌄</button><small>Tu respuesta · '+esc(horaPz(r.creado))+' '+pzPal(r)+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join(''))+'</div>';}
 function pintaPiz(){
   guardaBorr();
   var T=armaPz(),L=T.filter(function(x){return !x.ces;}),CS=T.filter(function(x){return x.ces;}),
@@ -445,6 +447,7 @@ function pzClic(e){var b=e.target.closest?e.target.closest('[data-pz]'):null;if(
   if(k==='cesto'){CESTOV=true;PZNOTA='';pintaPiz();try{window.scrollTo(0,0);}catch(z){}return;}
   if(k==='vaciar'){pzVaciar();return;}
   if(k==='menu'){pzMenu(id);return;}
+  if(k==='menur'){pzMenuResp(id);return;}
   if(!x||ENV)return;
   if(k==='ent')mandaPz(x,'✓ Enterado: «'+x.k+'»');
   if(k==='env'){var t=sala.querySelector('textarea[data-i="'+id+'"]'),v=t?t.value.trim():'';if(!v)return;
@@ -488,6 +491,20 @@ function pzCopia(x){
   var t=(x.tit?x.tit+'\n':'')+x.cu,ok=function(){PZNOTA='Aviso copiado.';pintaPiz();setTimeout(function(){if(PZNOTA==='Aviso copiado.'){PZNOTA='';if(VISTA==='piz')pintaPiz();}},2500);};
   try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){pzCopiaViejo(t,ok);});return;}}catch(z){}
   pzCopiaViejo(t,ok);}
+function pzBorraResp(id){
+  pzPregunta('🗑️','¿Eliminar esta respuesta?','Se quitará de tu Pizarrón y la Dirección ya no la verá. Esto no se puede deshacer.','Sí, eliminar',function(){
+    if(!B||!K)return;PZNOTA='';
+    llama('aviso_borrar_mio',{id:id}).then(function(r){
+      if(!(r&&r.ok)){PZNOTA='No se pudo eliminar: '+((r&&r.error)||'intenta otra vez');pintaPiz();return;}
+      MSG.forEach(function(m){if(String(m.id)===String(id)&&m.de==='maestro'){m.borrado='maestro';m.texto='';}});
+      try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(z){}
+      refrescaPz();traeAvisos();})
+    .catch(function(){PZNOTA='Sin señal: no se pudo eliminar. Intenta otra vez.';pintaPiz();});});}
+function pzMenuResp(id){
+  var m=MSG.filter(function(y){return String(y.id)===String(id)&&y.de==='maestro';})[0];if(!m)return;
+  abrir('<div class="obra"><div class="gr">💬</div><h2>Tu respuesta</h2></div><button class="btn sec2" id="pzRe" style="color:#ff8aa3">🗑️ Eliminar</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  hoja.classList.add('cen');
+  var e=$('pzRe');if(e)e.onclick=function(){cerrar();pzBorraResp(m.id);};}
 function pzMenu(id){
   var x=armaPz().filter(function(y){return String(y.id)===String(id);})[0];if(!x)return;
   var h;
