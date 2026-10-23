@@ -186,6 +186,12 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pz-resp small{display:block;color:#4a6285;margin-bottom:2px}
 .pz-caja{margin-top:10px}
 .pz-caja textarea{width:100%;min-height:62px;border-radius:8px;border:1px solid rgba(90,74,30,.4);padding:8px;font:inherit;font-size:.9rem;background:#fffdf3;color:#35290f}
+.pz-viej{justify-self:center;height:38px;padding:0 18px;border-radius:99px;border:1px dashed rgba(245,241,227,.6);background:transparent;color:#f5f1e3;font:inherit;font-weight:800;font-size:.84rem;cursor:pointer}
+.pz-mes{justify-self:start;font-family:"Segoe Print","Bradley Hand",cursive;font-size:1rem;color:#ffe9a8;border-bottom:1px dashed rgba(245,241,227,.35);padding-bottom:3px;text-transform:capitalize}
+.pz-filtros{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:-4px 0 18px}
+.pz-f{position:relative;height:34px;padding:0 14px;border-radius:99px;border:1px solid rgba(245,241,227,.5);background:transparent;color:#f5f1e3;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
+.pz-f.on{background:#f5f1e3;color:#1d3a2c;border-color:#f5f1e3}
+.pz-f i{font-style:normal;margin-left:6px;background:#e8335a;color:#fff;border-radius:99px;padding:1px 7px;font-size:.72rem}
 .pz-repisa{height:12px;margin:22px -4px 0;border-radius:3px;background:linear-gradient(180deg,#a8743a,#6b4220);box-shadow:0 5px 8px rgba(0,0,0,.45)}
 .pz-vacio{text-align:center;font-family:"Segoe Print","Bradley Hand",cursive;color:#e6efe8;padding:50px 10px}
 /* --- MIS PERMISOS (Ladrillo 498) --- */
@@ -308,21 +314,28 @@ function enObra(id){var o=OBRA[id];if(!o)return;
   abrir('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
   '<p class="nota"><em style="font-style:normal;color:var(--oro)">Paso a paso</em>: pronto se abre.</p></div><button class="btn sec2" onclick="cerrarSala()">Volver a la sala</button>');}
-var AT=[],AVN=0,HR='',QQ=null,MSG=[],PEND=0,OPEN={},CAJA={},DRAFT={},ENV=false,PZNOTA='';
+var AT=[],AVN=0,HR='',QQ=null,MSG=[],PEND=0,COMP=0,COMPT=0,OPEN={},CAJA={},DRAFT={},ENV=false,PZNOTA='',VIEJOS=false,FILTRO='todos',PZ_RECIENTES=5,
+PZ_MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function atItems(){
   var it=[],q=QQ||{};
   if(q.abierto){var nom=q.abierto==='DIAG'?'Diagnóstico abierto':'Periodo '+q.abierto+' abierto';
     it.push({pt:'#e0b83a',t:nom,s:'Captura las calificaciones de tu grupo',h:'calificaciones.html'+HR});}
   if(PEND>0)it.push({pt:'#ff5577',t:PEND+(PEND===1?' aviso por confirmar':' avisos por confirmar'),s:'Del director · ábrelos en el Pizarrón de avisos',p:1});
+  if(COMP>0)it.push({pt:'#e0b83a',t:COMP===1?'Falta entregar un comprobante de gestoría':'Faltan por entregar '+COMP+' comprobantes de gestoría',s:'Entrega una copia a la Dirección · ábrelo en Mis permisos',m:1});
   return it;}
 function pintaAtn(){var bt=$('atn');if(!bt)return;var it=atItems();
   if(it.length){bt.className='atn';bt.innerHTML='<span class="p"></span>Lo que pide tu atención<span class="n">'+it.length+'</span><span class="f">›</span>';}
   else{bt.className='atn bien-todo';bt.innerHTML='<span class="p" style="background:radial-gradient(circle at 35% 30%,#d9fff0,#6fe0b4 60%,#2f9c76)"></span>Todo al día<span class="f">›</span>';}}
 function abreAtn(){var it=atItems();
   if(!it.length){abrir('<div class="obra"><div class="gr">✅</div><h2>Todo al día</h2><p class="nota">No hay nada pendiente por ahora, maestra.</p><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg></div><button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');return;}
-  abrir('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});}
+  abrir('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':x.m?' data-mp="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-mp]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('perm');};});}
+function compCuenta(l){return (l||[]).filter(function(s){return s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='pendiente';}).length;}
+function traeComp(){
+  if(!B||!K||Date.now()-COMPT<60000)return;COMPT=Date.now();
+  llama('perm_mis').then(function(r){if(r&&r.ok){COMP=compCuenta(r.solicitudes);pintaAtn();}}).catch(function(){});}
 function traeAvisos(){
   if(!B||!K)return;
+  traeComp();
   llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
 function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
   return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
@@ -337,7 +350,7 @@ function armaPz(){
     mae.forEach(function(r){if(!(r.creado>a.creado))return;
       if(r.texto==='✓ Enterado: «'+c.k+'»'){if(!ent)ent=r;}
       else if(String(r.texto).indexOf(pre)===0)res.push(r);});
-    return {id:a.id,tit:c.tit,cu:c.cu,k:c.k,pre:pre,creado:a.creado,ent:ent,res:res};});}
+    return {id:a.id,tit:c.tit,cu:c.cu,k:c.k,pre:pre,creado:a.creado,lote:a.lote||'',ent:ent,res:res};});}
 function guardaBorr(){Array.prototype.forEach.call(sala.querySelectorAll('textarea[data-i]'),function(t){DRAFT[t.getAttribute('data-i')]=t.value;});}
 function quitaPz(o){MSG=MSG.filter(function(m){return m!==o;});}
 function mandaPz(x,texto,fin){
@@ -353,12 +366,19 @@ function refrescaPz(){var L=armaPz();PEND=L.filter(function(x){return !x.ent;}).
 function pintaPiz(){
   guardaBorr();
   var L=armaPz(),pend=L.filter(function(x){return !x.ent;}).length,rot=[-1.1,.9,-.6];PEND=pend;
+  var nG=L.filter(function(x){return x.lote&&!x.ent;}).length,nP=L.filter(function(x){return !x.lote&&!x.ent;}).length;
+  var LF=L.filter(function(x){return FILTRO==='todos'||(FILTRO==='gen'?!!x.lote:!x.lote);});
+  var le=LF.filter(function(x){return !!x.ent;}),oc={},hid=le.slice(PZ_RECIENTES);
+  hid.forEach(function(x){oc[x.id]=1;});var V=LF.filter(function(x){return !oc[x.id];});
   var h='<div class="pz-top"><button class="volv" id="pzAtras">‹ Sala</button></div><div class="pz-marco"><div class="pz-pizarra">'+
    '<h1 class="pz-tit">Pizarrón de avisos</h1><p class="pz-sub">de la Dirección para ti</p><div class="pz-raya"></div>'+
    '<div class="pz-pills"><span class="pz-pill">Por confirmar: <b>'+pend+'</b></span><span class="pz-pill">Total: '+L.length+'</span></div>';
+  if(L.length)h+='<div class="pz-filtros">'+[['todos','Todos',0],['gen','Generales',nG],['par','Particulares',nP]].map(function(f){
+    return '<button class="pz-f'+(FILTRO===f[0]?' on':'')+'" data-pz="f" data-f="'+f[0]+'">'+f[1]+(f[2]?'<i>'+f[2]+'</i>':'')+'</button>';}).join('')+'</div>';
   if(!L.length)h+='<p class="pz-vacio">Hoy no hay avisos. ¡Pizarrón limpio!</p>';
+  else if(!LF.length)h+='<p class="pz-vacio">No hay avisos '+(FILTRO==='gen'?'generales':'particulares')+'.</p>';
   else{h+='<div class="pz-lista">';
-    L.forEach(function(x,i){var id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?x.cu.slice(0,150).replace(/\s+\S*$/,'')+'…':x.cu;
+    var pintaN=function(x,i){var id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?x.cu.slice(0,150).replace(/\s+\S*$/,'')+'…':x.cu;
       h+='<div class="pz-nota '+(x.ent?'ya':'nueva')+'" style="--g:'+rot[i%3]+'deg"><span class="pz-tach"></span>'+
         '<div class="pz-cab"><b>Dirección</b><span>'+esc(horaPz(x.creado))+'</span></div>'+
         (x.tit?'<h3 class="pz-h">'+esc(x.tit)+'</h3>':'')+
@@ -367,13 +387,22 @@ function pintaPiz(){
         '<div class="pz-acc">'+(x.ent?'<span class="pz-ok">✓ Enterado · '+esc(horaPz(x.ent.creado))+'</span>':'<button class="pz-b ent" data-pz="ent" data-i="'+id+'">Enterado</button>')+
         '<button class="pz-b res" data-pz="res" data-i="'+id+'">Responder</button></div>'+
         (CAJA[x.id]?'<div class="pz-caja"><textarea data-i="'+id+'" maxlength="1500" placeholder="Escribe tu respuesta…">'+esc(DRAFT[x.id]||'')+'</textarea><button class="pz-b env" data-pz="env" data-i="'+id+'">Enviar respuesta</button></div>':'')+
-        x.res.map(function(r){return '<div class="pz-resp"><small>Tu respuesta · '+esc(horaPz(r.creado))+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join('')+'</div>';});
+        x.res.map(function(r){return '<div class="pz-resp"><small>Tu respuesta · '+esc(horaPz(r.creado))+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join('')+'</div>';};
+    V.forEach(pintaN);
+    if(hid.length){
+      h+='<button class="pz-viej" data-pz="viej">'+(VIEJOS?'Ocultar los anteriores':'Ver los anteriores ('+hid.length+')')+'</button>';
+      if(VIEJOS){var mes='';hid.forEach(function(x,i){var d=new Date(x.creado),m=isNaN(d)?'':PZ_MESES[d.getMonth()]+' '+d.getFullYear();
+        if(m!==mes){mes=m;h+='<div class="pz-mes">'+esc(m)+'</div>';}pintaN(x,i);});
+        h+='<button class="pz-viej" data-pz="viej">Ocultar los anteriores</button>';}
+    }
     h+='</div>';}
   h+='<div class="pz-repisa"></div></div></div>'+(PZNOTA?'<p class="nota" style="text-align:center;margin-top:12px">'+esc(PZNOTA)+'</p>':'');
   sala.innerHTML=h;
   $('pzAtras').onclick=function(){irA('sala');};
   sala.onclick=function(e){var b=e.target.closest?e.target.closest('[data-pz]'):null;if(!b)return;
     var id=b.getAttribute('data-i'),k=b.getAttribute('data-pz'),x=armaPz().filter(function(y){return String(y.id)===id;})[0];
+    if(k==='f'){FILTRO=b.getAttribute('data-f')||'todos';VIEJOS=false;pintaPiz();return;}
+    if(k==='viej'){VIEJOS=!VIEJOS;pintaPiz();return;}
     if(k==='mas'){OPEN[id]=!OPEN[id];pintaPiz();return;}
     if(k==='res'){CAJA[id]=!CAJA[id];pintaPiz();return;}
     if(!x||ENV)return;
@@ -417,7 +446,7 @@ function pmCarga(){
   if(!B||!K)return;PM.cargando=true;PM.err='';if(VISTA==='perm')pintaPerm();
   Promise.all([llama('perm_info'),llama('perm_mis')]).then(function(rs){PM.cargando=false;
     if(rs[0]&&rs[0].ok)PM.info=rs[0].info;else PM.err=(rs[0]&&rs[0].error)||'No pude leer tus datos.';
-    if(rs[1]&&rs[1].ok)PM.mis=rs[1].solicitudes||[];else if(!PM.err)PM.err=(rs[1]&&rs[1].error)||'No pude leer tus solicitudes.';
+    if(rs[1]&&rs[1].ok){PM.mis=rs[1].solicitudes||[];COMP=compCuenta(PM.mis);pintaAtn();}else if(!PM.err)PM.err=(rs[1]&&rs[1].error)||'No pude leer tus solicitudes.';
     if(VISTA==='perm')pintaPerm();}).catch(function(){PM.cargando=false;PM.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='perm')pintaPerm();});}
 function pmResumen(D){
   var i=D.i,tope=Number(i.tope)||9,us=Number(i.usados)||0,pct=Math.min(100,Math.round(us*100/tope));
@@ -432,6 +461,8 @@ function pmPedido(s){
     '<div class="fe">'+esc(pmTxt(fl))+' <span>('+(Number(s.dias)||fl.length)+(Number(s.dias)===1?' día':' días')+')</span></div>';
   if(s.tipo==='gestoria'&&(s.motivo||s.detalle))h+='<div class="mo">'+esc(s.detalle||s.motivo)+'</div>';
   if((s.estado==='rechazado'||s.estado==='revertido')&&s.motivo_resol)h+='<div class="rz"><b>Motivo:</b> '+esc(s.motivo_resol)+'</div>';
+  if(s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='pendiente')h+='<div class="pm-aviso" style="margin:10px 0 0">📎 <b>Comprobante pendiente:</b> entrega a la Dirección una copia del comprobante de tu trámite.</div>';
+  else if(s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='entregado')h+='<div style="margin-top:8px;font-size:.84rem;font-weight:700;color:#7ee6b9">✓ Comprobante entregado</div>';
   var ac='';
   if(s.estado==='pendiente')ac+='<button class="pm-b" data-pm="cancela" data-i="'+esc(s.id)+'">Cancelar solicitud</button>';
   if(s.estado==='aprobado'&&s.tiene_pdf)ac+='<button class="pm-b ok" data-pm="pdf" data-i="'+esc(s.id)+'">⬇ Descargar mi ficha</button>';
@@ -470,6 +501,12 @@ function pmMesVista(D){
     if(+dt===+D.hoy)cl+=' hoy';
     h+='<button class="'+cl+'" '+(dis?'disabled':'data-f="'+f+'"')+'>'+d+'</button>';}
   return h+'</div>';}
+function pmNuevo(tp){PM.atras=false;PM.tipo=tp;PM.paso=1;PM.ini=null;PM.n=1;PM.mes=null;PM.motivo='';PM.nota='';pintaPerm();try{window.scrollTo(0,0);}catch(e2){}}
+function pmAvisoGestoria(){
+  abrir('<div class="obra"><div class="gr">📄</div><h2>Antes de solicitar tu gestoría</h2>'+
+    '<p class="nota" style="font-size:.95rem;line-height:1.5">Para que pueda ser contada como gestoría, deberás presentar el comprobante realizado en Secretaría.</p></div>'+
+    '<button class="btn" id="gsOk">Entendido, continuar</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  var b=$('gsOk');if(b)b.onclick=function(){cerrar();pmNuevo('gestoria');};}
 function pmPedirVista(){
   var D=pmDatos(),i=D.i,es=PM.tipo==='permiso',max=pmMaxN(D);
   if(!PM.mes){var base=D.desde&&D.desde>D.hoy?D.desde:D.hoy;PM.mes=new Date(base.getFullYear(),base.getMonth(),1);}
@@ -493,6 +530,7 @@ function pmPedirVista(){
     var r=ok?pmRango(PM.ini,PM.n,D):null;
     if(r)h+='<div class="pm-resu">'+esc(pmTxt(r))+'<small>'+r.length+(r.length===1?' día':' días')+(es?' · te quedarán '+Math.max(0,D.rest-r.length)+' de tus permisos':'')+'</small></div>';
     else h+='<div class="pm-aviso">Con ese primer día no alcanzan los días libres. Prueba con otro día.</div>';
+    if(!es)h+='<div class="pm-aviso" style="margin:12px 0 0">📄 Recuerda: para que cuente como gestoría, deberás presentar el comprobante realizado en Secretaría.</div>';
     if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea>';
     var listo=!!r&&(es||PM.motivo.trim().length>=5);
     h+='<button class="btn" id="pmEnv" style="margin-top:14px"'+((listo&&!PM.envio)?'':' disabled')+'>'+(PM.envio?'Enviando…':'Enviar solicitud')+'</button>'+
@@ -517,7 +555,7 @@ function pintaPerm(){
     if(f){PM.ini=f;var D=pmDatos();if(!pmNOk(f,PM.n,D))PM.n=1;pintaPerm();return;}
     if(n){PM.n=+n;pintaPerm();return;}
     if(a==='atras'){PM.atras=!PM.atras;PM.ini=null;PM.n=1;pintaPerm();return;}
-    if(a==='nuevo'){PM.atras=false;PM.tipo=t.getAttribute('data-t');PM.paso=1;PM.ini=null;PM.n=1;PM.mes=null;PM.motivo='';PM.nota='';pintaPerm();try{window.scrollTo(0,0);}catch(e2){}return;}
+    if(a==='nuevo'){var tp=t.getAttribute('data-t');if(tp==='gestoria'){pmAvisoGestoria();return;}pmNuevo(tp);return;}
     if(a==='cancela'){pmCancela(t.getAttribute('data-i'));return;}
     if(a==='pdf'){pmPdf(t.getAttribute('data-i'),t);return;}
   };}
