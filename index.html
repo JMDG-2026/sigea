@@ -196,6 +196,12 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pz-f i{font-style:normal;margin-left:6px;background:#e8335a;color:#fff;border-radius:99px;padding:1px 7px;font-size:.72rem}
 .pz-repisa{height:12px;margin:22px -4px 0;border-radius:3px;background:linear-gradient(180deg,#a8743a,#6b4220);box-shadow:0 5px 8px rgba(0,0,0,.45)}
 .pz-vacio{text-align:center;font-family:"Segoe Print","Bradley Hand",cursive;color:#e6efe8;padding:50px 10px}
+/* --- EL CESTO DEL PIZARRON (Ladrillo 512) --- */
+.pz-pills{align-items:center}
+.pz-ic{position:relative;width:34px;height:34px;border-radius:50%;border:1px solid rgba(245,241,227,.5);background:rgba(255,255,255,.07);color:#f5f1e3;font-size:1rem;line-height:1;cursor:pointer;padding:0}
+.pz-ic i{position:absolute;top:-6px;right:-6px;font-style:normal;background:#e8335a;color:#fff;border-radius:99px;padding:1px 6px;font-size:.66rem;font-weight:800}
+.pz-chev{position:absolute;top:4px;right:6px;width:36px;height:32px;border:0;background:none;font:inherit;font-weight:800;font-size:1.15rem;color:#6d5a2a;cursor:pointer}
+.pz-nota .pz-cab{padding-right:30px}
 /* --- MIS PERMISOS (Ladrillo 498) --- */
 .pm-card{background:rgba(255,255,255,.07);border:1px solid var(--borde);border-radius:20px;padding:16px;margin-top:14px}
 .pm-res h2{margin:0 0 4px;font-size:1.05rem}.pm-res .sub{margin:0 0 10px;color:var(--suave);font-size:.85rem}
@@ -323,7 +329,7 @@ function enObra(id){var o=OBRA[id];if(!o)return;
   abrir('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
   '<p class="nota"><em style="font-style:normal;color:var(--oro)">Paso a paso</em>: pronto se abre.</p></div><button class="btn sec2" onclick="cerrarSala()">Volver a la sala</button>');}
-var AT=[],AVN=0,HR='',QQ=null,MSG=[],PEND=0,COMP=0,COMPT=0,OPEN={},CAJA={},DRAFT={},ENV=false,PZNOTA='',VIEJOS=false,FILTRO='todos',PZ_RECIENTES=5,
+var AT=[],AVN=0,HR='',QQ=null,MSG=[],PEND=0,COMP=0,COMPT=0,OPEN={},CAJA={},DRAFT={},ENV=false,PZNOTA='',CESTOV=false,VIEJOS=false,FILTRO='todos',PZ_RECIENTES=5,
 PZ_MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function atItems(){
   var it=[],q=QQ||{};
@@ -352,14 +358,14 @@ function clavePz(a){var t=String(a.texto||''),i=t.indexOf('\n'),tit=i>=0?t.slice
 function horaPz(iso){var d=new Date(iso);if(isNaN(d))return '';var m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return d.getDate()+' '+m[d.getMonth()]+' · '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
 function armaPz(){
   var dir=[],mae=[];
-  MSG.forEach(function(m){if(m.borrado)return;if(m.de==='director')dir.push(m);else if(m.de==='maestro')mae.push(m);});
+  MSG.forEach(function(m){if(m.borrado)return;if(m.de==='director'){if(m.cesto==='vaciado')return;dir.push(m);}else if(m.de==='maestro')mae.push(m);});
   dir.sort(function(a,b){return a.creado<b.creado?1:(a.creado>b.creado?-1:0);});
   mae.sort(function(a,b){return a.creado<b.creado?-1:(a.creado>b.creado?1:0);});
   return dir.map(function(a){var c=clavePz(a),ent=null,res=[],pre='Re: «'+c.k+'»: ';
     mae.forEach(function(r){if(!(r.creado>a.creado))return;
       if(r.texto==='✓ Enterado: «'+c.k+'»'){if(!ent)ent=r;}
       else if(String(r.texto).indexOf(pre)===0)res.push(r);});
-    return {id:a.id,tit:c.tit,cu:c.cu,k:c.k,pre:pre,creado:a.creado,lote:a.lote||'',ent:ent,res:res};});}
+    return {id:a.id,tit:c.tit,cu:c.cu,k:c.k,pre:pre,creado:a.creado,lote:a.lote||'',ent:ent,res:res,ces:a.cesto==='papelera'};});}
 function guardaBorr(){Array.prototype.forEach.call(sala.querySelectorAll('textarea[data-i]'),function(t){DRAFT[t.getAttribute('data-i')]=t.value;});}
 function quitaPz(o){MSG=MSG.filter(function(m){return m!==o;});}
 function mandaPz(x,texto,fin){
@@ -372,53 +378,129 @@ function mandaPz(x,texto,fin){
   .catch(function(){ENV=false;quitaPz(opt);PZNOTA='Sin señal: no se pudo enviar. Intenta otra vez.';pintaPiz();});}
 function pintaCofrePz(){var e=$('cPizEt');if(e)e.textContent=PEND?PEND+' por confirmar':'Al día';}
 function refrescaPz(){var L=armaPz();PEND=L.filter(function(x){return !x.ent;}).length;pintaAtn();pintaCofrePz();if(VISTA==='piz')pintaPiz();}
+function pzNota(x,i,enCesto){
+  var rot=[-1.1,.9,-.6],id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?x.cu.slice(0,150).replace(/\s+\S*$/,'')+'…':x.cu;
+  return '<div class="pz-nota '+(x.ent?'ya':'nueva')+'" style="--g:'+rot[i%3]+'deg"><span class="pz-tach"></span>'+
+    '<button class="pz-chev" data-pz="menu" data-i="'+id+'" aria-label="Más opciones">⌄</button>'+
+    '<div class="pz-cab"><b>Dirección</b><span>'+esc(horaPz(x.creado))+'</span></div>'+
+    (x.tit?'<h3 class="pz-h">'+esc(x.tit)+'</h3>':'')+
+    '<p class="pz-p">'+esc(cu).replace(/\n/g,'<br>')+'</p>'+
+    (largo?'<button class="pz-leer" data-pz="mas" data-i="'+id+'">'+(ab?'Leer menos':'Leer más')+'</button>':'')+
+    '<div class="pz-acc">'+(x.ent?'<span class="pz-ok">✓ Enterado · '+esc(horaPz(x.ent.creado))+'</span>':'<button class="pz-b ent" data-pz="ent" data-i="'+id+'">Enterado</button>')+'</div>'+
+    (enCesto?'':(CAJA[x.id]?'<div class="pz-caja"><textarea data-i="'+id+'" maxlength="1500" placeholder="Escribe tu respuesta…">'+esc(DRAFT[x.id]||'')+'</textarea><button class="pz-b env" data-pz="env" data-i="'+id+'">Enviar respuesta</button></div>':'')+
+      x.res.map(function(r){return '<div class="pz-resp"><small>Tu respuesta · '+esc(horaPz(r.creado))+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join(''))+'</div>';}
 function pintaPiz(){
   guardaBorr();
-  var L=armaPz(),pend=L.filter(function(x){return !x.ent;}).length,rot=[-1.1,.9,-.6];PEND=pend;
+  var T=armaPz(),L=T.filter(function(x){return !x.ces;}),CS=T.filter(function(x){return x.ces;}),
+    pend=L.filter(function(x){return !x.ent;}).length;PEND=pend;
+  if(CESTOV)return pintaCesto(CS);
   var nG=L.filter(function(x){return x.lote&&!x.ent;}).length,nP=L.filter(function(x){return !x.lote&&!x.ent;}).length;
   var LF=L.filter(function(x){return FILTRO==='todos'||(FILTRO==='gen'?!!x.lote:!x.lote);});
   var le=LF.filter(function(x){return !!x.ent;}),oc={},hid=le.slice(PZ_RECIENTES);
   hid.forEach(function(x){oc[x.id]=1;});var V=LF.filter(function(x){return !oc[x.id];});
   var h='<div class="pz-top"><button class="volv" id="pzAtras">‹ Sala</button></div><div class="pz-marco"><div class="pz-pizarra">'+
    '<h1 class="pz-tit">Pizarrón de avisos</h1><p class="pz-sub">de la Dirección para ti</p><div class="pz-raya"></div>'+
-   '<div class="pz-pills"><span class="pz-pill">Por confirmar: <b>'+pend+'</b></span><span class="pz-pill">Total: '+L.length+'</span></div>';
+   '<div class="pz-pills"><button class="pz-ic" data-pz="barrer" aria-label="Mandar al cesto los avisos confirmados" title="Mandar al cesto los avisos confirmados">🧹</button>'+
+   '<span class="pz-pill">Por confirmar: <b>'+pend+'</b></span><span class="pz-pill">Total: '+L.length+'</span>'+
+   '<button class="pz-ic" data-pz="cesto" aria-label="Abrir el cesto" title="Abrir el cesto">🧺'+(CS.length?'<i>'+CS.length+'</i>':'')+'</button></div>';
   if(L.length)h+='<div class="pz-filtros">'+[['todos','Todos',0],['gen','Generales',nG],['par','Particulares',nP]].map(function(f){
     return '<button class="pz-f'+(FILTRO===f[0]?' on':'')+'" data-pz="f" data-f="'+f[0]+'">'+f[1]+(f[2]?'<i>'+f[2]+'</i>':'')+'</button>';}).join('')+'</div>';
   if(!L.length)h+='<p class="pz-vacio">Hoy no hay avisos. ¡Pizarrón limpio!</p>';
   else if(!LF.length)h+='<p class="pz-vacio">No hay avisos '+(FILTRO==='gen'?'generales':'particulares')+'.</p>';
   else{h+='<div class="pz-lista">';
-    var pintaN=function(x,i){var id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?x.cu.slice(0,150).replace(/\s+\S*$/,'')+'…':x.cu;
-      h+='<div class="pz-nota '+(x.ent?'ya':'nueva')+'" style="--g:'+rot[i%3]+'deg"><span class="pz-tach"></span>'+
-        '<div class="pz-cab"><b>Dirección</b><span>'+esc(horaPz(x.creado))+'</span></div>'+
-        (x.tit?'<h3 class="pz-h">'+esc(x.tit)+'</h3>':'')+
-        '<p class="pz-p">'+esc(cu).replace(/\n/g,'<br>')+'</p>'+
-        (largo?'<button class="pz-leer" data-pz="mas" data-i="'+id+'">'+(ab?'Leer menos':'Leer más')+'</button>':'')+
-        '<div class="pz-acc">'+(x.ent?'<span class="pz-ok">✓ Enterado · '+esc(horaPz(x.ent.creado))+'</span>':'<button class="pz-b ent" data-pz="ent" data-i="'+id+'">Enterado</button>')+
-        '<button class="pz-b res" data-pz="res" data-i="'+id+'">Responder</button></div>'+
-        (CAJA[x.id]?'<div class="pz-caja"><textarea data-i="'+id+'" maxlength="1500" placeholder="Escribe tu respuesta…">'+esc(DRAFT[x.id]||'')+'</textarea><button class="pz-b env" data-pz="env" data-i="'+id+'">Enviar respuesta</button></div>':'')+
-        x.res.map(function(r){return '<div class="pz-resp"><small>Tu respuesta · '+esc(horaPz(r.creado))+'</small>'+esc(String(r.texto).slice(x.pre.length))+'</div>';}).join('')+'</div>';};
-    V.forEach(pintaN);
+    V.forEach(function(x,i){h+=pzNota(x,i,false);});
     if(hid.length){
       h+='<button class="pz-viej" data-pz="viej">'+(VIEJOS?'Ocultar los anteriores':'Ver los anteriores ('+hid.length+')')+'</button>';
       if(VIEJOS){var mes='';hid.forEach(function(x,i){var d=new Date(x.creado),m=isNaN(d)?'':PZ_MESES[d.getMonth()]+' '+d.getFullYear();
-        if(m!==mes){mes=m;h+='<div class="pz-mes">'+esc(m)+'</div>';}pintaN(x,i);});
+        if(m!==mes){mes=m;h+='<div class="pz-mes">'+esc(m)+'</div>';}h+=pzNota(x,i,false);});
         h+='<button class="pz-viej" data-pz="viej">Ocultar los anteriores</button>';}
     }
     h+='</div>';}
   h+='<div class="pz-repisa"></div></div></div>'+(PZNOTA?'<p class="nota" style="text-align:center;margin-top:12px">'+esc(PZNOTA)+'</p>':'');
   sala.innerHTML=h;
   $('pzAtras').onclick=function(){irA('sala');};
-  sala.onclick=function(e){var b=e.target.closest?e.target.closest('[data-pz]'):null;if(!b)return;
-    var id=b.getAttribute('data-i'),k=b.getAttribute('data-pz'),x=armaPz().filter(function(y){return String(y.id)===id;})[0];
-    if(k==='f'){FILTRO=b.getAttribute('data-f')||'todos';VIEJOS=false;pintaPiz();return;}
-    if(k==='viej'){VIEJOS=!VIEJOS;pintaPiz();return;}
-    if(k==='mas'){OPEN[id]=!OPEN[id];pintaPiz();return;}
-    if(k==='res'){CAJA[id]=!CAJA[id];pintaPiz();return;}
-    if(!x||ENV)return;
-    if(k==='ent')mandaPz(x,'✓ Enterado: «'+x.k+'»');
-    if(k==='env'){var t=sala.querySelector('textarea[data-i="'+id+'"]'),v=t?t.value.trim():'';if(!v)return;
-      mandaPz(x,(x.pre+v).slice(0,1900),function(){CAJA[id]=false;DRAFT[id]='';});}
-  };}
+  sala.onclick=pzClic;}
+function pintaCesto(CS){
+  var h='<div class="pz-top"><button class="volv" id="pzAtras">‹ Pizarrón</button></div><div class="pz-marco"><div class="pz-pizarra">'+
+   '<h1 class="pz-tit">🧺 Cesto</h1><p class="pz-sub">avisos que quitaste de tu Pizarrón</p><div class="pz-raya"></div>';
+  if(!CS.length)h+='<p class="pz-vacio">El cesto está vacío.</p>';
+  else{h+='<div class="pz-lista">';CS.forEach(function(x,i){h+=pzNota(x,i,true);});
+    h+='</div><div style="text-align:center;margin-top:22px"><button class="pz-viej" data-pz="vaciar">Vaciar el cesto</button></div>';}
+  h+='<div class="pz-repisa"></div></div></div>'+(PZNOTA?'<p class="nota" style="text-align:center;margin-top:12px">'+esc(PZNOTA)+'</p>':'');
+  sala.innerHTML=h;
+  $('pzAtras').onclick=function(){CESTOV=false;PZNOTA='';pintaPiz();};
+  sala.onclick=pzClic;}
+function pzClic(e){var b=e.target.closest?e.target.closest('[data-pz]'):null;if(!b)return;
+  var id=b.getAttribute('data-i'),k=b.getAttribute('data-pz'),x=armaPz().filter(function(y){return String(y.id)===id;})[0];
+  if(k==='f'){FILTRO=b.getAttribute('data-f')||'todos';VIEJOS=false;pintaPiz();return;}
+  if(k==='viej'){VIEJOS=!VIEJOS;pintaPiz();return;}
+  if(k==='mas'){OPEN[id]=!OPEN[id];pintaPiz();return;}
+  if(k==='barrer'){pzBarrer();return;}
+  if(k==='cesto'){CESTOV=true;PZNOTA='';pintaPiz();try{window.scrollTo(0,0);}catch(z){}return;}
+  if(k==='vaciar'){pzVaciar();return;}
+  if(k==='menu'){pzMenu(id);return;}
+  if(!x||ENV)return;
+  if(k==='ent')mandaPz(x,'✓ Enterado: «'+x.k+'»');
+  if(k==='env'){var t=sala.querySelector('textarea[data-i="'+id+'"]'),v=t?t.value.trim():'';if(!v)return;
+    mandaPz(x,(x.pre+v).slice(0,1900),function(){CAJA[id]=false;DRAFT[id]='';});}
+}
+/* ---- el cesto: ventanitas y orden a la bodega ---- */
+function pzPregunta(ic,tit,tx,si,fn){
+  abrir('<div class="obra"><div class="gr">'+ic+'</div><h2>'+tit+'</h2><p class="nota" style="font-size:.95rem;line-height:1.5">'+tx+'</p></div>'+
+    '<button class="btn" id="pzSi">'+si+'</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  hoja.classList.add('cen');
+  var b=$('pzSi');if(b)b.onclick=function(){b.disabled=true;cerrar();fn();};}
+function pzAviso(ic,tit,tx){
+  abrir('<div class="obra"><div class="gr">'+ic+'</div><h2>'+tit+'</h2><p class="nota" style="font-size:.95rem;line-height:1.5">'+tx+'</p></div><button class="btn" onclick="cerrarSala()">Entendido</button>');
+  hoja.classList.add('cen');}
+function pzCesto(acc,ids){
+  if(!B||!K||!ids.length)return;
+  PZNOTA='';
+  llama('aviso_cesto',{accion:acc,ids:ids}).then(function(r){
+    if(!(r&&r.ok)){PZNOTA='No se pudo: '+((r&&r.error)||'intenta otra vez');pintaPiz();return;}
+    var ok=r.ids_ok||[],mapa={};ok.forEach(function(i){mapa[i]=1;});
+    MSG.forEach(function(m){if(m.de==='director'&&mapa[m.id]){m.cesto=acc==='tirar'?'papelera':(acc==='restaurar'?'':'vaciado');if(acc==='vaciar')m.texto='';}});
+    try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(z){}
+    if(ok.length<ids.length)PZNOTA=acc==='tirar'?'Algunos avisos no se mandaron al cesto porque todavía no los confirmas.':'Algunos avisos no se pudieron cambiar. Intenta otra vez.';
+    refrescaPz();traeAvisos();})
+  .catch(function(){PZNOTA='Sin señal: no se pudo hacer el cambio. Intenta otra vez.';pintaPiz();});}
+function pzBarrer(){
+  var ids=armaPz().filter(function(x){return !x.ces&&x.ent;}).map(function(x){return x.id;}),n=ids.length;
+  if(!n){pzAviso('🧹','Nada que mandar al cesto','No hay avisos confirmados. Los que faltan por confirmar se quedan en tu Pizarrón.');return;}
+  pzPregunta('🧹','¿Mandar al cesto los avisos confirmados?',(n===1?'Se mandará <b>1 aviso</b>.':'Se mandarán <b>'+n+' avisos</b>.')+' Los que faltan por confirmar se quedan en tu Pizarrón. Los puedes recuperar desde el cesto 🧺.','Sí, mandar al cesto',function(){pzCesto('tirar',ids);});}
+function pzEliminar(id){
+  pzPregunta('🗑️','¿Mandar este aviso al cesto?','Dejará de verse en tu Pizarrón. Lo puedes recuperar cuando quieras desde el cesto 🧺.','Sí, mandar al cesto',function(){pzCesto('tirar',[id]);});}
+function pzRestaurar(id){
+  pzPregunta('↩','¿Restaurar este aviso?','Volverá a tu Pizarrón tal como estaba, con su «Enterado» y tus respuestas.','Sí, restaurar',function(){pzCesto('restaurar',[id]);});}
+function pzVaciar(){
+  var ids=armaPz().filter(function(x){return x.ces;}).map(function(x){return x.id;});if(!ids.length)return;
+  pzPregunta('🧺','¿Vaciar el cesto?','Esto no se puede deshacer: ya no podrás recuperar estos avisos. La Dirección conserva su historial.','Sí, vaciar el cesto',function(){pzCesto('vaciar',ids);});}
+function pzCopiaViejo(t,ok){
+  try{var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);ok();}
+  catch(z){PZNOTA='No se pudo copiar.';pintaPiz();}}
+function pzCopia(x){
+  var t=(x.tit?x.tit+'\n':'')+x.cu,ok=function(){PZNOTA='Aviso copiado.';pintaPiz();setTimeout(function(){if(PZNOTA==='Aviso copiado.'){PZNOTA='';if(VISTA==='piz')pintaPiz();}},2500);};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){pzCopiaViejo(t,ok);});return;}}catch(z){}
+  pzCopiaViejo(t,ok);}
+function pzMenu(id){
+  var x=armaPz().filter(function(y){return String(y.id)===String(id);})[0];if(!x)return;
+  var h;
+  if(x.ces){
+    h='<div class="obra"><div class="gr">🧺</div><h2>'+esc(x.tit||'Aviso')+'</h2><p class="nota">Este aviso está en el cesto.</p></div>'+
+      '<button class="btn" id="pzMs">↩ Restaurar</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>';
+  }else{
+    var puede=!!x.ent;
+    h='<div class="obra"><div class="gr">📌</div><h2>'+esc(x.tit||'Aviso')+'</h2></div>'+
+      '<button class="btn sec2" id="pzMr">↩ Responder</button><button class="btn sec2" id="pzMc">⧉ Copiar</button>'+
+      '<button class="btn sec2" id="pzMe"'+(puede?' style="color:#ff8aa3"':' disabled')+'>🗑️ Eliminar</button>'+
+      (puede?'':'<p class="nota" style="text-align:center;margin:8px 0 0">Para quitarlo, primero confírmalo con «Enterado».</p>')+
+      '<button class="btn sec2" onclick="cerrarSala()">Cancelar</button>';
+  }
+  abrir(h);hoja.classList.add('cen');
+  var s=$('pzMs');if(s)s.onclick=function(){cerrar();pzRestaurar(x.id);};
+  var r=$('pzMr');if(r)r.onclick=function(){cerrar();CAJA[x.id]=true;pintaPiz();var t=sala.querySelector('textarea[data-i="'+x.id+'"]');if(t){try{t.focus();}catch(z){}}};
+  var c=$('pzMc');if(c)c.onclick=function(){cerrar();pzCopia(x);};
+  var e=$('pzMe');if(e&&!e.disabled)e.onclick=function(){cerrar();pzEliminar(x.id);};}
 /* ---- MIS PERMISOS (Ladrillo 498): el calendario, el historial, cancelar y bajar la ficha ---- */
 var PM={sol:false,ft:'todas',fe:'',vi:false,nv:[],info:null,mis:null,cargando:false,err:'',nota:'',paso:0,tipo:'permiso',mes:null,ini:null,n:1,motivo:'',envio:false,atras:false};
 var PM_MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -682,7 +764,7 @@ function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;marca(v==='sala'||v==='piz'||v==='perm');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
