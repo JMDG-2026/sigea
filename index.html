@@ -105,6 +105,8 @@ body{
   background:linear-gradient(180deg,#152a57,#0d1c3d);border:1px solid var(--borde);border-bottom:0;border-radius:26px 26px 0 0;padding:10px 18px 26px;
   transition:transform .28s cubic-bezier(.2,.8,.2,1)}
 .hoja.on{transform:translate(-50%,0)}
+.hoja.cen{bottom:auto;top:50%;transform:translate(-50%,-44%);opacity:0;pointer-events:none;border-bottom:1px solid var(--borde);border-radius:26px;padding-bottom:22px;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .28s}
+.hoja.cen.on{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}
 .asa{width:46px;height:5px;border-radius:9px;background:rgba(255,255,255,.28);margin:0 auto 12px}
 .hoja h2{margin:0 0 4px;font-size:1.2rem}.hoja .sub{color:var(--suave);font-size:.85rem;margin:0 0 14px}
 .btn{display:block;width:100%;border:0;border-radius:16px;padding:14px;font:inherit;font-weight:800;font-size:1rem;color:#2b1c00;cursor:pointer;
@@ -287,7 +289,7 @@ function leeCache(){try{return JSON.parse(localStorage.getItem(CK)).q||null;}cat
 function guardaCache(q){try{localStorage.setItem(CK,JSON.stringify({q:q}));}catch(e){}}
 function borraCache(){try{localStorage.removeItem(CK);}catch(e){}}
 var hoja=$('hoja'),fondo=$('fondo'),cont=$('cont'),sala=$('sala');
-function abrir(h){cont.innerHTML=h;hoja.classList.add('on');fondo.classList.add('on')}
+function abrir(h){cont.innerHTML=h;hoja.classList.remove('cen');hoja.classList.add('on');fondo.classList.add('on')}
 function cerrar(){hoja.classList.remove('on');fondo.classList.remove('on')}
 fondo.onclick=cerrar;window.cerrarSala=cerrar;
 function estado(ico,tit,msg,reint){
@@ -504,8 +506,9 @@ function pmMesVista(D){
 function pmNuevo(tp){PM.atras=false;PM.tipo=tp;PM.paso=1;PM.ini=null;PM.n=1;PM.mes=null;PM.motivo='';PM.nota='';pintaPerm();try{window.scrollTo(0,0);}catch(e2){}}
 function pmAvisoGestoria(){
   abrir('<div class="obra"><div class="gr">📄</div><h2>Antes de solicitar tu gestoría</h2>'+
-    '<p class="nota" style="font-size:.95rem;line-height:1.5">Para que pueda ser contada como gestoría, deberás presentar el comprobante realizado en Secretaría.</p></div>'+
+    '<p class="nota" style="font-size:.95rem;line-height:1.5">Para que tu solicitud cuente como gestoría, deberás entregar a la Dirección una copia del comprobante del trámite realizado en la Secretaría de Educación o en sus dependencias.</p></div>'+
     '<button class="btn" id="gsOk">Entendido, continuar</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  hoja.classList.add('cen');
   var b=$('gsOk');if(b)b.onclick=function(){cerrar();pmNuevo('gestoria');};}
 function pmPedirVista(){
   var D=pmDatos(),i=D.i,es=PM.tipo==='permiso',max=pmMaxN(D);
@@ -530,7 +533,7 @@ function pmPedirVista(){
     var r=ok?pmRango(PM.ini,PM.n,D):null;
     if(r)h+='<div class="pm-resu">'+esc(pmTxt(r))+'<small>'+r.length+(r.length===1?' día':' días')+(es?' · te quedarán '+Math.max(0,D.rest-r.length)+' de tus permisos':'')+'</small></div>';
     else h+='<div class="pm-aviso">Con ese primer día no alcanzan los días libres. Prueba con otro día.</div>';
-    if(!es)h+='<div class="pm-aviso" style="margin:12px 0 0">📄 Recuerda: para que cuente como gestoría, deberás presentar el comprobante realizado en Secretaría.</div>';
+    if(!es)h+='<div class="pm-aviso" style="margin:12px 0 0">📄 Recuerda: entrega a la Dirección una copia del comprobante de tu trámite en la Secretaría de Educación o en sus dependencias.</div>';
     if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea>';
     var listo=!!r&&(es||PM.motivo.trim().length>=5);
     h+='<button class="btn" id="pmEnv" style="margin-top:14px"'+((listo&&!PM.envio)?'':' disabled')+'>'+(PM.envio?'Enviando…':'Enviar solicitud')+'</button>'+
