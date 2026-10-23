@@ -188,6 +188,60 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pz-caja textarea{width:100%;min-height:62px;border-radius:8px;border:1px solid rgba(90,74,30,.4);padding:8px;font:inherit;font-size:.9rem;background:#fffdf3;color:#35290f}
 .pz-repisa{height:12px;margin:22px -4px 0;border-radius:3px;background:linear-gradient(180deg,#a8743a,#6b4220);box-shadow:0 5px 8px rgba(0,0,0,.45)}
 .pz-vacio{text-align:center;font-family:"Segoe Print","Bradley Hand",cursive;color:#e6efe8;padding:50px 10px}
+/* --- MIS PERMISOS (Ladrillo 498) --- */
+.pm-card{background:rgba(255,255,255,.07);border:1px solid var(--borde);border-radius:20px;padding:16px;margin-top:14px}
+.pm-res h2{margin:0 0 4px;font-size:1.05rem}.pm-res .sub{margin:0 0 10px;color:var(--suave);font-size:.85rem}
+.pm-barra{height:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.pm-barra i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--oro2),var(--oro))}
+.pm-barra.rojo i{background:linear-gradient(90deg,#9c1236,#e0264d)}
+.pm-cnt{display:flex;justify-content:space-between;font-size:.8rem;color:var(--suave);margin-top:6px}
+.pm-bts{display:grid;gap:10px;margin-top:14px}
+.pm-bt{display:flex;align-items:center;gap:12px;border:0;border-radius:18px;padding:15px 16px;font:inherit;font-weight:800;font-size:1.02rem;color:#fff;text-align:left;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.3)}
+.pm-bt .i{font-size:1.7rem}.pm-bt small{display:block;font-weight:600;font-size:.76rem;opacity:.9;margin-top:2px}
+.pm-bt.a{background:linear-gradient(145deg,#ffab4a,var(--nar) 45%,var(--nar2))}
+.pm-bt.b{background:linear-gradient(145deg,#a98aff,var(--mor) 45%,var(--mor2))}
+.pm-bt[disabled]{opacity:.42;cursor:not-allowed;box-shadow:none}
+.pm-aviso{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(226,187,98,.14);border:1px solid rgba(226,187,98,.45);color:#f1deaa;font-size:.88rem;line-height:1.4}
+.pm-sec{margin:22px 4px 8px;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave)}
+.pm-ped{background:rgba(255,255,255,.06);border:1px solid var(--borde);border-radius:16px;padding:13px 14px;margin:0 0 10px}
+.pm-ped .cab{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.pm-ped .tp{font-size:.74rem;color:var(--suave);letter-spacing:.04em}
+.pm-ped .fe{font-weight:800;font-size:.98rem;line-height:1.3}.pm-ped .fe span{font-weight:600;color:var(--suave);font-size:.82rem}
+.pm-ped .mo{margin-top:4px;font-size:.84rem;color:var(--suave);line-height:1.35}
+.pm-ped .rz{margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.25);font-size:.84rem;line-height:1.35}
+.pm-ped .ac{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.pm-chip{font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.pm-chip.pendiente{background:#e2bb62;color:#2b1c00}.pm-chip.aprobado{background:#1fa673;color:#04241a}
+.pm-chip.rechazado{background:#e0264d;color:#fff}.pm-chip.revertido,.pm-chip.cancelado{background:rgba(255,255,255,.2);color:#e8e8f0}
+.pm-b{height:38px;padding:0 15px;border-radius:11px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:800;font-size:.85rem;cursor:pointer}
+.pm-b.ok{border:0;background:linear-gradient(145deg,#3fd197,var(--ver) 50%,var(--ver2));color:#04241a}
+.pm-vacio{text-align:center;color:var(--suave);padding:22px 8px;font-size:.9rem}
+.pm-cal h3{margin:0 0 10px;font-size:1.02rem;text-align:center;text-transform:capitalize}
+.pm-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pm-nav button{width:40px;height:40px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;font-size:1.3rem;cursor:pointer}
+.pm-nav button[disabled]{opacity:.3}
+.pm-nav b{font-size:1.02rem;text-transform:capitalize}
+.pm-sem,.pm-dias{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.pm-sem span{text-align:center;font-size:.7rem;color:var(--suave);padding:2px 0 6px;text-transform:uppercase}
+.pm-d{aspect-ratio:1;border-radius:12px;border:1px solid transparent;background:rgba(255,255,255,.13);color:#fff;font:inherit;font-weight:800;font-size:.95rem;cursor:pointer;position:relative;padding:0}
+.pm-d.v{background:transparent;border:0;cursor:default}
+.pm-d.no{background:rgba(0,0,0,.42);color:#6a6178;cursor:not-allowed;font-weight:600}
+.pm-d.esp::after{content:"★";position:absolute;top:2px;right:4px;font-size:.62rem;color:var(--oro)}
+.pm-d.esp{border:1px dashed var(--oro)}
+.pm-d.oc{background:rgba(31,166,115,.28);color:#a9f0cf;border:1px solid rgba(31,166,115,.6);cursor:not-allowed}
+.pm-d.pe{background:rgba(226,187,98,.22);color:#f1deaa;border:1px solid rgba(226,187,98,.55);cursor:not-allowed}
+.pm-d.sel{background:linear-gradient(145deg,#f3d388,var(--oro) 50%,var(--oro2));color:#2b1c00;border-color:#fff2c4;box-shadow:0 4px 12px rgba(226,187,98,.45)}
+.pm-d.hoy{box-shadow:0 0 0 2px rgba(31,122,224,.9)}
+.pm-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.74rem;color:var(--suave)}
+.pm-leyenda i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.pm-n{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
+.pm-n button{min-width:54px;height:44px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:800;font-size:1rem;cursor:pointer}
+.pm-n button.on{background:linear-gradient(145deg,#f3d388,var(--oro) 50%,var(--oro2));color:#2b1c00;border-color:#fff2c4}
+.pm-n button[disabled]{opacity:.3;cursor:not-allowed}
+.pm-resu{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(226,187,98,.14);border:1px solid rgba(226,187,98,.45);font-weight:800;line-height:1.35}
+.pm-resu small{display:block;font-weight:600;color:var(--suave);margin-top:3px}
+.pm-cal textarea{width:100%;min-height:74px;margin-top:12px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;font:inherit;padding:10px}
+.pm-cal label{display:block;margin-top:12px;font-size:.84rem;color:var(--suave)}
 </style>
 </head>
 <body>
@@ -327,6 +381,171 @@ function pintaPiz(){
     if(k==='env'){var t=sala.querySelector('textarea[data-i="'+id+'"]'),v=t?t.value.trim():'';if(!v)return;
       mandaPz(x,(x.pre+v).slice(0,1900),function(){CAJA[id]=false;DRAFT[id]='';});}
   };}
+/* ---- MIS PERMISOS (Ladrillo 498): el calendario, el historial, cancelar y bajar la ficha ---- */
+var PM={info:null,mis:null,cargando:false,err:'',nota:'',paso:0,tipo:'permiso',mes:null,ini:null,n:1,motivo:'',envio:false,atras:false};
+var PM_MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function pmD(f){var p=String(f).slice(0,10).split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+function pmIso(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function pmSuma(d,n){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);return x;}
+function pmTxt(fl){var g=[];fl.slice().sort().forEach(function(f){var d=pmD(f),m=d.getMonth(),y=d.getFullYear();
+    if(g.length&&g[g.length-1].m===m&&g[g.length-1].y===y)g[g.length-1].d.push(d.getDate());else g.push({m:m,y:y,d:[d.getDate()]});});
+  return g.map(function(x){var ds=x.d.length>1?x.d.slice(0,-1).join(', ')+' y '+x.d[x.d.length-1]:String(x.d[0]);return ds+' de '+PM_MES[x.m]+' de '+x.y;}).join(' y ');}
+function pmDatos(){
+  var i=PM.info||{},inh={},esp={},tom={},oc={},pe={},hoy=i.hoy?pmD(i.hoy):new Date();
+  hoy=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate());
+  var hoyReal=new Date();hoyReal=new Date(hoyReal.getFullYear(),hoyReal.getMonth(),hoyReal.getDate());if(hoyReal>hoy)hoy=hoyReal;
+  (i.inhabiles||[]).forEach(function(f){inh[f]=1;});(i.especiales||[]).forEach(function(e){esp[e.f]=e.r||'CTE';});(i.tomados||[]).forEach(function(f){tom[f]=1;});
+  var pendDias=0;
+  (PM.mis||[]).forEach(function(s){if(s.tipo==='constancia')return;
+    (s.fechas||[]).forEach(function(f){
+      if(s.estado==='pendiente'){if(s.tipo===PM.tipo)pe[f]=1;}
+      else if(s.estado==='aprobado'&&s.tipo===PM.tipo&&s.tipo==='gestoria')oc[f]=1;});
+    if(s.estado==='pendiente'&&s.tipo==='permiso')pendDias+=Number(s.dias)||0;});
+  if(PM.tipo==='permiso')Object.keys(tom).forEach(function(f){oc[f]=1;});
+  var rest=Math.max(0,(Number(i.restante)||0)-pendDias);
+  return {i:i,inh:inh,esp:esp,oc:oc,pe:pe,hoy:hoy,rest:rest,pendDias:pendDias,
+    desde:i.desde?pmD(i.desde):null,hasta:i.hasta?pmD(i.hasta):null};}
+function pmHabil(d,D){var f=pmIso(d);if(d.getDay()===0||d.getDay()===6)return false;if(D.inh[f])return false;
+  if(D.desde&&d<D.desde)return false;if(D.hasta&&d>D.hasta)return false;return true;}
+function pmRango(ini,n,D){var r=[],d=pmD(ini),v=0;
+  while(r.length<n&&v<400){if(pmHabil(d,D))r.push(pmIso(d));d=pmSuma(d,1);v++;}
+  return r.length===n?r:null;}
+function pmMaxN(D){return PM.tipo==='permiso'?Math.min(3,D.rest):10;}
+function pmNOk(ini,n,D){var r=pmRango(ini,n,D);if(!r)return false;
+  return r.every(function(f){return !D.oc[f]&&!D.pe[f];});}
+function pmCarga(){
+  if(!B||!K)return;PM.cargando=true;PM.err='';if(VISTA==='perm')pintaPerm();
+  Promise.all([llama('perm_info'),llama('perm_mis')]).then(function(rs){PM.cargando=false;
+    if(rs[0]&&rs[0].ok)PM.info=rs[0].info;else PM.err=(rs[0]&&rs[0].error)||'No pude leer tus datos.';
+    if(rs[1]&&rs[1].ok)PM.mis=rs[1].solicitudes||[];else if(!PM.err)PM.err=(rs[1]&&rs[1].error)||'No pude leer tus solicitudes.';
+    if(VISTA==='perm')pintaPerm();}).catch(function(){PM.cargando=false;PM.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='perm')pintaPerm();});}
+function pmResumen(D){
+  var i=D.i,tope=Number(i.tope)||9,us=Number(i.usados)||0,pct=Math.min(100,Math.round(us*100/tope));
+  return '<div class="pm-card pm-res"><h2>Tus permisos económicos</h2><p class="sub">Ciclo '+esc(i.anio?i.anio+' — '+(i.anio+1):'')+'</p>'+
+    '<div class="pm-barra'+(pct>=85?' rojo':'')+'"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="pm-cnt"><span>Llevas <b>'+us+'</b> de '+tope+' días</span><span>Te quedan <b>'+Math.max(0,tope-us)+'</b></span></div>'+
+    (D.pendDias?'<p class="nota" style="margin:8px 0 0">Tienes '+D.pendDias+(D.pendDias===1?' día':' días')+' en revisión: ya cuentan para lo que puedes solicitar.</p>':'')+'</div>';}
+function pmEstado(s){return {pendiente:'En revisión',aprobado:'Aprobado',rechazado:'No aprobado',revertido:'Cancelado por la Dirección',cancelado:'Cancelado por ti'}[s]||s;}
+function pmPedido(s){
+  var tp=s.tipo==='gestoria'?'Gestoría':'Permiso económico',fl=s.fechas||[];
+  var h='<div class="pm-ped"><div class="cab"><span class="tp">'+tp.toUpperCase()+'</span><span class="pm-chip '+esc(s.estado)+'">'+esc(pmEstado(s.estado))+'</span></div>'+
+    '<div class="fe">'+esc(pmTxt(fl))+' <span>('+(Number(s.dias)||fl.length)+(Number(s.dias)===1?' día':' días')+')</span></div>';
+  if(s.tipo==='gestoria'&&(s.motivo||s.detalle))h+='<div class="mo">'+esc(s.detalle||s.motivo)+'</div>';
+  if((s.estado==='rechazado'||s.estado==='revertido')&&s.motivo_resol)h+='<div class="rz"><b>Motivo:</b> '+esc(s.motivo_resol)+'</div>';
+  var ac='';
+  if(s.estado==='pendiente')ac+='<button class="pm-b" data-pm="cancela" data-i="'+esc(s.id)+'">Cancelar solicitud</button>';
+  if(s.estado==='aprobado'&&s.tiene_pdf)ac+='<button class="pm-b ok" data-pm="pdf" data-i="'+esc(s.id)+'">⬇ Descargar mi ficha</button>';
+  return h+(ac?'<div class="ac">'+ac+'</div>':'')+'</div>';}
+function pmLista(){
+  var D=pmDatos(),i=D.i,h='';
+  var lista=(PM.mis||[]).filter(function(s){return s.tipo!=='constancia';});
+  if(PM.cargando&&!PM.info)return '<div class="pm-card"><p class="pm-vacio">Cargando tus permisos…</p></div>';
+  if(PM.err&&!PM.info)return '<div class="pm-aviso">'+esc(PM.err)+'</div><button class="btn sec2" id="pmRei">Intentar otra vez</button>';
+  if(!PM.info)return '<div class="pm-aviso">Tu pantalla de permisos todavía no está lista. Avísale al director para que la prepare.</div>';
+  if(i.leido===false)return pmResumen(D)+'<div class="pm-aviso">El director todavía no carga el calendario de este ciclo. Vuelve más tarde para solicitar un permiso.</div>'+pmHist(lista);
+  h+=pmResumen(D);
+  D.tipoTmp=PM.tipo;PM.tipo='permiso';var Dp=pmDatos();PM.tipo=D.tipoTmp;
+  var restP=Dp.rest;
+  h+='<div class="pm-bts"><button class="pm-bt a" data-pm="nuevo" data-t="permiso"'+(restP<1?' disabled':'')+'><span class="i">🗓️</span><span>Solicitar un permiso<small>'+(restP<1?'Ya no te quedan días por solicitar':'Hasta 3 días seguidos · te quedan '+restP)+'</small></span></button>'+
+    '<button class="pm-bt b" data-pm="nuevo" data-t="gestoria"><span class="i">📄</span><span>Solicitar una gestoría<small>Para un trámite · no cuenta de tus 9 días</small></span></button></div>';
+  if(PM.nota)h+='<div class="pm-aviso">'+esc(PM.nota)+'</div>';
+  return h+pmHist(lista);}
+function pmHist(lista){
+  var h='<div class="pm-sec">Mis solicitudes</div>';
+  if(!lista.length)return h+'<div class="pm-card"><p class="pm-vacio">Todavía no has solicitado nada.</p></div>';
+  return h+lista.map(pmPedido).join('');}
+function pmMesVista(D){
+  var m=PM.mes,y=m.getFullYear(),mo=m.getMonth(),prim=new Date(y,mo,1),dias=new Date(y,mo+1,0).getDate(),ini=PM.ini;
+  var rango=ini&&pmNOk(ini,PM.n,D)?pmRango(ini,PM.n,D):(ini?pmRango(ini,1,D):[]);
+  var set={};(rango||[]).forEach(function(f){set[f]=1;});
+  var h='<div class="pm-sem">'+['do','lu','ma','mi','ju','vi','sá'].map(function(x){return '<span>'+x+'</span>';}).join('')+'</div><div class="pm-dias">';
+  for(var k=0;k<prim.getDay();k++)h+='<span class="pm-d v"></span>';
+  for(var d=1;d<=dias;d++){var dt=new Date(y,mo,d),f=pmIso(dt),cl='pm-d',dis=false;
+    var hab=pmHabil(dt,D),pas=(dt<D.hoy&&!PM.atras);
+    if(!hab||pas){cl+=' no';dis=true;}
+    else if(D.oc[f]){cl+=' oc';dis=true;}
+    else if(D.pe[f]){cl+=' pe';dis=true;}
+    else if(D.esp[f])cl+=' esp';
+    if(set[f])cl+=' sel';
+    if(+dt===+D.hoy)cl+=' hoy';
+    h+='<button class="'+cl+'" '+(dis?'disabled':'data-f="'+f+'"')+'>'+d+'</button>';}
+  return h+'</div>';}
+function pmPedirVista(){
+  var D=pmDatos(),i=D.i,es=PM.tipo==='permiso',max=pmMaxN(D);
+  if(!PM.mes){var base=D.desde&&D.desde>D.hoy?D.desde:D.hoy;PM.mes=new Date(base.getFullYear(),base.getMonth(),1);}
+  var pm=PM.mes,prev=new Date(pm.getFullYear(),pm.getMonth()-1,1),sig=new Date(pm.getFullYear(),pm.getMonth()+1,1);
+  var dPrev=!!(D.desde&&new Date(pm.getFullYear(),pm.getMonth(),0)<D.desde)||(!PM.atras&&new Date(pm.getFullYear(),pm.getMonth(),0)<new Date(D.hoy.getFullYear(),D.hoy.getMonth(),0));
+  var dSig=!!(D.hasta&&sig>D.hasta);
+  var h='<div class="pz-top"><button class="volv" id="pmAtras">‹ Mis permisos</button></div>'+
+   '<div class="pm-card pm-cal"><h2 style="margin:0 0 4px;font-size:1.15rem">'+(es?'Solicitar un permiso':'Solicitar una gestoría')+'</h2>'+
+   '<p class="nota">'+(es?'Toca el primer día. Después escoge cuántos días: hasta '+Math.min(3,D.rest)+' seguidos.':'Toca el primer día de tu trámite. Después escoge cuántos días necesitas.')+'</p>'+
+   '<div class="pm-nav"><button id="pmPrev"'+(dPrev?' disabled':'')+' aria-label="Mes anterior">‹</button><b>'+PM_MES[pm.getMonth()]+' '+pm.getFullYear()+'</b><button id="pmSig"'+(dSig?' disabled':'')+' aria-label="Mes siguiente">›</button></div>'+
+   pmMesVista(D)+
+   '<div class="pm-leyenda"><span><i style="background:rgba(255,255,255,.13)"></i>Disponible</span><span><i style="background:rgba(0,0,0,.5)"></i>No se puede</span>'+
+   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span></div>'+
+   (PM.atras?'<div class="pm-aviso" style="margin-top:12px">Estás solicitando días que <b>ya pasaron</b>. El director lo verá marcado como extemporáneo y decidirá.</div><button class="pm-b" data-pm="atras" style="margin-top:10px">Volver a solo días que faltan</button>'
+            :'<button class="pm-b" data-pm="atras" style="margin-top:12px;width:100%">Mi solicitud es de días que ya pasaron</button>');
+  if(PM.ini){
+    var ok=pmNOk(PM.ini,PM.n,D);
+    h+='<label>¿Cuántos días?</label><div class="pm-n">';
+    for(var n=1;n<=max;n++)h+='<button data-n="'+n+'"'+(n===PM.n?' class="on"':'')+(pmNOk(PM.ini,n,D)?'':' disabled')+'>'+n+'</button>';
+    h+='</div>';
+    var r=ok?pmRango(PM.ini,PM.n,D):null;
+    if(r)h+='<div class="pm-resu">'+esc(pmTxt(r))+'<small>'+r.length+(r.length===1?' día':' días')+(es?' · te quedarán '+Math.max(0,D.rest-r.length)+' de tus permisos':'')+'</small></div>';
+    else h+='<div class="pm-aviso">Con ese primer día no alcanzan los días libres. Prueba con otro día.</div>';
+    if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea>';
+    var listo=!!r&&(es||PM.motivo.trim().length>=5);
+    h+='<button class="btn" id="pmEnv" style="margin-top:14px"'+((listo&&!PM.envio)?'':' disabled')+'>'+(PM.envio?'Enviando…':'Enviar solicitud')+'</button>'+
+       '<p class="nota" style="margin:10px 0 0;text-align:center">El director lo revisa y te avisa en tu Pizarrón.</p>';}
+  return h+'</div>';}
+function pintaPerm(){
+  sala.onclick=null;
+  var enc='<div class="bv"><h1 style="font-size:1.4rem">🗓️ Mis permisos</h1></div>';
+  if(PM.paso===1){sala.innerHTML=pmPedirVista();}
+  else{sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Sala</button></div>'+enc+pmLista();}
+  var q=function(i){return $(i);};
+  if(q('pmSala'))q('pmSala').onclick=function(){irA('sala');};
+  if(q('pmRei'))q('pmRei').onclick=pmCarga;
+  if(q('pmAtras'))q('pmAtras').onclick=function(){PM.paso=0;PM.ini=null;PM.motivo='';PM.atras=false;pintaPerm();};
+  if(q('pmPrev'))q('pmPrev').onclick=function(){PM.mes=new Date(PM.mes.getFullYear(),PM.mes.getMonth()-1,1);pintaPerm();};
+  if(q('pmSig'))q('pmSig').onclick=function(){PM.mes=new Date(PM.mes.getFullYear(),PM.mes.getMonth()+1,1);pintaPerm();};
+  if(q('pmEnv'))q('pmEnv').onclick=pmEnvia;
+  var mot=q('pmMot');if(mot)mot.oninput=function(){PM.motivo=mot.value;var b=q('pmEnv');if(b){var D=pmDatos();b.disabled=!(PM.ini&&pmNOk(PM.ini,PM.n,D)&&PM.motivo.trim().length>=5)||PM.envio;}};
+  sala.onclick=function(e){
+    var t=e.target.closest?e.target.closest('button'):null;if(!t)return;
+    var f=t.getAttribute('data-f'),n=t.getAttribute('data-n'),a=t.getAttribute('data-pm');
+    if(f){PM.ini=f;var D=pmDatos();if(!pmNOk(f,PM.n,D))PM.n=1;pintaPerm();return;}
+    if(n){PM.n=+n;pintaPerm();return;}
+    if(a==='atras'){PM.atras=!PM.atras;PM.ini=null;PM.n=1;pintaPerm();return;}
+    if(a==='nuevo'){PM.atras=false;PM.tipo=t.getAttribute('data-t');PM.paso=1;PM.ini=null;PM.n=1;PM.mes=null;PM.motivo='';PM.nota='';pintaPerm();try{window.scrollTo(0,0);}catch(e2){}return;}
+    if(a==='cancela'){pmCancela(t.getAttribute('data-i'));return;}
+    if(a==='pdf'){pmPdf(t.getAttribute('data-i'),t);return;}
+  };}
+function pmEnvia(){
+  if(PM.envio||!PM.ini)return;var D=pmDatos(),es=PM.tipo==='permiso';
+  var r=pmNOk(PM.ini,PM.n,D)?pmRango(PM.ini,PM.n,D):null;if(!r)return;
+  var motivo=es?'necesito atender asuntos personales':PM.motivo.trim(),extra={tipo:PM.tipo,fechas:r,motivo:motivo};
+  if(!es)extra.detalle=motivo;
+  PM.envio=true;pintaPerm();
+  llama('perm_pedir',extra).then(function(x){PM.envio=false;
+    if(x&&x.ok){PM.paso=0;PM.ini=null;PM.motivo='';PM.nota='✓ Tu solicitud se envió. El director lo revisará y te avisará en tu Pizarrón.';pmCarga();return;}
+    PM.nota='No se pudo enviar: '+((x&&x.error)||'intenta otra vez');PM.paso=0;pmCarga();})
+  .catch(function(){PM.envio=false;PM.nota='Sin señal: no se pudo enviar. Intenta otra vez.';PM.paso=0;pintaPerm();});}
+function pmCancela(id){
+  abrir('<div class="obra"><div class="gr">✋</div><h2>¿Cancelar esta solicitud?</h2><p class="nota">El director ya no lo verá. Después puedes solicitar otro.</p></div><button class="btn" id="pmSi">Sí, cancelar la solicitud</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
+  $('pmSi').onclick=function(){$('pmSi').disabled=true;
+    llama('perm_cancelar',{id:id}).then(function(x){cerrar();PM.nota=(x&&x.ok)?'Tu solicitud se canceló.':'No se pudo cancelar: '+((x&&x.error)||'intenta otra vez');pmCarga();})
+    .catch(function(){cerrar();PM.nota='Sin señal: no se pudo cancelar.';pintaPerm();});};}
+function pmPdf(id,btn){
+  if(btn){btn.disabled=true;btn.textContent='Preparando…';}
+  llama('perm_pdf',{id:id}).then(function(x){
+    if(!(x&&x.ok&&x.base64))throw new Error((x&&x.error)||'no llegó el archivo');
+    var bin=atob(x.base64),u=new Uint8Array(bin.length);for(var k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);
+    var url=URL.createObjectURL(new Blob([u],{type:'application/pdf'})),a=document.createElement('a');
+    a.href=url;a.download=x.nombre||'permiso.pdf';document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},4000);
+    if(btn){btn.disabled=false;btn.textContent='⬇ Descargar mi ficha';}})
+  .catch(function(e){PM.nota='No pude bajar tu ficha: '+(e&&e.message||'intenta otra vez');pintaPerm();});}
 function limpia(){try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('sigea_web_')===0||k.indexOf('sigea_av_')===0||k.indexOf('sigea_sala_')===0))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);});}catch(e){}marca(false);}
 function despedida(){estado('👋','Hasta pronto','Tu sala quedó cerrada en este aparato. Para volver, abre tu enlace de WhatsApp.');}
 function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>Cerrar sesión</h2><p class="nota">Se cerrará tu sala en este aparato. Para volver, abre tu enlace de WhatsApp.</p></div><button class="btn" id="csSi">Cerrar sesión</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
@@ -334,7 +553,7 @@ function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;marca(v==='sala'||v==='piz');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA(v){VISTA=v;marca(v==='sala'||v==='piz'||v==='perm');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
@@ -342,16 +561,17 @@ function pinta(q,aviso){
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
   var cofres=
    '<div class="cofres" id="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
-   '<button class="cofre c-nar apagado" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
    '<button class="cofre c-ver apagado" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-mor apagado" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et">En construcción</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca SIGEP</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
-  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar apagado" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et">En construcción</span></button>'+
+  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
+  if(VISTA==='perm'){pintaPerm();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
      '<button class="entrar" id="atras" style="font-size:1rem;padding:12px 28px;margin-top:28px">‹ Volver a la bienvenida</button><button class="salir-b" id="salir">Cerrar sesión</button>';
@@ -374,7 +594,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
