@@ -578,7 +578,7 @@ function pmPedirVista(){
     if(r)h+='<div class="pm-resu">'+esc(pmTxt(r))+'<small>'+r.length+(r.length===1?' día':' días')+(es?' · te quedarán '+Math.max(0,D.rest-r.length)+' de tus permisos':'')+'</small></div>';
     else h+='<div class="pm-aviso">Con ese primer día no alcanzan los días libres. Prueba con otro día.</div>';
     if(!es)h+='<div class="pm-aviso" style="margin:12px 0 0">📄 Recuerda: entrega a la Dirección una copia del comprobante de tu trámite en la Secretaría de Educación o en sus dependencias.</div>';
-    if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea><p class="pm-ayuda">Escribe con minúscula, como si continuaras la frase «…ya que…». Los nombres propios, con mayúscula inicial.</p>';
+    if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea><p class="pm-ayuda">Escribe con minúscula, por ejemplo: necesito hacer trámites en Secretaría de Educación. Los nombres propios, con mayúscula inicial.</p>';
     var listo=!!r&&(es||PM.motivo.trim().length>=5);
     h+='<button class="btn" id="pmEnv" style="margin-top:14px"'+((listo&&!PM.envio)?'':' disabled')+'>'+(PM.envio?'Enviando…':'Enviar solicitud')+'</button>'+
        '<p class="nota" style="margin:10px 0 0;text-align:center">El director lo revisa y te avisa en tu Pizarrón.</p>';}
@@ -614,6 +614,7 @@ function pintaPerm(){
 var PM_SIGLAS='SEP|ISSSTE|CTE|IMSS|SAT|INE|RFC|CURP|CCT';
 function pmNormMotivo(t){
   t=String(t||'').replace(/\s+/g,' ').trim();
+  t=t.replace(/^ya que\s+/i,'');
   var L=t.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g)||[],U=t.match(/[A-ZÁÉÍÓÚÜÑ]/g)||[];
   if(L.length>=4&&U.length/L.length>=0.7){
     t=t.toLowerCase().replace(new RegExp('(^|[^a-záéíóúüñ])('+PM_SIGLAS.toLowerCase()+')(?![a-záéíóúüñ])','g'),function(m,a,b){return a+b.toUpperCase();});
