@@ -215,6 +215,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pz-f i.am{background:#e0b83a;color:#2b1c00}
 .sl-lbl{font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);margin:10px 4px 6px}
 .pm-bt[disabled]{opacity:.42;cursor:not-allowed;box-shadow:none}
+.pm-ayuda{font-size:.8rem;color:var(--suave);margin:6px 2px 0;line-height:1.4}
 .pm-aviso{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(226,187,98,.14);border:1px solid rgba(226,187,98,.45);color:#f1deaa;font-size:.88rem;line-height:1.4}
 .pm-sec{margin:22px 4px 8px;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave)}
 .pm-ped{background:rgba(255,255,255,.06);border:1px solid var(--borde);border-radius:16px;padding:13px 14px;margin:0 0 10px}
@@ -577,7 +578,7 @@ function pmPedirVista(){
     if(r)h+='<div class="pm-resu">'+esc(pmTxt(r))+'<small>'+r.length+(r.length===1?' día':' días')+(es?' · te quedarán '+Math.max(0,D.rest-r.length)+' de tus permisos':'')+'</small></div>';
     else h+='<div class="pm-aviso">Con ese primer día no alcanzan los días libres. Prueba con otro día.</div>';
     if(!es)h+='<div class="pm-aviso" style="margin:12px 0 0">📄 Recuerda: entrega a la Dirección una copia del comprobante de tu trámite en la Secretaría de Educación o en sus dependencias.</div>';
-    if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea>';
+    if(!es)h+='<label for="pmMot">¿Qué trámite vas a hacer?</label><textarea id="pmMot" maxlength="200" placeholder="Por ejemplo: necesito hacer trámites en la Secretaría de Educación">'+esc(PM.motivo)+'</textarea><p class="pm-ayuda">Escribe con minúscula, como si continuaras la frase «…ya que…». Los nombres propios, con mayúscula inicial.</p>';
     var listo=!!r&&(es||PM.motivo.trim().length>=5);
     h+='<button class="btn" id="pmEnv" style="margin-top:14px"'+((listo&&!PM.envio)?'':' disabled')+'>'+(PM.envio?'Enviando…':'Enviar solicitud')+'</button>'+
        '<p class="nota" style="margin:10px 0 0;text-align:center">El director lo revisa y te avisa en tu Pizarrón.</p>';}
@@ -610,10 +611,38 @@ function pintaPerm(){
     if(a==='cancela'){pmCancela(t.getAttribute('data-i'));return;}
     if(a==='pdf'){pmAvisoFicha(t.getAttribute('data-i'));return;}
   };}
+var PM_SIGLAS='SEP|ISSSTE|CTE|IMSS|SAT|INE|RFC|CURP|CCT';
+function pmNormMotivo(t){
+  t=String(t||'').replace(/\s+/g,' ').trim();
+  var L=t.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g)||[],U=t.match(/[A-ZÁÉÍÓÚÜÑ]/g)||[];
+  if(L.length>=4&&U.length/L.length>=0.7){
+    t=t.toLowerCase().replace(new RegExp('(^|[^a-záéíóúüñ])('+PM_SIGLAS.toLowerCase()+')(?![a-záéíóúüñ])','g'),function(m,a,b){return a+b.toUpperCase();});
+  }else{
+    var w=t.match(/^[A-ZÁÉÍÓÚÜÑ]{2,}(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/);
+    if(w&&!new RegExp('^('+PM_SIGLAS+')$').test(w[0]))t=w[0].toLowerCase()+t.slice(w[0].length);
+    else if(/^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]/.test(t))t=t.charAt(0).toLowerCase()+t.slice(1);
+  }
+  return t.replace(/[.\s]+$/,'');}
+function pmFichaFechas(fl){
+  var ds=(fl||[]).slice().sort().filter(function(f,i,a){return i===0||a[i-1]!==f;}),g=[];
+  ds.forEach(function(f){var d=pmD(f),m=d.getMonth(),y=d.getFullYear();
+    if(g.length&&g[g.length-1].m===m&&g[g.length-1].y===y)g[g.length-1].d.push(d.getDate());else g.push({m:m,y:y,d:[d.getDate()]});});
+  var tx=g.map(function(x,i){var t=x.d.length===1?String(x.d[0]):x.d.slice(0,-1).join(', ')+' y '+x.d[x.d.length-1];
+    t+=' de '+PM_MES[x.m];if(i===g.length-1||g[i+1].y!==x.y)t+=' de '+x.y;return t;});
+  return tx.length<=1?(tx[0]||''):tx.slice(0,-1).join(', ')+' y '+tx[tx.length-1];}
+function pmConfirmaGes(r,motivo){
+  abrir('<div class="obra"><div class="gr">📝</div><h2>Revisa tu solicitud</h2><p class="nota" style="font-size:.9rem">Así dirá tu ficha. Si algo no suena bien, aprieta «Corregir».</p></div>'+
+    '<div class="pm-aviso" style="margin:0 0 12px;font-size:.92rem;line-height:1.5">«…solicito Autorización por Gestoría Escolar para el <b>'+esc(pmFichaFechas(r))+'</b> y con el presente documento justificar la inasistencia en mi centro de trabajo de adscripción, ya que <b>'+esc(motivo)+'</b>.»</div>'+
+    '<button class="btn" id="cfOk">Está bien, enviar</button><button class="btn sec2" id="cfNo">Corregir</button>');
+  hoja.classList.add('cen');
+  var a=$('cfOk'),c=$('cfNo');
+  if(a)a.onclick=function(){cerrar();PM.conf=true;pmEnvia();};
+  if(c)c.onclick=function(){cerrar();};}
 function pmEnvia(){
   if(PM.envio||!PM.ini)return;var D=pmDatos(),es=PM.tipo==='permiso';
   var r=pmNOk(PM.ini,PM.n,D)?pmRango(PM.ini,PM.n,D):null;if(!r)return;
-  var motivo=es?'necesito atender asuntos personales':PM.motivo.trim(),extra={tipo:PM.tipo,fechas:r,motivo:motivo};
+  var motivo=es?'necesito atender asuntos personales':pmNormMotivo(PM.motivo),extra={tipo:PM.tipo,fechas:r,motivo:motivo};
+  if(!es&&!PM.conf){pmConfirmaGes(r,motivo);return;}PM.conf=false;
   if(!es)extra.detalle=motivo;
   PM.envio=true;pintaPerm();
   llama('perm_pedir',extra).then(function(x){PM.envio=false;
