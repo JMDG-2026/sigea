@@ -608,7 +608,7 @@ function pintaPerm(){
     if(a==='sfe'){var ve=t.getAttribute('data-v')||'';PM.fe=PM.fe===ve?'':ve;PM.vi=false;pintaPerm();return;}
     if(a==='svi'){PM.vi=!PM.vi;pintaPerm();return;}
     if(a==='cancela'){pmCancela(t.getAttribute('data-i'));return;}
-    if(a==='pdf'){pmPdf(t.getAttribute('data-i'),t);return;}
+    if(a==='pdf'){pmAvisoFicha(t.getAttribute('data-i'));return;}
   };}
 function pmEnvia(){
   if(PM.envio||!PM.ini)return;var D=pmDatos(),es=PM.tipo==='permiso';
@@ -625,6 +625,16 @@ function pmCancela(id){
   $('pmSi').onclick=function(){$('pmSi').disabled=true;
     llama('perm_cancelar',{id:id}).then(function(x){cerrar();PM.nota=(x&&x.ok)?'Tu solicitud se canceló.':'No se pudo cancelar: '+((x&&x.error)||'intenta otra vez');pmCarga();})
     .catch(function(){cerrar();PM.nota='Sin señal: no se pudo cancelar.';pintaPerm();});};}
+function pmAvisoFicha(id){
+  var s=null;(PM.mis||[]).forEach(function(x){if(x.id===id)s=x;});
+  var ges=!!(s&&s.tipo==='gestoria');
+  var tx=ges?'Imprime tu ficha, fírmala y entrégala en la Dirección de la escuela. Quedará en espera y será validada cuando entregues la copia del comprobante de tu trámite.'
+            :'Imprime tu ficha, fírmala y preséntala en la Dirección de la escuela para que sea validada.';
+  abrir('<div class="obra"><div class="gr">📄</div><h2>Antes de descargar tu ficha</h2><p class="nota" style="font-size:.95rem;line-height:1.5">'+esc(tx)+'</p></div>'+
+    '<button class="btn" id="fiOk">Entendido, descargar</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  hoja.classList.add('cen');
+  var b=$('fiOk');if(b)b.onclick=function(){cerrar();var bt=null,bs=sala.querySelectorAll('[data-pm="pdf"]');
+    Array.prototype.forEach.call(bs,function(x){if(x.getAttribute('data-i')===id)bt=x;});pmPdf(id,bt);};}
 function pmPdf(id,btn){
   if(btn){btn.disabled=true;btn.textContent='Preparando…';}
   llama('perm_pdf',{id:id}).then(function(x){
