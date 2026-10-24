@@ -839,9 +839,9 @@ function lvPintar(){var b=document.getElementById('leerBtn'),s=document.getEleme
   else if(LV.pausa){b.textContent='▶ Continuar';b.classList.add('lvon');if(s)s.style.display=''}
   else{b.textContent='⏸ Pausar';b.classList.add('lvon');if(s)s.style.display=''}
   gmPinta();lvMantiene()}
-function lvHablar(texto,alTerminar){var tr=lvTrozos(texto),k=0;
-  function sig(){if(!LV.on||LV.pausa)return;if(k>=tr.length){alTerminar();return}
-    var u=new SpeechSynthesisUtterance(tr[k++]);u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();u.onend=sig;u.onerror=sig;window.speechSynthesis.speak(u)}
+function lvHablar(texto,alTerminar,desde){var tr=lvTrozos(texto),k=desde||0,g=LV.gen=(LV.gen||0)+1;LV.cur={texto:texto,fin:alTerminar,k:k};/* Ladrillo547: recuerda el pedacito en turno */
+  function sig(){if(LV.gen!==g||!LV.on||LV.pausa)return;if(k>=tr.length){LV.cur=null;alTerminar();return}
+    LV.cur.k=k;var u=new SpeechSynthesisUtterance(tr[k++]);u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();u.onend=sig;u.onerror=sig;window.speechSynthesis.speak(u)}
   sig()}
 function lvMarcar(aid){document.querySelectorAll('.lv-viva').forEach(function(e){e.classList.remove('lv-viva')});if(aid==null)return;
   if(LV.p==='RES'){var fr_=document.querySelector('.rt tr[data-aid="'+aid+'"]');if(fr_){fr_.classList.add('lv-viva');setTimeout(function(){try{filaBajoEnc(fr_)}catch(e){}},70)}return}
@@ -928,9 +928,11 @@ function lvArrancar(){if(!lvOk()){lvAviso('Este navegador no trae voz para leer.
   try{window.speechSynthesis.cancel()}catch(e){}
   lvHablar(c.cab,function(){lvSiguiente()})}
 function lvToggle(){if(!LV.on){lvArrancar();return}
-  if(LV.pausa){LV.pausa=false;lvPintar();lvSiguiente()}
-  else{LV.pausa=true;try{window.speechSynthesis.cancel()}catch(e){}lvPintar()}}
-function lvDetener(avisar){var estaba=LV.on;LV.on=false;LV.pausa=false;LV.cola=[];LV.idx=0;LV.leidos=0;LV.total=0;LV.nom='';
+  if(LV.pausa){LV.pausa=false;lvPintar();lvReanuda()}
+  else{LV.pausa=true;LV.gen=(LV.gen||0)+1;try{window.speechSynthesis.cancel()}catch(e){}lvPintar()}}
+/* Ladrillo547: al reanudar, sigue donde se quedo (repite el pedacito en turno y sigue); si la pausa fue entre alumnos, pasa al siguiente */
+function lvReanuda(){var c=LV.cur;LV.gen=(LV.gen||0)+1;if(c&&c.fin&&c.texto!==undefined)lvHablar(c.texto,c.fin,c.k||0);else lvSiguiente()}
+function lvDetener(avisar){var estaba=LV.on;LV.on=false;LV.pausa=false;LV.cur=null;LV.gen=(LV.gen||0)+1;LV.cola=[];LV.idx=0;LV.leidos=0;LV.total=0;LV.nom='';
   if(estaba){try{window.speechSynthesis.cancel()}catch(e){}}
   lvMarcar(null);lvPintar();
   if(avisar&&estaba&&lvOk()){try{var u=new SpeechSynthesisUtterance('Lectura detenida.');u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();window.speechSynthesis.speak(u)}catch(e){}}}
