@@ -310,6 +310,7 @@ function borraCache(){try{localStorage.removeItem(CK);}catch(e){}}
 var hoja=$('hoja'),fondo=$('fondo'),cont=$('cont'),sala=$('sala');
 function abrir(h){cont.innerHTML=h;hoja.classList.remove('cen');hoja.classList.add('on');fondo.classList.add('on')}
 function cerrar(){hoja.classList.remove('on');fondo.classList.remove('on')}
+function abrirC(h){abrir(h);hoja.classList.add('cen');}
 fondo.onclick=cerrar;window.cerrarSala=cerrar;
 function estado(ico,tit,msg,reint){
   sala.innerHTML='<section class="cristal estado"><div class="gr">'+ico+'</div><h2>'+tit+'</h2><p>'+msg+'</p>'+(reint?'<button class="btn" id="reint">Intentar de nuevo</button>':'')+'</section>';
@@ -332,7 +333,7 @@ var OBRA={
  biblioteca:['📚','Biblioteca SIGEP','Aquí abrirás la carpeta con los materiales del personal.'],
  tutoriales:['🎬','Tutoriales','Aquí aprenderás paso a paso a usar la plataforma.']};
 function enObra(id){var o=OBRA[id];if(!o)return;
-  abrir('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
+  abrirC('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
   '<p class="nota"><em style="font-style:normal;color:var(--oro)">Paso a paso</em>: pronto se abre.</p></div><button class="btn sec2" onclick="cerrarSala()">Volver a la sala</button>');}
 var AT=[],AVN=0,HR='',QQ=null,MSG=[],PEND=0,COMP=0,COMPT=0,OPEN={},CAJA={},DRAFT={},ENV=false,PZNOTA='',CESTOV=false,VIEJOS=false,FILTRO='todos',PZ_RECIENTES=5,
@@ -348,8 +349,8 @@ function pintaAtn(){var bt=$('atn');if(!bt)return;var it=atItems();
   if(it.length){bt.className='atn';bt.innerHTML='<span class="p"></span>Lo que pide tu atención<span class="n">'+it.length+'</span><span class="f">›</span>';}
   else{bt.className='atn bien-todo';bt.innerHTML='<span class="p" style="background:radial-gradient(circle at 35% 30%,#d9fff0,#6fe0b4 60%,#2f9c76)"></span>Todo al día<span class="f">›</span>';}}
 function abreAtn(){var it=atItems();
-  if(!it.length){abrir('<div class="obra"><div class="gr">✅</div><h2>Todo al día</h2><p class="nota">No hay nada pendiente por ahora, maestra.</p><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg></div><button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');return;}
-  abrir('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':x.m?' data-mp="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-mp]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('perm');};});}
+  if(!it.length){abrirC('<div class="obra"><div class="gr">✅</div><h2>Todo al día</h2><p class="nota">No hay nada pendiente por ahora, maestra.</p><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg></div><button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');return;}
+  abrirC('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':x.m?' data-mp="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-mp]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('perm');};});}
 function compCuenta(l){return (l||[]).filter(function(s){return s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='pendiente';}).length;}
 function traeComp(){
   if(!B||!K||Date.now()-COMPT<60000)return;COMPT=Date.now();
@@ -756,7 +757,7 @@ function pmEnvia(){
     PM.nota='No se pudo enviar: '+((x&&x.error)||'intenta otra vez');PM.paso=0;pmCarga();})
   .catch(function(){PM.envio=false;PM.nota='Sin señal: no se pudo enviar. Intenta otra vez.';PM.paso=0;pintaPerm();});}
 function pmCancela(id){
-  abrir('<div class="obra"><div class="gr">✋</div><h2>¿Cancelar esta solicitud?</h2><p class="nota">El director ya no lo verá. Después puedes solicitar otro.</p></div><button class="btn" id="pmSi">Sí, cancelar la solicitud</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
+  abrirC('<div class="obra"><div class="gr">✋</div><h2>¿Cancelar esta solicitud?</h2><p class="nota">El director ya no lo verá. Después puedes solicitar otro.</p></div><button class="btn" id="pmSi">Sí, cancelar la solicitud</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
   $('pmSi').onclick=function(){$('pmSi').disabled=true;
     llama('perm_cancelar',{id:id}).then(function(x){cerrar();PM.nota=(x&&x.ok)?'Tu solicitud se canceló.':'No se pudo cancelar: '+((x&&x.error)||'intenta otra vez');pmCarga();})
     .catch(function(){cerrar();PM.nota='Sin señal: no se pudo cancelar.';pintaPerm();});};}
@@ -782,7 +783,7 @@ function pmPdf(id,btn){
   .catch(function(e){PM.nota='No pude bajar tu ficha: '+(e&&e.message||'intenta otra vez');pintaPerm();});}
 function limpia(){try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('sigea_web_')===0||k.indexOf('sigea_av_')===0||k.indexOf('sigea_sala_')===0))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);});}catch(e){}marca(false);}
 function despedida(){estado('👋','Hasta pronto','Tu sala quedó cerrada en este aparato. Para volver, abre tu enlace de WhatsApp.');}
-function confirmaSalir(){abrir('<div class="obra"><div class="gr">🚪</div><h2>Cerrar sesión</h2><p class="nota">Se cerrará tu sala en este aparato. Para volver, abre tu enlace de WhatsApp.</p></div><button class="btn" id="csSi">Cerrar sesión</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+function confirmaSalir(){abrirC('<div class="obra"><div class="gr">🚪</div><h2>Cerrar sesión</h2><p class="nota">Se cerrará tu sala en este aparato. Para volver, abre tu enlace de WhatsApp.</p></div><button class="btn" id="csSi">Cerrar sesión</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
   $('csSi').onclick=function(){limpia();K='';QQ=null;cerrar();try{history.replaceState(null,'','#adios');}catch(e){}despedida();};}
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
