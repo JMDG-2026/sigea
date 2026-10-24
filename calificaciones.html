@@ -838,7 +838,7 @@ function lvPintar(){var b=document.getElementById('leerBtn'),s=document.getEleme
   if(!LV.on){b.textContent='🔊 Leer';b.classList.remove('lvon');if(s)s.style.display='none'}
   else if(LV.pausa){b.textContent='▶ Continuar';b.classList.add('lvon');if(s)s.style.display=''}
   else{b.textContent='⏸ Pausar';b.classList.add('lvon');if(s)s.style.display=''}
-  gmPinta()}
+  gmPinta();lvMantiene()}
 function lvHablar(texto,alTerminar){var tr=lvTrozos(texto),k=0;
   function sig(){if(!LV.on||LV.pausa)return;if(k>=tr.length){alTerminar();return}
     var u=new SpeechSynthesisUtterance(tr[k++]);u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();u.onend=sig;u.onerror=sig;window.speechSynthesis.speak(u)}
@@ -849,6 +849,43 @@ function lvMarcar(aid){document.querySelectorAll('.lv-viva').forEach(function(e)
   for(var i=0;i<ins.length;i++){if(ins[i].offsetParent!==null){el=ins[i];break}}
   if(!el)return;var f=el.closest('tr')||el.closest('.al');if(!f)return;f.classList.add('lv-viva');
   setTimeout(function(){try{filaBajoEnc(f)}catch(e){}},70)}
+/* ===== Ladrillo545: la lectura sigue con la pantalla negra; un toque pausa o reanuda ===== */
+var LVP={wl:null,pidiendo:false,idle:0,negro:false,avisado:false,tt:null};
+function lvToast(t){var e=document.getElementById('lvToast');if(!e)return;e.textContent=t;e.style.display='block';clearTimeout(LVP.tt);LVP.tt=setTimeout(function(){e.style.display='none'},1400)}
+function lvWlOk(){try{return !!(navigator.wakeLock&&navigator.wakeLock.request)}catch(e){return false}}
+function lvWlPide(){
+  if(!lvWlOk())return false;
+  if(LVP.wl||LVP.pidiendo)return true;
+  LVP.pidiendo=true;
+  try{navigator.wakeLock.request('screen').then(function(l){LVP.pidiendo=false;
+    if(!(LV.on&&!LV.pausa)){try{l.release()}catch(e){}return}
+    LVP.wl=l;l.addEventListener('release',function(){if(LVP.wl===l)LVP.wl=null})}).catch(function(){LVP.pidiendo=false;LVP.wl=null})}
+  catch(e){LVP.pidiendo=false;return false}
+  return true}
+function lvWlSuelta(){var l=LVP.wl;LVP.wl=null;try{if(l)l.release()}catch(e){}}
+function lvNegroQuita(){var o=document.getElementById('lvNegro');if(o)o.style.display='none';LVP.negro=false}
+function lvNegroPon(){LVP.idle=0;if(!(LV.on&&!LV.pausa)||!lvWlOk())return;var o=document.getElementById('lvNegro');if(!o)return;o.style.display='block';LVP.negro=true}
+function lvIdleArma(reinicia){if(LVP.idle&&!reinicia)return;clearTimeout(LVP.idle);LVP.idle=0;
+  if(LV.on&&!LV.pausa&&lvWlOk())LVP.idle=setTimeout(lvNegroPon,10000)}
+function lvMantiene(){
+  if(LV.on&&!LV.pausa){
+    if(!lvWlPide()&&!LVP.avisado){LVP.avisado=true;lvAviso('Este celular no deja mantener la pantalla prendida: si se apaga, la lectura puede cortarse.')}
+    lvIdleArma(false)}
+  else{lvWlSuelta();clearTimeout(LVP.idle);LVP.idle=0;lvNegroQuita()}}
+function lvInteractivo(el){
+  for(var n=el,i=0;n&&n!==document.body&&i<25;n=n.parentNode,i++){
+    if(n.nodeType!==1)continue;
+    if(/^(BUTTON|INPUT|SELECT|TEXTAREA|A|LABEL|SUMMARY|OPTION)$/.test(n.tagName)||n.hasAttribute('onclick')||n.isContentEditable)return true;
+    try{if(getComputedStyle(n).cursor==='pointer')return true}catch(e){}}
+  return false}
+function lvToqueInit(){
+  ['touchstart','pointerdown','mousedown','keydown'].forEach(function(ev){document.addEventListener(ev,function(){if(LV.on&&!LV.pausa&&!LVP.negro)lvIdleArma(true)},true)});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&LV.on&&!LV.pausa)lvWlPide()});
+  document.addEventListener('click',function(e){
+    if(!LV.on)return;
+    if(LVP.negro||(e.target&&e.target.id==='lvNegro')){e.preventDefault();lvNegroQuita();lvToggle();lvToast(LV.pausa?'⏸ En pausa':'▶ Sigue la lectura');return}
+    if(lvInteractivo(e.target))return;
+    lvToggle();lvToast(LV.pausa?'⏸ En pausa':'▶ Sigue la lectura')},true)}
 /* ===== Ladrillo451: lectura en el Resumen (Tabla) y lectura que sigue a los campos formativos ===== */
 function lvColaRes(){var sel=_espPerSel;
   if(sel==='DIAG')return lvColaDiag();
@@ -905,7 +942,7 @@ function lvInit(){var b=document.getElementById('leerBtn');if(!b)return;
   b.addEventListener('click',lvToggle);
   document.getElementById('lvStop').addEventListener('click',function(){lvDetener(true)});
   document.getElementById('lvCfg').addEventListener('click',function(){var p=document.getElementById('lvPanel');p.style.display=(p.style.display==='none')?'':'none';if(typeof fijaEnc==='function')fijaEnc()});
-  ['lvVel','lvVoz','lvPau'].forEach(function(i){var e=document.getElementById(i);if(e)e.addEventListener('change',function(){if(i==='lvVoz')LV.voz=null;lvGuarda()})})}
+  ['lvVel','lvVoz','lvPau'].forEach(function(i){var e=document.getElementById(i);if(e)e.addEventListener('change',function(){if(i==='lvVoz')LV.voz=null;lvGuarda()})});lvToqueInit()}
 function dicInit(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition,b=dicBtn();if(!SR||!b||/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent||''))return;b.style.display='';
   document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.tagName==='TEXTAREA'&&t.classList&&t.classList.contains('ob')){if(DIC.on&&!DIC.cal&&DIC.rec&&DIC.ta&&t!==DIC.ta){DIC.nuevo=t}else{DIC.ta=t;if(DIC.on&&DIC.cal)dicFin()}}else if(t&&t.tagName==='INPUT'&&t.classList&&t.classList.contains('gi')&&(t.dataset.k==='cal'||t.dataset.k==='diag')&&!t.disabled){DIC.ta=t;if(DIC.on&&DIC.cal){DIC.cur=t;dicPinta();if(!DIC.prog&&t.dataset.a!==DIC.alum)dicAnuncia(t,false)}}});
   b.addEventListener('pointerdown',function(e){e.preventDefault()});
@@ -1470,5 +1507,7 @@ if(!K){pinta('🔑','Falta tu llave','Abre esta página desde el enlace que te m
 busca();
 })();
 </script>
+<div id="lvNegro" style="display:none;position:fixed;left:0;top:0;right:0;bottom:0;background:#000;z-index:2147483647"></div>
+<div id="lvToast" style="display:none;position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(20,24,40,.92);color:#fff;font-weight:800;font-size:1.3rem;padding:16px 28px;border-radius:16px;z-index:2147483646;pointer-events:none"></div>
 </body>
 </html>
