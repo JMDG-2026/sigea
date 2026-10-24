@@ -1001,12 +1001,14 @@ function entPreguntaRep(id){
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var CAL_DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ef8a1d'};
+var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ef8a1d',cie:'#a98aff'};
 function calNom(r){var u=String(r||'').toUpperCase().trim();
   if(u==='REGISTRO CALIF')return ['Descarga','Registro de calificaciones · no hay clases'];
   if(u==='CTE INTENSIVO')return ['CTE intensivo','Consejo Técnico Escolar intensivo · no hay clases'];
   if(u==='CTE')return ['CTE','Consejo Técnico Escolar · no hay clases'];
   return [String(r||'Sin clases'),'No hay clases'];}
+var CAL_FEST={'DIA DE MUERTOS':'Día de Muertos','ANO NUEVO':'Año Nuevo','REVOLUCION':'Revolución Mexicana','CONSTITUCION':'Día de la Constitución','NATALICIO DE JUAREZ':'Natalicio de Benito Juárez','INDEPENDENCIA':'Día de la Independencia','NAVIDAD':'Navidad','REYES':'Día de Reyes','BATALLA DE PUEBLA':'Batalla de Puebla','VACACIONES':'Vacaciones','RECESO':'Receso escolar'};
+function calFest(r){var s=String(r||'').trim();if(!s)return ['Sin clases','Vacaciones, receso o día festivo'];return [CAL_FEST[s.toUpperCase()]||s,'No hay clases'];}
 function calEventos(){
   var ev={},i=PM.info||{},desde=i.desde||'',hasta=i.hasta||'',esp={};
   function add(f,o){(ev[f]=ev[f]||[]).push(o);}
@@ -1014,9 +1016,14 @@ function calEventos(){
   (i.inhabiles||[]).forEach(function(f){
     if(esp[f]||(desde&&f<desde)||(hasta&&f>hasta))return;
     var d=pmD(f);if(d.getDay()===0||d.getDay()===6)return;
-    add(f,{k:'esc',t:'Sin clases',s:'Vacaciones, receso o día festivo',n:1});});
+    var nm=calFest((i.nombres||{})[f]);add(f,{k:'esc',t:nm[0],s:nm[1],n:1});});
   (ENT.lista||[]).forEach(function(x){
     if(x.tipo==='fecha'&&x.limite)add(String(x.limite).slice(0,10),{k:'ent',t:'Entregar: '+x.nombre,s:x.entrega?'✓ Ya lo entregaste':'Te falta entregarlo'});});
+  (i.periodos||[]).forEach(function(p){if(!p||!p.f)return;var c=String(p.c||'').toUpperCase(),t,s;
+    if(c==='FIN'){t='Fin de ciclo';s='Último día del ciclo escolar';}
+    else if(c==='DIAG'){t='Cierre del diagnóstico';s='Fecha de cierre de calificaciones';}
+    else{t='Cierre del '+String(p.n||c).toLowerCase();s='Fecha de cierre de calificaciones';}
+    add(String(p.f).slice(0,10),{k:'cie',t:t,s:s});});
   (i.tomados||[]).forEach(function(f){add(f,{k:'per',t:'Tu permiso económico',s:'Día aprobado'});});
   (PM.mis||[]).forEach(function(s){if(s.tipo==='constancia')return;
     if(s.estado==='pendiente')(s.fechas||[]).forEach(function(f){add(f,{k:'per',t:(s.tipo==='gestoria'?'Gestoría':'Permiso')+' en revisión',s:'Espera la respuesta del director'});});
@@ -1057,9 +1064,9 @@ function pintaCal(){
       var f=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2),dw=new Date(y,m,d).getDay(),L=ev[f]||[],cl='cd',ks={};
       if(dw===0||dw===6)cl+=' fin';if(f===hi)cl+=' hoy';
       L.forEach(function(e){ks[e.k]=1;});if(ks.esc)cl+=' susp';
-      var pts=['esc','ent','per'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+'"></i>';}).join('');
+      var pts=['esc','ent','cie','per'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+'"></i>';}).join('');
       h+='<button class="'+cl+'" data-d="'+f+'">'+d+(pts?'<span class="p">'+pts+'</span>':'')+'</button>';}
-    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span></div>';
+    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span></div>';
     var prox=[];Object.keys(ev).sort().forEach(function(f){if(f<hi)return;ev[f].forEach(function(e){if(!e.n)prox.push({f:f,e:e});});});
     prox=prox.slice(0,4);
     h+='<div class="pm-sec">Lo que sigue</div>';
