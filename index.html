@@ -1067,7 +1067,7 @@ function pintaDes(){
   else if(DES.err&&!DES.lista)h+='<div class="pm-aviso">'+esc(DES.err)+'</div><div class="en-act"><button class="pm-b" id="deRei">↻ Intentar otra vez</button></div>';
   else{
     if(DES.err)h+='<div class="pm-aviso">'+esc(DES.err)+' Esto es lo último que pude leer.</div>';
-    h+='<div class="de-chips">'+[['todos','Todo'],['circular','Circulares'],['oficio','Oficios']].map(function(f){return '<button class="de-chip'+(DES.filtro===f[0]?' on':'')+'" data-de="f" data-f="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'+
+    h+='<div class="de-chips">'+[['todos','Todo'],['circular','Circulares'],['oficio','Oficios'],['otro','Otros']].map(function(f){return '<button class="de-chip'+(DES.filtro===f[0]?' on':'')+'" data-de="f" data-f="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'+
        '<input class="de-busca" id="deQ" type="search" placeholder="🔍 Buscar por título o número" value="'+esc(DES.q)+'" autocomplete="off">'+
        '<div id="deLista">'+desLista()+'</div>'+
        '<p class="pm-ayuda">Lo más nuevo va arriba, por mes. «nuevo» se quita cuando bajas o ves el documento.</p>'+
