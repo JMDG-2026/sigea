@@ -92,6 +92,7 @@ body{
 .c-tea{background:linear-gradient(145deg,#45d0dc,var(--tea) 45%,var(--tea2))}
 .c-fus{background:linear-gradient(145deg,#ff6ec7,#e0309a 45%,#9c1068)}
 .c-oro{background:linear-gradient(145deg,#f3d388,var(--oro) 45%,var(--oro2));color:#2b1c00}
+.c-lim{background:linear-gradient(145deg,#c6ee5a,#8cc21f 45%,#557a0c);color:#1c2a00}
 .c-oro h3{text-shadow:none}.c-oro .et{background:rgba(255,255,255,.4);border-color:rgba(0,0,0,.2);color:#2b1c00}
 .sec{margin:22px 4px 4px;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave)}
 /* --- pie --- */
@@ -370,7 +371,8 @@ var OBRA={
  avisos:['💬','Avisos','Aquí te llegarán los avisos del director.'],
  entregas:['📤','Entregas','Aquí subirás tus documentos en PDF y verás qué te falta entregar.'],
  calendario:['📅','Calendario','Aquí verás las fechas importantes del ciclo.'],
- biblioteca:['📚','SIGEP','Aquí abrirás la carpeta con los materiales del personal.'],
+ descargas:['⬇️','Descargas','Aquí bajarás las circulares y los oficios que te mande el director.'],
+ biblioteca:['📚','Biblioteca','Aquí abrirás los materiales del personal.'],
  enlaces:['🔗','Enlaces','Aquí encontrarás enlaces a sitios de interés.'],
  tutoriales:['🎬','Tutoriales','Aquí aprenderás paso a paso a usar la plataforma.']};
 function enObra(id){var o=OBRA[id];if(!o)return;
@@ -1128,8 +1130,9 @@ function pinta(q,aviso){
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button>'+
    '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
-   '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>SIGEP</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-lim apagado" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-fus apagado" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
