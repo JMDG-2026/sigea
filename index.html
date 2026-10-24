@@ -807,7 +807,7 @@ function entChip(x){
   return '<span class="en-chip faltan">'+(d===1?'Falta 1 día':'Faltan '+d+' días')+'</span>';}
 function entCaja(x){
   var fec=(x.tipo==='fecha'&&entDias(x.limite)!==null)?'Entregar a más tardar el '+entFecha(x.limite)+'. ':'';
-  var fm=x.formato==='pdf'?'Solo PDF.':'PDF o foto.';
+  var fm=x.formato==='pdf'?'Solo PDF.':(x.formato==='pdf_word'?'PDF o Word.':'PDF o foto.');
   return '<div class="pm-ped"><div class="cab"><span class="tp">'+(x.tipo==='fecha'?'📄 CON FECHA LÍMITE':'🗂️ UNA SOLA VEZ · EXPEDIENTE')+'</span>'+entChip(x)+'</div>'+
     '<div class="fe">'+esc(x.nombre)+'</div><div class="mo">'+esc(fec+fm)+'</div></div>';}
 function pintaEnt(){
