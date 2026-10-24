@@ -244,6 +244,20 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pm-b{height:38px;padding:0 15px;border-radius:11px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:800;font-size:.85rem;cursor:pointer}
 .pm-b.ok{border:0;background:linear-gradient(145deg,#3fd197,var(--ver) 50%,var(--ver2));color:#04241a}
 .pm-vacio{text-align:center;color:var(--suave);padding:22px 8px;font-size:.9rem}
+.ca-nav{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 12px}.ca-nav b{font-size:1.1rem;letter-spacing:.02em}
+.ca-fl{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:var(--oro);font:inherit;font-weight:900;font-size:1.1rem;cursor:pointer;padding:0}.ca-fl[disabled]{opacity:.3;cursor:default}
+.ca-sem,.ca-dias{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.ca-sem span{text-align:center;font-size:.68rem;color:var(--suave);letter-spacing:.06em;padding-bottom:4px}
+.cd{aspect-ratio:1/1.08;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid transparent;display:flex;flex-direction:column;align-items:center;padding:6px 0 0;font:inherit;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;min-width:0}
+.cd.v{background:transparent;cursor:default;pointer-events:none}.cd.fin{color:#7c88a6;background:rgba(255,255,255,.025)}
+.cd.hoy{border-color:var(--oro);box-shadow:0 0 0 2px rgba(226,187,98,.25) inset;color:var(--oro)}
+.cd.susp{background:linear-gradient(160deg,rgba(226,187,98,.55),rgba(169,131,47,.35));border-color:rgba(226,187,98,.5);color:#fff3cf}
+.cd .p{display:flex;gap:3px;margin-top:4px;justify-content:center}.cd .p i{width:6px;height:6px;border-radius:50%;display:block}
+.ca-ley{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.76rem;color:var(--suave)}.ca-ley i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.ca-ev{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:9px 11px;margin-bottom:7px;text-align:left}
+.ca-ev .f{min-width:42px;text-align:center;font-weight:900;line-height:1.1}.ca-ev .f small{display:block;font-size:.62rem;color:var(--suave);letter-spacing:.06em}
+.ca-ev b{display:block;font-size:.92rem}.ca-ev em{font-style:normal;color:var(--suave);font-size:.8rem}.ca-ev .bar{width:5px;align-self:stretch;border-radius:4px;flex:none}
+.ca-dia h2{margin:0 0 2px;font-size:1.1rem}.ca-dia{margin-bottom:12px}
 .en-chip{font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:99px;white-space:nowrap}
 .en-chip.faltan{background:#e2bb62;color:#2b1c00}.en-chip.hoy{background:#ff9d3d;color:#2b1200}
 .en-chip.venc{background:#e0264d;color:#fff}.en-chip.libre{background:rgba(255,255,255,.2);color:#e8e8f0}
@@ -983,10 +997,91 @@ function entVer(id,btn){
 function entPreguntaRep(id){
   abrirC('<div class="obra"><div class="gr">🔄</div><h2>¿Cambiar tu archivo?</h2><p class="nota">El anterior se queda guardado con el director. Solo cambia el que verá como vigente.</p></div><button class="btn" id="enRepSi">Sí, cambiarlo</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
   var b=$('enRepSi');if(b)b.onclick=function(){entAbreRec(id);};}
+/* CALENDARIO (ladrillo 531): el mes de la sala. Junta lo que la sala ya sabe: dias de la escuela (perm_info), entregas con fecha (ent_mis) y permisos propios. Solo MIRA. */
+var CAL={mes:null,cargando:false,err:''};
+var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var CAL_DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ef8a1d'};
+function calNom(r){var u=String(r||'').toUpperCase().trim();
+  if(u==='REGISTRO CALIF')return ['Descarga','Registro de calificaciones · no hay clases'];
+  if(u==='CTE INTENSIVO')return ['CTE intensivo','Consejo Técnico Escolar intensivo · no hay clases'];
+  if(u==='CTE')return ['CTE','Consejo Técnico Escolar · no hay clases'];
+  return [String(r||'Sin clases'),'No hay clases'];}
+function calEventos(){
+  var ev={},i=PM.info||{},desde=i.desde||'',hasta=i.hasta||'',esp={};
+  function add(f,o){(ev[f]=ev[f]||[]).push(o);}
+  (i.especiales||[]).forEach(function(e){var n=calNom(e.r);esp[e.f]=1;add(e.f,{k:'esc',t:n[0],s:n[1]});});
+  (i.inhabiles||[]).forEach(function(f){
+    if(esp[f]||(desde&&f<desde)||(hasta&&f>hasta))return;
+    var d=pmD(f);if(d.getDay()===0||d.getDay()===6)return;
+    add(f,{k:'esc',t:'Sin clases',s:'Vacaciones, receso o día festivo',n:1});});
+  (ENT.lista||[]).forEach(function(x){
+    if(x.tipo==='fecha'&&x.limite)add(String(x.limite).slice(0,10),{k:'ent',t:'Entregar: '+x.nombre,s:x.entrega?'✓ Ya lo entregaste':'Te falta entregarlo'});});
+  (i.tomados||[]).forEach(function(f){add(f,{k:'per',t:'Tu permiso económico',s:'Día aprobado'});});
+  (PM.mis||[]).forEach(function(s){if(s.tipo==='constancia')return;
+    if(s.estado==='pendiente')(s.fechas||[]).forEach(function(f){add(f,{k:'per',t:(s.tipo==='gestoria'?'Gestoría':'Permiso')+' en revisión',s:'Espera la respuesta del director'});});
+    else if(s.estado==='aprobado'&&s.tipo==='gestoria')(s.fechas||[]).forEach(function(f){add(f,{k:'per',t:'Gestoría aprobada',s:'Día aprobado'});});});
+  return ev;}
+function calMesIni(){
+  var i=PM.info||{},hoy=new Date(),m=new Date(hoy.getFullYear(),hoy.getMonth(),1);
+  if(i.desde){var a=pmD(i.desde);a=new Date(a.getFullYear(),a.getMonth(),1);if(m<a)m=a;}
+  if(i.hasta){var b=pmD(i.hasta);b=new Date(b.getFullYear(),b.getMonth(),1);if(m>b)m=b;}
+  return m;}
+function calCarga(){
+  if(!B||!K)return;CAL.cargando=true;CAL.err='';if(VISTA==='cal')pintaCal();
+  var nulo=function(){return null;};
+  Promise.all([llama('perm_info').catch(nulo),llama('perm_mis').catch(nulo),llama('ent_mis').catch(nulo)]).then(function(rs){
+    CAL.cargando=false;
+    if(rs[0]&&rs[0].ok)PM.info=rs[0].info;else if(!PM.info)CAL.err='No pude leer el calendario de la escuela'+((rs[0]&&rs[0].error)?' ('+rs[0].error+')':'')+'.';
+    if(rs[1]&&rs[1].ok){PM.mis=rs[1].solicitudes||[];COMP=compCuenta(PM.mis);}
+    if(rs[2]&&rs[2].ok){ENT.lista=rs[2].pedidos||[];ENT.T=Date.now();}
+    var e=$('cEnEt');if(e)e.textContent=entEt();pintaAtn();
+    if(VISTA==='cal')pintaCal();});}
+function pintaCal(){
+  sala.onclick=null;
+  var h='<div class="pz-top"><button class="volv" id="caSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">📅 Calendario</h1></div>',i=PM.info;
+  if(CAL.cargando&&!i)h+='<p class="pm-vacio">Armando tu calendario…</p>';
+  else if(CAL.err&&!i)h+='<div class="pm-aviso">'+esc(CAL.err)+'</div><div class="en-act"><button class="pm-b" id="caRei">↻ Intentar otra vez</button></div>';
+  else{
+    if(!CAL.mes)CAL.mes=calMesIni();
+    var ev=calEventos(),M=CAL.mes,y=M.getFullYear(),m=M.getMonth(),n=new Date(y,m+1,0).getDate(),lead=(new Date(y,m,1).getDay()+6)%7;
+    var a=i&&i.desde?pmD(i.desde):null,b=i&&i.hasta?pmD(i.hasta):null,hoy=new Date(),hi=pmIso(hoy);
+    var antes=a&&new Date(y,m,0)<new Date(a.getFullYear(),a.getMonth(),1),despues=b&&new Date(y,m+1,1)>b;
+    var dis1=(a&&new Date(y,m-1,1)<new Date(a.getFullYear(),a.getMonth(),1))?' disabled':'',dis2=(b&&new Date(y,m+1,1)>new Date(b.getFullYear(),b.getMonth(),1))?' disabled':'';
+    if(i&&!i.leido)h+='<div class="pm-aviso">El calendario de la escuela todavía no está cargado. Aquí verás solo tus entregas y permisos.</div>';
+    if(CAL.err)h+='<div class="pm-aviso">'+esc(CAL.err)+' Esto es lo último que pude leer.</div>';
+    h+='<div class="ca-nav"><button class="ca-fl" id="caPrev"'+dis1+'>‹</button><b>'+CAL_MN[m]+' '+y+'</b><button class="ca-fl" id="caNext"'+dis2+'>›</button></div>'+
+       '<div class="ca-sem"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div><div class="ca-dias">';
+    for(var k=0;k<lead;k++)h+='<div class="cd v"></div>';
+    for(var d=1;d<=n;d++){
+      var f=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2),dw=new Date(y,m,d).getDay(),L=ev[f]||[],cl='cd',ks={};
+      if(dw===0||dw===6)cl+=' fin';if(f===hi)cl+=' hoy';
+      L.forEach(function(e){ks[e.k]=1;});if(ks.esc)cl+=' susp';
+      var pts=['esc','ent','per'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+'"></i>';}).join('');
+      h+='<button class="'+cl+'" data-d="'+f+'">'+d+(pts?'<span class="p">'+pts+'</span>':'')+'</button>';}
+    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span></div>';
+    var prox=[];Object.keys(ev).sort().forEach(function(f){if(f<hi)return;ev[f].forEach(function(e){if(!e.n)prox.push({f:f,e:e});});});
+    prox=prox.slice(0,4);
+    h+='<div class="pm-sec">Lo que sigue</div>';
+    if(!prox.length)h+='<p class="pm-vacio" style="padding:8px">Nada próximo por ahora.</p>';
+    else h+=prox.map(function(x){var p=pmD(x.f);return '<div class="ca-ev"><div class="f">'+p.getDate()+'<small>'+CAL_MN[p.getMonth()].slice(0,3).toUpperCase()+'</small></div><span class="bar" style="background:'+CAL_COL[x.e.k]+'"></span><div><b>'+esc(x.e.t)+'</b><em>'+esc(x.e.s)+'</em></div></div>';}).join('');
+    h+='<div class="en-act"><button class="pm-b" id="caRei">'+(CAL.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
+  sala.innerHTML=h;
+  var s=$('caSala');if(s)s.onclick=function(){irA('sala');};
+  var r=$('caRei');if(r)r.onclick=calCarga;
+  var pv=$('caPrev');if(pv)pv.onclick=function(){CAL.mes=new Date(CAL.mes.getFullYear(),CAL.mes.getMonth()-1,1);pintaCal();};
+  var nx=$('caNext');if(nx)nx.onclick=function(){CAL.mes=new Date(CAL.mes.getFullYear(),CAL.mes.getMonth()+1,1);pintaCal();};
+  sala.onclick=function(e){var t=e.target.closest?e.target.closest('.cd[data-d]'):null;if(t)calDia(t.getAttribute('data-d'));};}
+function calDia(f){
+  var ev=calEventos()[f]||[],d=pmD(f),lista=ev.map(function(e){
+    return '<div class="ca-ev"><span class="bar" style="background:'+CAL_COL[e.k]+'"></span><div><b>'+esc(e.t)+'</b><em>'+esc(e.s)+'</em></div></div>';}).join('');
+  var fin=(d.getDay()===0||d.getDay()===6);
+  abrirC('<div class="ca-dia"><h2>'+esc(CAL_DN[d.getDay()].charAt(0).toUpperCase()+CAL_DN[d.getDay()].slice(1)+' '+d.getDate()+' de '+CAL_MN[d.getMonth()].toLowerCase())+'</h2>'+
+    '<p class="sub">'+(ev.length?(ev.length===1?'1 cosa ese día':ev.length+' cosas ese día'):(fin?'Fin de semana':'Nada especial ese día'))+'</p>'+lista+'</div><button class="btn" onclick="cerrarSala()">Cerrar</button>');}
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
@@ -997,17 +1092,18 @@ function pinta(q,aviso){
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button>'+
-   '<button class="cofre c-mor apagado" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et">En construcción</span></button></div>'+
+   '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>SIGEP</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-fus apagado" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
-   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button></div>';
+   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
   if(VISTA==='ent'){pintaEnt();return;}
+  if(VISTA==='cal'){pintaCal();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
      '<button class="entrar" id="atras" style="font-size:1rem;padding:12px 28px;margin-top:28px">‹ Volver a la bienvenida</button><button class="salir-b" id="salir">Cerrar sesión</button>';
@@ -1030,7 +1126,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
