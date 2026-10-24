@@ -245,6 +245,13 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pm-b{height:38px;padding:0 15px;border-radius:11px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:800;font-size:.85rem;cursor:pointer}
 .pm-b.ok{border:0;background:linear-gradient(145deg,#3fd197,var(--ver) 50%,var(--ver2));color:#04241a}
 .pm-vacio{text-align:center;color:var(--suave);padding:22px 8px;font-size:.9rem}
+/* DESCARGAS (ladrillo 538) */
+.de-chips{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+.de-chip{height:36px;padding:0 15px;border-radius:99px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;font:inherit;font-weight:800;font-size:.85rem;cursor:pointer}
+.de-chip.on{border:0;background:linear-gradient(145deg,#c6ee5a,#8cc21f);color:#1c2a00}
+.de-busca{width:100%;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit;margin:0 0 12px}
+.de-nue{background:#e0264d;color:#fff;border-radius:99px;font-size:.7rem;font-weight:800;padding:2px 9px}
+.pm-b.lim{border:0;background:linear-gradient(145deg,#c6ee5a,#8cc21f 50%,#557a0c);color:#1c2a00}
 .ca-nav{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 12px}.ca-nav b{font-size:1.1rem;letter-spacing:.02em}
 .ca-fl{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:var(--oro);font:inherit;font-weight:900;font-size:1.1rem;cursor:pointer;padding:0}.ca-fl[disabled]{opacity:.3;cursor:default}
 .ca-sem,.ca-dias{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
@@ -387,6 +394,7 @@ function atItems(){
     it.push({pt:'#e0b83a',t:nom,s:'Captura las calificaciones de tu grupo',h:'calificaciones.html'+HR});}
   if(PEND>0)it.push({pt:'#ff5577',t:PEND+(PEND===1?' aviso por confirmar':' avisos por confirmar'),s:'Del director · ábrelos en el Pizarrón de avisos',p:1});
   if(COMP>0)it.push({pt:'#e0b83a',t:COMP===1?'Falta entregar un comprobante de gestoría':'Faltan por entregar '+COMP+' comprobantes de gestoría',s:'Entrega una copia a la Dirección · ábrelo en Mis permisos',m:1});
+  if(DES.lista&&DES.nuevos>0)it.push({pt:'#8cc21f',t:DES.nuevos===1?'Hay una descarga nueva':'Hay '+DES.nuevos+' descargas nuevas',s:'Circulares y oficios · ábrelos en Descargas',d:1});
   if(ENT.lista){var pe=entPend();if(pe>0)it.push({pt:'#e0b83a',t:pe===1?'Tienes un documento por entregar':'Tienes '+pe+' documentos por entregar',s:'Ábrelos en Entregas',e:1});}
   return it;}
 function pintaAtn(){var bt=$('atn');if(!bt)return;var it=atItems();
@@ -394,14 +402,14 @@ function pintaAtn(){var bt=$('atn');if(!bt)return;var it=atItems();
   else{bt.className='atn bien-todo';bt.innerHTML='<span class="p" style="background:radial-gradient(circle at 35% 30%,#d9fff0,#6fe0b4 60%,#2f9c76)"></span>Todo al día<span class="f">›</span>';}}
 function abreAtn(){var it=atItems();
   if(!it.length){abrirC('<div class="obra"><div class="gr">✅</div><h2>Todo al día</h2><p class="nota">No hay nada pendiente por ahora, maestra.</p><svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg></div><button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');return;}
-  abrirC('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':x.m?' data-mp="1" href="#"':x.e?' data-en="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-mp]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('perm');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-en]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('ent');};});}
+  abrirC('<h2>Lo que pide tu atención</h2><p class="sub">Toca uno para ir a él.</p>'+it.map(function(x){return '<a class="it"'+(x.p?' data-piz="1" href="#"':x.m?' data-mp="1" href="#"':x.e?' data-en="1" href="#"':x.d?' data-de="1" href="#"':' href="'+x.h+'"')+'><span class="pt" style="background:'+x.pt+'"></span><span><b>'+esc(x.t)+'</b><small>'+esc(x.s)+'</small></span><span class="fl">›</span></a>';}).join('')+'<button class="btn sec2" onclick="cerrarSala()">Cerrar</button>');Array.prototype.forEach.call(cont.querySelectorAll('a[data-piz]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('piz');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-mp]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('perm');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-en]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('ent');};});Array.prototype.forEach.call(cont.querySelectorAll('a[data-de]'),function(a){a.onclick=function(e){e.preventDefault();cerrar();irA('des');};});}
 function compCuenta(l){return (l||[]).filter(function(s){return s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='pendiente';}).length;}
 function traeComp(){
   if(!B||!K||Date.now()-COMPT<60000)return;COMPT=Date.now();
   llama('perm_mis').then(function(r){if(r&&r.ok){COMP=compCuenta(r.solicitudes);pintaAtn();}}).catch(function(){});}
 function traeAvisos(){
   if(!B||!K)return;
-  traeComp();traeEnt();
+  traeComp();traeEnt();traeDes();
   llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
 function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
   return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
@@ -1026,6 +1034,75 @@ function entPropioCaja(x){
 function entPreguntaRep(id){
   abrirC('<div class="obra"><div class="gr">🔄</div><h2>¿Cambiar tu archivo?</h2><p class="nota">El anterior se queda guardado con el director. Solo cambia el que verá como vigente.</p></div><button class="btn" id="enRepSi">Sí, cambiarlo</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
   var b=$('enRepSi');if(b)b.onclick=function(){entAbreRec(id);};}
+/* DESCARGAS (ladrillo 538): lo que el director publica para los maestros. El maestro BAJA o VE; nada se borra. */
+var DES={cargando:false,err:'',lista:null,nuevos:0,T:0,filtro:'todos',q:''};
+function desEt(){if(!DES.lista)return 'Circulares y oficios';if(!DES.lista.length)return 'Nada por ahora';return DES.nuevos?(DES.nuevos===1?'1 nueva':DES.nuevos+' nuevas'):'Al día';}
+function desCuenta(){DES.nuevos=(DES.lista||[]).filter(function(x){return !x.bajada;}).length;}
+function desSin(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function desFecha(iso){var d=new Date(iso);if(isNaN(d))return '';var m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return d.getDate()+' '+m[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' '+d.getFullYear():'');}
+function desMes(iso){var d=new Date(iso);if(isNaN(d))return 'Sin fecha';var m=PZ_MESES[d.getMonth()];return m.charAt(0).toUpperCase()+m.slice(1)+' '+d.getFullYear();}
+function desTipo(x){var n=x.numero?' · '+esc(x.numero):'';return x.tipo==='circular'?'📄 CIRCULAR'+n:(x.tipo==='oficio'?'✉️ OFICIO'+n:'📎 DOCUMENTO'+n);}
+function desCaja(x){
+  var id=esc(x.id),fem=x.tipo==='circular',cl=x.clase==='pdf'?'PDF':(x.clase==='word'?'Word':'Foto'),puedeVer=(x.clase==='pdf'||x.clase==='foto');
+  return '<div class="pm-ped"><div class="cab"><span class="tp">'+desTipo(x)+'</span>'+(x.bajada?'':'<span class="de-nue">nuevo</span>')+'</div>'+
+    '<div class="fe">'+esc(x.titulo)+'</div><div class="mo">'+(fem?'Publicada':'Publicado')+' el '+esc(desFecha(x.creado))+' · '+cl+' · '+esc(entKb(x.bytes))+(x.bajada?' · ✓ '+(fem?'ya la bajaste':'ya lo bajaste'):'')+'</div>'+
+    '<div class="ac"><button class="pm-b'+(x.bajada?'':' lim')+'" data-de="baja" data-i="'+id+'">⬇ Bajar</button>'+(puedeVer?'<button class="pm-b" data-de="ver" data-i="'+id+'">👁 Ver</button>':'')+'</div></div>';}
+function desVisibles(){
+  var q=desSin(DES.q).trim();
+  return (DES.lista||[]).filter(function(x){
+    if(DES.filtro!=='todos'&&x.tipo!==DES.filtro)return false;
+    if(q){var h=desSin(x.titulo+' '+x.numero+' '+x.tipo);var ps=q.split(/\s+/);for(var i=0;i<ps.length;i++)if(h.indexOf(ps[i])<0)return false;}
+    return true;});}
+function desLista(){
+  var L=desVisibles();
+  if(!(DES.lista||[]).length)return '<p class="pm-vacio">Todavía no hay descargas. Cuando el director publique una circular o un oficio, aparecerá aquí. 📭</p>';
+  if(!L.length)return '<p class="pm-vacio">No encontré nada con eso.</p>';
+  var h='',mes='';
+  L.forEach(function(x){var m=desMes(x.creado);if(m!==mes){mes=m;h+='<div class="pm-sec" style="margin:'+(h?'14px':'6px')+' 4px 8px">'+esc(m)+'</div>';}h+=desCaja(x);});
+  return h;}
+function pintaDes(){
+  sala.onclick=null;
+  var h='<div class="pz-top"><button class="volv" id="deSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">⬇️ Descargas</h1></div>';
+  if(DES.cargando&&!DES.lista)h+='<p class="pm-vacio">Buscando lo que hay…</p>';
+  else if(DES.err&&!DES.lista)h+='<div class="pm-aviso">'+esc(DES.err)+'</div><div class="en-act"><button class="pm-b" id="deRei">↻ Intentar otra vez</button></div>';
+  else{
+    if(DES.err)h+='<div class="pm-aviso">'+esc(DES.err)+' Esto es lo último que pude leer.</div>';
+    h+='<div class="de-chips">'+[['todos','Todo'],['circular','Circulares'],['oficio','Oficios']].map(function(f){return '<button class="de-chip'+(DES.filtro===f[0]?' on':'')+'" data-de="f" data-f="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'+
+       '<input class="de-busca" id="deQ" type="search" placeholder="🔍 Buscar por título o número" value="'+esc(DES.q)+'" autocomplete="off">'+
+       '<div id="deLista">'+desLista()+'</div>'+
+       '<p class="pm-ayuda">Lo más nuevo va arriba, por mes. «nuevo» se quita cuando bajas o ves el documento.</p>'+
+       '<div class="en-act"><button class="pm-b" id="deRei">'+(DES.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
+  sala.innerHTML=h;
+  var a=$('deSala');if(a)a.onclick=function(){irA('sala');};
+  var r=$('deRei');if(r)r.onclick=desCarga;
+  var q=$('deQ');if(q)q.oninput=function(){DES.q=this.value;var l=$('deLista');if(l)l.innerHTML=desLista();};
+  sala.onclick=function(e){var t=e.target.closest?e.target.closest('button'):null;if(!t)return;var ac=t.getAttribute('data-de'),id=t.getAttribute('data-i');
+    if(ac==='f'){DES.filtro=t.getAttribute('data-f');pintaDes();}
+    else if(ac==='baja')desBaja(id,t,false);else if(ac==='ver')desBaja(id,t,true);};}
+function desCarga(){
+  if(!B||!K)return;DES.cargando=true;DES.err='';if(VISTA==='des')pintaDes();
+  llama('des_mis').then(function(r){DES.cargando=false;DES.T=Date.now();
+    if(r&&r.ok){DES.lista=r.descargas||[];DES.err='';desCuenta();}else DES.err='No pude leer las descargas ('+((r&&r.error)||'respuesta rara')+').';
+    if(VISTA==='des')pintaDes();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();})
+  .catch(function(){DES.cargando=false;DES.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='des')pintaDes();});}
+function traeDes(){
+  if(!B||!K||Date.now()-DES.T<60000)return;DES.T=Date.now();
+  llama('des_mis').then(function(r){if(r&&r.ok){DES.lista=r.descargas||[];desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();}}).catch(function(){});}
+function desBaja(id,btn,ver){
+  var P=null;(DES.lista||[]).forEach(function(x){if(x.id===id)P=x;});if(!P)return;
+  var txt=btn.textContent;btn.disabled=true;btn.textContent='Abriendo…';
+  var fin=function(){btn.disabled=false;btn.textContent=txt;};
+  llama('des_bajar',{id:id}).then(function(x){
+    if(!(x&&x.ok&&x.base64))throw new Error((x&&x.error)||'no llegó el archivo');
+    var bin=atob(x.base64),u=new Uint8Array(bin.length);for(var k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);
+    var url=URL.createObjectURL(new Blob([u],{type:x.mime||'application/octet-stream'}));
+    var w=null;
+    if(ver&&(x.clase==='pdf'||x.clase==='foto')){try{w=window.open(url,'_blank');}catch(e){w=null;}}
+    if(!w){var a=document.createElement('a');a.href=url;a.download=x.nombre||'documento';document.body.appendChild(a);a.click();document.body.removeChild(a);}
+    setTimeout(function(){URL.revokeObjectURL(url);},60000);
+    P.bajada=true;desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();
+    if(VISTA==='des'){var q=$('deQ'),pos=window.pageYOffset||0;pintaDes();var q2=$('deQ');if(q2&&q&&q.value)q2.value=q.value;try{window.scrollTo(0,pos);}catch(e2){}}})
+  .catch(function(e){fin();DES.err='No pude abrir el documento: '+((e&&e.message)||'intenta otra vez');if(VISTA==='des')pintaDes();});}
 /* CALENDARIO (ladrillo 531): el mes de la sala. Junta lo que la sala ya sabe: dias de la escuela (perm_info), entregas con fecha (ent_mis) y permisos propios. Solo MIRA. */
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1117,7 +1194,7 @@ function calDia(f){
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
@@ -1130,16 +1207,17 @@ function pinta(q,aviso){
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button>'+
    '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
-   '<button class="cofre c-lim apagado" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button>'+
    '<button class="cofre c-fus apagado" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
-   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>';
+   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
   if(VISTA==='ent'){pintaEnt();return;}
+  if(VISTA==='des'){pintaDes();return;}
   if(VISTA==='cal'){pintaCal();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
@@ -1163,7 +1241,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
