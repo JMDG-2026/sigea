@@ -351,7 +351,8 @@ var OBRA={
  avisos:['💬','Avisos','Aquí te llegarán los avisos del director.'],
  entregas:['📤','Entregas','Aquí subirás tus documentos en PDF y verás qué te falta entregar.'],
  calendario:['📅','Calendario','Aquí verás las fechas importantes del ciclo.'],
- biblioteca:['📚','Biblioteca SIGEP','Aquí abrirás la carpeta con los materiales del personal.'],
+ biblioteca:['📚','SIGEP','Aquí abrirás la carpeta con los materiales del personal.'],
+ enlaces:['🔗','Enlaces','Aquí encontrarás enlaces a sitios de interés.'],
  tutoriales:['🎬','Tutoriales','Aquí aprenderás paso a paso a usar la plataforma.']};
 function enObra(id){var o=OBRA[id];if(!o)return;
   abrirC('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
@@ -997,7 +998,8 @@ function pinta(q,aviso){
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button>'+
    '<button class="cofre c-mor apagado" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et">En construcción</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
-   '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca SIGEP</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>SIGEP</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-azur apagado" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
