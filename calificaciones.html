@@ -959,7 +959,7 @@ function fijaEnc(){var hb=document.querySelector('.hojasbar'),g=document.querySe
   try{var mo=new MutationObserver(fijaEnc);['vista','hojas','subtabs'].forEach(function(i){var e=document.getElementById(i);if(e)mo.observe(e,{childList:true,subtree:true})})}catch(e){}})();
 /* ===== armazón ===== */
 function renderChrome(){
-  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k);sb.hidden=false;var cs=$("#salirB");if(cs)cs.hidden=false;}}catch(e){}
+  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k)+(SIGEA_WEB.b?'&b='+encodeURIComponent(SIGEA_WEB.b):'');/* Ladrillo554 */sb.hidden=false;var cs=$("#salirB");if(cs)cs.hidden=false;}}catch(e){}
   $("#info").textContent=D.docente+' · Ciclo '+D.ciclo+' · Página '+D.pagina+' · actualización '+D.actualizacion+' · generada desde el SIGEA el '+D.generada;
   var hh='',ph=['DIAG',1,2,3];
   ph.forEach(function(p){var e=EST[p],lab=(p==='DIAG')?'Diagnóstico':'Periodo '+p,sel=(S.hoja===String(p)),c='hoja';
