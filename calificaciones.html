@@ -75,6 +75,8 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .tag{text-indent:0;display:inline-block;font-size:.66em;font-weight:800;border-radius:99px;padding:1px 7px;margin-left:4px;vertical-align:middle}
 .tag.alta{background:#dff2e6;color:#1e6b3f}.tag.baja{background:#e6e6ea;color:#666}
 .pgl{width:58px;text-align:center;font-size:1.05em;font-weight:800;color:var(--navy);background:#eef1f7;border-radius:11px;padding:9px 2px}/* Ladrillo454 */
+/* Ladrillo553: promedio del diagnostico debajo de la ultima casilla (lista del celular) */
+.al.dg>.gi{margin-bottom:26px}.pcol{display:flex;flex-direction:column;gap:2px}.pcol .pg2{height:24px;box-sizing:border-box;width:58px;background:#eef1f7;border-radius:9px;font-size:.92em;font-weight:800;color:var(--navy);display:flex;align-items:center;justify-content:center;gap:3px}.pcol .pg2 small{font-size:.62em;font-weight:700;color:var(--mute)}
 .gi{width:58px;text-align:center;font-size:1.12em;font-weight:800;border:2px solid var(--line);border-radius:11px;padding:8px 2px;font-family:inherit;color:var(--navy);background:#fff}
 .gi:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(63,120,208,.2)}
 .gi.v-ok{border-color:var(--verde);background:#effaf3}.gi.v-mid{border-color:var(--ambar);background:#fff8e8}.gi.v-bad{border-color:var(--rojo);background:#fff0f1}
@@ -526,7 +528,7 @@ function vistaDiag(){
     h+='<div class="vista-lista"><div class="chips solotel">'+cs.map(function(cid){var f=faltanDiagCampo(cid),cc=D.campos.filter(function(x){return x.id===cid})[0];return '<button class="chip'+(S.dcampo===cid?' sel':'')+(f===0?' listo':'')+'" data-dcampo="'+cid+'"><b>'+(cc?cc.corto:cid)+'</b><span>'+(f===0?'✓ completo':'faltan '+f)+'</span></button>'}).join('')+'</div>';
   }else h+='<div class="vista-lista">';
   h+='<div class="hdr"><div class="nm">Alumno</div>'+cv.map(function(c){return '<div class="c">'+c.corto+'</div>'}).join('')+'</div>';
-  D.alumnos.forEach(function(a){h+='<div class="al"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div>'+cv.map(function(c){return inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')}).join('')+'</div>';});
+  D.alumnos.forEach(function(a){var pr=promDiag(a),ce=cv.map(function(c){return inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')}),ul=ce.pop()||'';h+='<div class="al dg"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</div>'+ce.join('')+'<div class="pcol">'+ul+'<div class="pg2" id="pl-'+a.id+'"><small>'+(cv.length===cols.length?'Prom.':'Gral.')+'</small> '+(pr===''?'—':pr.toFixed(1))+'</div></div></div>';});
   h+='</div><div class="vista-matriz"><table class="mx diag"><tr class="g1"><th><div class="hd">Alumno</div></th>';
   cols.forEach(function(c){h+='<th class="campo'+c.campo+'"><div class="hd">'+esc(c.nombre)+'</div></th>'});h+='<th><div class="hd">Promedio</div></th></tr>';
   D.alumnos.forEach(function(a){var pr=promDiag(a);h+='<tr><td>'+numAl(a)+esc(a.nombre)+tagsAl(a)+'</td>'+cols.map(function(c){return '<td>'+inp('diag','DIAG',a.id,c.id,getDiag(a.id,c.id),EST.DIAG!=='abierto')+'</td>'}).join('')+'<td class="prom" id="pd-'+a.id+'">'+(pr===''?'—':pr.toFixed(1))+'</td></tr>';});
@@ -1035,7 +1037,7 @@ document.addEventListener('change',function(e){var el=e.target;if(!el.classList.
   if(k==='cal')setCal(p,a,parseInt(m,10),r.v);else if(k==='fal')setFal(p,a,parseInt(m,10),r.v);else if(k==='diag')setDiag(a,parseInt(m,10),r.v);
   guardado();
   document.querySelectorAll('.gi[data-k="'+k+'"][data-p="'+p+'"][data-a="'+a+'"][data-m="'+m+'"]').forEach(function(x){x.value=r.v===null?'':r.v;x.className='gi '+(k==='fal'?(r.v===null?'vacio':'v-ok'):cls(r.v));});
-  if(k==='diag'){var pdv=promDiag(porId(a)),pdc=$('#pd-'+a);if(pdc)pdc.textContent=pdv===''?'—':pdv.toFixed(1);document.querySelectorAll('.chip[data-dcampo]').forEach(function(b){var f=faltanDiagCampo(parseInt(b.dataset.dcampo,10));b.classList.toggle('listo',f===0);b.querySelector('span').textContent=f===0?'✓ completo':'faltan '+f});renderChrome();return}
+  if(k==='diag'){var pdv=promDiag(porId(a)),pdc=$('#pd-'+a);if(pdc)pdc.textContent=pdv===''?'—':pdv.toFixed(1);var pdl=document.getElementById('pl-'+a);if(pdl){var sm=pdl.querySelector('small');pdl.textContent='';if(sm)pdl.appendChild(sm);pdl.appendChild(document.createTextNode(' '+(pdv===''?'—':pdv.toFixed(1))));}document.querySelectorAll('.chip[data-dcampo]').forEach(function(b){var f=faltanDiagCampo(parseInt(b.dataset.dcampo,10));b.classList.toggle('listo',f===0);b.querySelector('span').textContent=f===0?'✓ completo':'faltan '+f});renderChrome();return}
   var al=porId(a),pr=promPeriodo(al,p),prc=$('#pr-'+p+'-'+a);if(prc)prc.textContent=pr===''?'—':pr.toFixed(1);var plc=$('#pl-'+p+'-'+a);if(plc)plc.textContent=pr===''?'—':pr.toFixed(1);
   var ti=0;mesesP(p).forEach(function(me){var v=getFal(p,a,me.n);if(v!==null)ti+=v});var tc=$('#ti-'+p+'-'+a);if(tc)tc.textContent=ti;if(k==='fal'){var tm=$('#tm-'+p+'-'+m);if(tm)tm.textContent=totMes(p,parseInt(m,10));var gg=0;mesesP(p).forEach(function(me){gg+=totMes(p,me.n)});var tg=$('#tg-'+p);if(tg)tg.textContent=gg;}
   renderChrome();
