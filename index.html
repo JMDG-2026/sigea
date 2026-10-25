@@ -252,6 +252,10 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .de-busca{width:100%;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit;margin:0 0 12px}
 .de-nue{background:#e0264d;color:#fff;border-radius:99px;font-size:.7rem;font-weight:800;padding:2px 9px}
 .pm-b.lim{border:0;background:linear-gradient(145deg,#c6ee5a,#8cc21f 50%,#557a0c);color:#1c2a00}
+.el-card{border-left:3px solid #e0309a}
+.el-card .el-sit{font-size:.78rem}
+a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
+.pm-b.fus{border:0;background:linear-gradient(145deg,#ff6ec7,#e0309a 50%,#9c1068);color:#fff}
 .ca-nav{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 12px}.ca-nav b{font-size:1.1rem;letter-spacing:.02em}
 .ca-fl{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:var(--oro);font:inherit;font-weight:900;font-size:1.1rem;cursor:pointer;padding:0}.ca-fl[disabled]{opacity:.3;cursor:default}
 .ca-sem,.ca-dias{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
@@ -409,7 +413,7 @@ function traeComp(){
   llama('perm_mis').then(function(r){if(r&&r.ok){COMP=compCuenta(r.solicitudes);pintaAtn();}}).catch(function(){});}
 function traeAvisos(){
   if(!B||!K)return;
-  traeComp();traeEnt();traeDes();
+  traeComp();traeEnt();traeDes();traeEnl();
   llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
 function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
   return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
@@ -1103,6 +1107,60 @@ function desBaja(id,btn,ver){
     P.bajada=true;desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();
     if(VISTA==='des'){var q=$('deQ'),pos=window.pageYOffset||0;pintaDes();var q2=$('deQ');if(q2&&q&&q.value)q2.value=q.value;try{window.scrollTo(0,pos);}catch(e2){}}})
   .catch(function(e){fin();DES.err='No pude abrir el documento: '+((e&&e.message)||'intenta otra vez');if(VISTA==='des')pintaDes();});}
+/* ENLACES (ladrillo 549): paginas web que el director comparte. El maestro las ABRE (pestana nueva); nada se borra. */
+var ENL={cargando:false,err:'',lista:null,nuevos:0,T:0,filtro:'todos',q:''};
+var EL_CAT={herramientas:['🧰','Herramientas'],capacitacion:['🎓','Capacitación'],normatividad:['⚖️','Normatividad'],otros:['📎','Otros']};
+function enlEt(){if(!ENL.lista)return 'Páginas de interés';if(!ENL.lista.length)return 'Nada por ahora';return ENL.nuevos?(ENL.nuevos===1?'1 nuevo':ENL.nuevos+' nuevos'):'Al día';}
+function enlCuenta(){ENL.nuevos=(ENL.lista||[]).filter(function(x){return !x.abierto;}).length;}
+function enlCaja(x){
+  var id=esc(x.id),c=EL_CAT[x.categoria]||EL_CAT.otros,ok=/^https:\/\//i.test(String(x.url||''));
+  return '<div class="pm-ped el-card"><div class="cab"><span class="tp">'+c[0]+' '+esc(c[1].toUpperCase())+'</span>'+(x.abierto?'':'<span class="de-nue">nuevo</span>')+'</div>'+
+    '<div class="fe">'+esc(x.titulo)+'</div>'+(x.nota?'<div class="mo">'+esc(x.nota)+'</div>':'')+
+    '<div class="mo el-sit">🌐 '+esc(x.sitio)+' · '+esc(desFecha(x.creado))+(x.abierto?' · ✓ ya lo abriste':'')+'</div>'+
+    '<div class="ac">'+(ok?'<a class="pm-b'+(x.abierto?'':' fus')+'" data-el="'+id+'" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Abrir ↗</a>':'')+'</div></div>';}
+function enlVisibles(){
+  var q=desSin(ENL.q).trim();
+  return (ENL.lista||[]).filter(function(x){
+    if(ENL.filtro!=='todos'&&x.categoria!==ENL.filtro)return false;
+    if(q){var h=desSin(x.titulo+' '+x.nota+' '+x.sitio+' '+((EL_CAT[x.categoria]||[])[1]||''));var ps=q.split(/\s+/);for(var i=0;i<ps.length;i++)if(h.indexOf(ps[i])<0)return false;}
+    return true;});}
+function enlLista(){
+  var L=enlVisibles();
+  if(!(ENL.lista||[]).length)return '<p class="pm-vacio">Todavía no hay enlaces. Cuando el director comparta uno, aparecerá aquí. 📭</p>';
+  if(!L.length)return '<p class="pm-vacio">No encontré nada con eso.</p>';
+  return L.map(enlCaja).join('');}
+function pintaEnl(){
+  sala.onclick=null;
+  var h='<div class="pz-top"><button class="volv" id="elSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">🔗 Enlaces</h1></div>';
+  if(ENL.cargando&&!ENL.lista)h+='<p class="pm-vacio">Buscando lo que hay…</p>';
+  else if(ENL.err&&!ENL.lista)h+='<div class="pm-aviso">'+esc(ENL.err)+'</div><div class="en-act"><button class="pm-b" id="elRei">↻ Intentar otra vez</button></div>';
+  else{
+    if(ENL.err)h+='<div class="pm-aviso">'+esc(ENL.err)+' Esto es lo último que pude leer.</div>';
+    h+='<div class="de-chips">'+[['todos','Todo'],['herramientas','Herramientas'],['capacitacion','Capacitación'],['normatividad','Normatividad'],['otros','Otros']].map(function(f){return '<button class="de-chip'+(ENL.filtro===f[0]?' on':'')+'" data-el="f" data-f="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'+
+       '<input class="de-busca" id="elQ" type="search" placeholder="🔍 Buscar por título o sitio" value="'+esc(ENL.q)+'" autocomplete="off">'+
+       '<div id="elLista">'+enlLista()+'</div>'+
+       '<p class="pm-ayuda">Lo más nuevo va arriba. «nuevo» se quita cuando abres el enlace. Se abre en otra pestaña.</p>'+
+       '<div class="en-act"><button class="pm-b" id="elRei">'+(ENL.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
+  sala.innerHTML=h;
+  var a=$('elSala');if(a)a.onclick=function(){irA('sala');};
+  var r=$('elRei');if(r)r.onclick=enlCarga;
+  var q=$('elQ');if(q)q.oninput=function(){ENL.q=this.value;var l=$('elLista');if(l)l.innerHTML=enlLista();};
+  sala.onclick=function(e){
+    var ln=e.target.closest?e.target.closest('a[data-el]'):null;
+    if(ln){var id=ln.getAttribute('data-el'),P=null;(ENL.lista||[]).forEach(function(x){if(x.id===id)P=x;});
+      if(P&&!P.abierto){P.abierto=true;enlCuenta();var et=$('cElEt');if(et)et.textContent=enlEt();llama('enl_abrir',{id:id}).catch(function(){});setTimeout(function(){if(VISTA==='enl'){var q2=$('elQ'),pos=window.pageYOffset||0;pintaEnl();var q3=$('elQ');if(q3&&q2&&q2.value)q3.value=q2.value;try{window.scrollTo(0,pos);}catch(e2){}}},700);}
+      return;}
+    var t=e.target.closest?e.target.closest('button'):null;if(!t)return;
+    if(t.getAttribute('data-el')==='f'){ENL.filtro=t.getAttribute('data-f');pintaEnl();}};}
+function enlCarga(){
+  if(!B||!K)return;ENL.cargando=true;ENL.err='';if(VISTA==='enl')pintaEnl();
+  llama('enl_mis').then(function(r){ENL.cargando=false;ENL.T=Date.now();
+    if(r&&r.ok){ENL.lista=r.enlaces||[];ENL.err='';enlCuenta();}else ENL.err='No pude leer los enlaces ('+((r&&r.error)||'respuesta rara')+').';
+    if(VISTA==='enl')pintaEnl();var e=$('cElEt');if(e)e.textContent=enlEt();})
+  .catch(function(){ENL.cargando=false;ENL.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='enl')pintaEnl();});}
+function traeEnl(){
+  if(!B||!K||Date.now()-ENL.T<60000)return;ENL.T=Date.now();
+  llama('enl_mis').then(function(r){if(r&&r.ok){ENL.lista=r.enlaces||[];enlCuenta();var e=$('cElEt');if(e)e.textContent=enlEt();}}).catch(function(){});}
 /* CALENDARIO (ladrillo 531): el mes de la sala. Junta lo que la sala ya sabe: dias de la escuela (perm_info), entregas con fecha (ent_mis) y permisos propios. Solo MIRA. */
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1194,7 +1252,7 @@ function calDia(f){
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
@@ -1208,16 +1266,17 @@ function pinta(q,aviso){
    '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button>'+
-   '<button class="cofre c-fus apagado" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button>'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
-   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button></div>';
+   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
   if(VISTA==='ent'){pintaEnt();return;}
   if(VISTA==='des'){pintaDes();return;}
+  if(VISTA==='enl'){pintaEnl();return;}
   if(VISTA==='cal'){pintaCal();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
@@ -1241,7 +1300,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
