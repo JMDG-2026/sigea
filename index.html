@@ -13,6 +13,10 @@
 <meta property="og:url" content="https://jmdg-2026.github.io/sigea/">
 <meta property="og:image" content="https://jmdg-2026.github.io/sigea/corona.png">
 <meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#091428">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
   --noche:#091428; --navy:#12234a; --vino:#6d2440; --oro:#e2bb62; --oro2:#a9832f;
@@ -156,6 +160,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .entrar{margin:26px auto 0;display:block;border:1px solid #8d6a1d;background:linear-gradient(180deg,#3a2a14,#2a1d10);color:#f7e7a8;font:inherit;font-weight:900;font-size:1.15rem;border-radius:16px;padding:15px 38px;cursor:pointer}
 .it{display:flex;gap:12px;align-items:center;width:100%;text-align:left;color:inherit;font:inherit;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid var(--borde);border-radius:14px;padding:12px;margin:0 0 9px;cursor:pointer}
 .it .pt{flex:0 0 12px;height:12px;border-radius:50%}.it b{display:block;font-size:.95rem}.it small{color:var(--suave)}.it .fl{margin-left:auto;color:var(--suave);font-size:1.2rem}
+.insta{display:block;width:100%;margin:18px 0 0;text-align:center;background:#1c141d;border:1px dashed #8d6a1d;border-radius:16px;padding:12px 10px;color:#f7e7a8;font:inherit;font-weight:800;font-size:.95rem;cursor:pointer}.insta small{display:block;margin-top:3px;font-weight:600;font-size:.74rem;color:#b9a97a}
 .salir-b{display:block;margin:22px auto 0;background:none;border:0;color:#8a7a96;font:inherit;font-size:.85rem;text-decoration:underline;cursor:pointer;padding:8px 14px}
 .sala-tit{margin:34px 4px 0;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--suave);text-align:center}
 /* --- PIZARRON DE AVISOS (Ladrillo 474) --- */
@@ -354,6 +359,14 @@ try{var h=(location.hash||'').replace(/^#/,'');if(h==='adios')ADIOS=true;
   if(h.indexOf('=')<0)K=decodeURIComponent(h);
   else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=v;if(n==='s'&&v==='1')S1=true;});
 }catch(e){}
+/* Ladrillo558: la sala se acuerda de tu llave en ESTE aparato (para el icono de la pantalla de inicio) */
+var LL='sigea_sala__llave';
+try{if(!K&&!ADIOS){var g=JSON.parse(localStorage.getItem(LL)||'null');if(g&&g.k){K=g.k;if(!SIGEA_BODEGA&&g.b)B=g.b;}}
+  else if(K&&!ADIOS)localStorage.setItem(LL,JSON.stringify({k:K,b:(SIGEA_BODEGA?'':B)}));}catch(e){}
+var DIP=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();DIP=e;var b=document.getElementById('instal');if(b)b.style.display='';});
+window.addEventListener('appinstalled',function(){DIP=null;var b=document.getElementById('instal');if(b)b.style.display='none';});
+try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}
 function hh(s){var a=0x811c9dc5,b=0x1b873593;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b^c,2246822519);}return (a>>>0).toString(36)+(b>>>0).toString(36);}
 var CK='sigea_sala_'+hh(K);
 function leeCache(){try{return JSON.parse(localStorage.getItem(CK)).q||null;}catch(e){return null;}}
@@ -1300,8 +1313,9 @@ function pinta(q,aviso){
      '<button class="atn" id="atn"></button>'+
      '<div class="accesos"><button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button>'+(PER?'':'<a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>')+
      '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button></div>'+
+     '<button class="insta" id="instal"'+(DIP?'':' style="display:none"')+'>📲 Poner SIGEA en tu pantalla de inicio<small>Entra de un toque, sin buscar el enlace</small></button>'+
      '<button class="entrar" id="entrar">Entrar →</button><button class="salir-b" id="salir">Cerrar sesión</button>';
-    $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};
+    $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};$('instal').onclick=function(){if(!DIP)return;var d=DIP;DIP=null;try{d.prompt();}catch(e){}$('instal').style.display='none';};
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
@@ -1321,7 +1335,7 @@ function busca(){
       ['DIAG','1','2','3'].forEach(function(k){if(!ab&&es[k]==='abierto')ab=k;});
       var q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,ciclo:p.ciclo,tot:al.length,altas:al.filter(function(x){return x.es_alta}).length,bajas:al.filter(function(x){return x.es_baja}).length,abierto:ab,perfil:p.perfil||''};
       guardaCache(q);pinta(q);traeAvisos();return;}
-    if(r&&r.error==='llave no valida'){borraCache();estado('🔒','Esta llave ya no está activa','Pídele al director tu enlace nuevo.');return;}
+    if(r&&r.error==='llave no valida'){borraCache();try{localStorage.removeItem(LL);}catch(e){}estado('🔒','Esta llave ya no está activa','Pídele al director tu enlace nuevo.');return;}
     if(!c)estado('⚠️','No se pudo abrir',esc(String((r&&r.error)||'respuesta rara')),true);})
   .catch(function(){
     if(c)pinta(c,'📴 Sin señal: esta es la copia guardada en este aparato');
