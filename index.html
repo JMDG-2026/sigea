@@ -1259,18 +1259,18 @@ function pinta(q,aviso){
   var PER=(q.perfil==='personal');if(PER)gtxt='';
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
   var cofres=
-   '<div class="cofres" id="cofres"><a class="cofre grande c-azur link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><div><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></div></a>'+
+   '<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></div></button>'+
+   '<a class="cofre c-esc link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></a>'+
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
-   '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
-   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button>'+
-   '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button></div>'+
+   '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button>'+
+   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button>'+
    '<button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button>'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
-  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
-   '<button class="cofre c-esc" data-o="piz"><span class="ico">📌</span><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></button>'+
+  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></div></button>'+
+   '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
