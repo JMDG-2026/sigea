@@ -38,7 +38,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 @media(min-width:900px){.pill-fija,.pill-fija.on{position:static;display:block;align-self:flex-start;white-space:nowrap;margin:6px 2px 0;box-shadow:none;min-width:152px;text-align:center}#save{display:none}}.menu button{display:block;width:100%;text-align:left;border:none;background:none;padding:11px 12px;border-radius:8px;font-size:.9em;color:var(--navy);cursor:pointer}
 .menu button:hover{background:#f3eef0}
 .info{font-size:.78em;color:var(--mute);margin:2px 2px 10px}
-.hojas{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px}
+.hojas{display:flex;gap:8px;overflow-x:auto;padding:4px 4px 10px}/* Ladrillo555: que no se corte el borde */
 .hojasbar{display:flex;gap:8px;align-items:flex-start}.hojasbar .hojas{flex:1 1 auto;min-width:0}
 .dic{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 15px;font-size:.88em;font-weight:700;color:var(--navy);cursor:pointer;font-family:inherit;white-space:nowrap}
 .dic.on{background:#fdecee;border-color:var(--rojo);color:var(--rojo)}
@@ -50,6 +50,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .hoja.env{background:#eaf1fc;border-color:#b5ccf0;color:#27518f}
 .hoja.off{opacity:.45;background:#f3f0f2;color:#9aa1ad;cursor:not-allowed}
 .hoja.res{background:var(--navy);color:#fff;border-color:var(--navy)}.hoja.res.sel{box-shadow:0 0 0 2px var(--rose)}
+.hoja.res.off{opacity:.45;cursor:not-allowed}.stab.off{opacity:.45;cursor:not-allowed}/* Ladrillo555: Generales y sus botones dormidos */
 .aviso{border-radius:12px;padding:10px 14px;font-size:.85em;margin:0 0 10px;line-height:1.45}
 .aviso.oro{background:#fbf3e0;border:1px solid #e3c677;color:#7a5a00}
 .aviso.azul{background:#eaf1fc;border:1px solid #b5ccf0;color:#27518f}
@@ -84,7 +85,7 @@ header.top{padding:14px 2px 4px;display:flex;gap:10px;align-items:flex-start;jus
 .gi:disabled{opacity:.9;border-style:solid;background:#f3f0f2;color:#4a5568}.gi.v-ok:disabled,.gi.v-mid:disabled,.gi.v-bad:disabled{background:#f7f4f5}
 @keyframes sh{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .vista-matriz{display:none}
-@media(min-width:900px){.vista-matriz{display:block;overflow-x:auto}.vista-lista{display:none}.solotel{display:none}}
+@media(min-width:900px){.vista-matriz{display:block;overflow-x:auto;padding:2px 3px 3px}.vista-lista{display:none}.solotel{display:none}}
 table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:.86em}
 .mx th{background:var(--navy);color:#fff;padding:6px 4px;font-size:.76em;line-height:1.15}
 .mx tr.g1 th{font-size:.7em;letter-spacing:.2px;border-left:2px solid #fff}
@@ -558,7 +559,7 @@ var ORT=true;try{ORT=localStorage.getItem('sigea_ort')!=='0'}catch(e){}
 function ortBarra(){return '<div class="ort"><label><input type="checkbox" id="ortSw" '+(ORT?'checked':'')+'> ✍️ Revisar ortografía</label><span>Subraya las palabras dudosas mientras escribes. Tú decides si las corriges.</span></div>'}
 document.addEventListener('change',function(e){var c=e.target;if(c&&c.id==='ortSw'){ORT=!!c.checked;try{localStorage.setItem('sigea_ort',ORT?'1':'0')}catch(x){}document.querySelectorAll('textarea.ob').forEach(function(t){t.spellcheck=ORT})}});
 function vistaObs(p){
-  var dis=!editable(p),h='<div class="card"><div class="hint"><b>Observaciones</b> (opcionales): fortalezas · áreas de mejora · recomendaciones al alumno · recomendaciones al tutor. Máximo <b>'+D.tope_obs+' caracteres sin contar los espacios</b>: si te pasas, la página te avisa, pero no te corta.</div>'+obBarra(p,dis)+ortBarra();
+  var dis=!editable(p),h='<div class="card"><div class="hint"><b>Observaciones</b>: fortalezas · áreas de mejora · recomendaciones al alumno · recomendaciones al tutor. Máximo <b>'+D.tope_obs+' caracteres sin contar los espacios</b>: si te pasas, la página te avisa, pero no te corta.</div>'+obBarra(p,dis)+ortBarra();
   D.alumnos.forEach(function(a){var t=pcap(p).obs[a.id]||'',n=sinEsp(t),pasa=n>D.tope_obs,off=dis||a.es_baja;
     h+='<div class="al" style="display:block"><div class="nm">'+numAl(a)+esc(a.nombre)+tagsAl(a)+obBtn(p,a,off)+'</div><textarea class="ob'+(pasa?' pasa':'')+'" data-o="'+a.id+'" placeholder="Sin observación" spellcheck="'+(ORT?'true':'false')+'" lang="es-MX" autocapitalize="sentences" '+(off?'disabled':'')+'>'+esc(t)+'</textarea>'+
       '<div class="cnt'+(pasa?' pasa':'')+'" id="c-'+a.id+'">'+(pasa?'⚠️ TE PASASTE POR '+(n-D.tope_obs)+' — RECORTA':n+' / '+D.tope_obs)+'</div></div>';});
@@ -583,12 +584,20 @@ function tablaResumen(r){
   var pgg=promOficial(gen);
   if(pgg!=='')h+='<div class="promgrupal">'+(esGen?'Promedio de grado del grupo':'Promedio grupal · '+(esD?'Diagnóstico':'Periodo '+_espPerSel))+': <b style="color:'+zonaCol(pgg)+'">'+pgg+'</b></div>';
   return h+'</div>';}
+/* ===== Ladrillo555: GENERALES (antes Resumen) se enciende por etapas ===== */
+function resListo(p){var e=EST[p];return e==='enviado'||e==='blindado'}
+function resAbre(){return resListo('DIAG')||resListo(1)}
+function resGraf(){return resAbre()}
+function resTabla(){return resListo(1)}
+function resRep(){return EST[1]==='blindado'}
+function resAuto(){if(EST[3]==='blindado')return 'gen';var o=[3,2,1];for(var i=0;i<o.length;i++){if(resListo(o[i]))return o[i]}return resListo('DIAG')?'DIAG':'gen'}
 function vistaResumen(){
   var r=datosResumen();_espCalifData=r;
   var disp=[];if(r.semaforo['DIAG'])disp.push('DIAG');[1,2,3].forEach(function(p){if(r.semaforo[String(p)])disp.push(p)});if(r.semaforo['GRADO'])disp.push('GRADO');
-  var opts=['DIAG',1,2,3,'gen'];
-  var h='<div class="chips">'+opts.map(function(p){return '<button class="chip'+(_espPerSel===p?' sel':'')+'" data-rp="'+p+'"><b>'+(p==='DIAG'?'Diagnóstico':p==='gen'?'Generales':'Periodo '+p)+'</b></button>'}).join('')+'</div>';
-  h+='<div class="subtabs" style="margin-bottom:10px"><button class="stab '+(_resVista==='tabla'?'sel':'')+'" data-rv="tabla">📋 Tabla</button><button class="stab '+(_resVista==='graf'?'sel':'')+'" data-rv="graf">📊 Gráficas</button><button class="stab imp" data-printall="1">🖨️ Reportes de evaluación</button></div>';
+  _espPerSel=resAuto();/* Ladrillo555: sin barra de periodos; se muestra lo mas reciente */
+  var h='';
+  if(_resVista==='tabla'&&!resTabla())_resVista='graf';
+  h+='<div class="subtabs" style="margin-bottom:10px"><button class="stab '+(_resVista==='tabla'?'sel':'')+(resTabla()?'':' off')+'" data-rv="tabla">📋 Tabla</button><button class="stab '+(_resVista==='graf'?'sel':'')+(resGraf()?'':' off')+'" data-rv="graf">📊 Gráficas</button><button class="stab imp'+(resRep()?'':' off')+'" data-printall="1">🖨️ Reportes de evaluación</button></div>';
   if(_resVista==='tabla')return h+tablaResumen(r)+boletasLista(r);
   if(!disp.length)return h+'<div class="card"><div class="hint">Todavía no hay promedios para graficar: un promedio de periodo se calcula cuando un alumno tiene <b>todas</b> sus calificaciones. Prueba el <b>Escenario B</b> o <b>C</b> del panel de maqueta.</div></div>'+boletasLista(r);
   var pe=_espPerEfectivo();if(disp.indexOf(pe)<0)pe=disp[disp.length-1];
@@ -599,7 +608,7 @@ function vistaResumen(){
     '<div><span class="dot" style="background:#1e8449"></span>Sobresaliente <b>'+pct[0]+'%</b></div><div><span class="dot" style="background:#e0a020"></span>Satisfactorio <b>'+pct[1]+'%</b></div><div><span class="dot" style="background:#c0392b"></span>Riesgo <b>'+pct[2]+'%</b></div></div></div></div></div>';
   h+='<div class="gcard"><div class="gt">📊 '+(pe==='GRADO'?'Promedio de grado de cada alumno':'Promedio de cada alumno · '+petx)+'</div><div class="gs">Barra y color según el semáforo</div>'+svgAlumnos(r,pe)+'</div>';
   return h+boletasLista(r);}
-function boletasLista(r){var h='<div class="gcard"><div class="gt">🧾 Reportes de evaluación</div><div class="gs">Toca un alumno para ver su reporte. En el celular, «Imprimir» te deja guardarlo como PDF.</div><button class="btn" data-printall="1" style="width:100%;margin:6px 0 4px">🖨️ Imprimir reporte individual</button>';
+function boletasLista(r){if(!resRep())return '';var h='<div class="gcard"><div class="gt">🧾 Reportes de evaluación</div><div class="gs">Toca un alumno para ver su reporte. En el celular, «Imprimir» te deja guardarlo como PDF.</div><button class="btn" data-printall="1" style="width:100%;margin:6px 0 4px">🖨️ Imprimir reporte individual</button>';
   D.alumnos.forEach(function(a){var pg=promGrado(a);var col=(pg==='- - -')?'var(--mute)':(semNivel(pg)==='riesgo'?'#c0392b':semNivel(pg)==='satisf'?'#b07a14':'#1e8449');
     h+='<div class="bol-row" data-bol="'+a.id+'"><span>'+esc(a.nombre)+tagsAl(a)+'</span><span>Prom. de grado <b style="color:'+col+'">'+pg+'</b> ›</span></div>';});
   return h+'</div>';}
@@ -855,6 +864,8 @@ function lvMarcar(aid){document.querySelectorAll('.lv-viva').forEach(function(e)
 var LVP={wl:null,pidiendo:false,idle:0,negro:false,avisado:false,tt:null};
 function lvToast(t){var e=document.getElementById('lvToast');if(!e)return;e.textContent=t;e.style.display='block';clearTimeout(LVP.tt);LVP.tt=setTimeout(function(){e.style.display='none'},1400)}
 function lvWlOk(){try{return !!(navigator.wakeLock&&navigator.wakeLock.request)}catch(e){return false}}
+/* Ladrillo555: el negro es solo del celular o tableta (puntero tactil); en la laptop la pantalla se queda normal */
+function lvTactil(){try{return !!(window.matchMedia&&matchMedia('(pointer:coarse)').matches)}catch(e){return false}}
 function lvWlPide(){
   if(!lvWlOk())return false;
   if(LVP.wl||LVP.pidiendo)return true;
@@ -866,9 +877,9 @@ function lvWlPide(){
   return true}
 function lvWlSuelta(){var l=LVP.wl;LVP.wl=null;try{if(l)l.release()}catch(e){}}
 function lvNegroQuita(){var o=document.getElementById('lvNegro');if(o)o.style.display='none';LVP.negro=false}
-function lvNegroPon(){LVP.idle=0;if(!(LV.on&&!LV.pausa)||!lvWlOk())return;var o=document.getElementById('lvNegro');if(!o)return;o.style.display='block';LVP.negro=true}
+function lvNegroPon(){LVP.idle=0;if(!(LV.on&&!LV.pausa)||!lvWlOk()||!lvTactil())return;var o=document.getElementById('lvNegro');if(!o)return;o.style.display='block';LVP.negro=true}
 function lvIdleArma(reinicia){if(LVP.idle&&!reinicia)return;clearTimeout(LVP.idle);LVP.idle=0;
-  if(LV.on&&!LV.pausa&&lvWlOk())LVP.idle=setTimeout(lvNegroPon,10000)}
+  if(LV.on&&!LV.pausa&&lvWlOk()&&lvTactil())LVP.idle=setTimeout(lvNegroPon,10000)}
 function lvMantiene(){
   if(LV.on&&!LV.pausa){
     if(!lvWlPide()&&!LVP.avisado){LVP.avisado=true;lvAviso('Este celular no deja mantener la pantalla prendida: si se apaga, la lectura puede cortarse.')}
@@ -965,7 +976,7 @@ function renderChrome(){
   ph.forEach(function(p){var e=EST[p],lab=(p==='DIAG')?'Diagnóstico':'Periodo '+p,sel=(S.hoja===String(p)),c='hoja';
     if(e==='blindado'){c+=' bli';lab+=' ✓🔒'}else if(e==='enviado'){c+=' env';lab+=' 📤'}else if(e==='apagado')c+=' off';
     if(sel)c+=' sel';hh+='<button class="'+c+'" data-h="'+p+'">'+lab+'</button>';});
-  hh+='<button class="hoja res'+(S.hoja==='RES'?' sel':'')+'" data-h="RES">📊 Resumen</button>';
+  hh+='<button class="hoja res'+(S.hoja==='RES'?' sel':'')+(resAbre()?'':' off')+'" data-h="RES">📊 Generales</button>';
   $("#hojas").innerHTML=hh;
   var h=S.hoja,av='',st='';
   if(h==='DIAG'){var ed=EST.DIAG;av=ed==='abierto'?'<div class="aviso azul">✍️ Captura con calma: la página guarda tu avance sola. '+(envWeb()?'También se respalda en la bodega.':'De vez en cuando usa <b>⋯ → Guardar mi avance</b> para tener un respaldo que sí puedas ver.')+'</div>':(ed==='enviado'?'<div class="aviso azul">📤 <b>Diagnóstico enviado (provisional).</b> Se vuelve definitivo cuando el director lo acepte y lo blinde. Si la corona lo rechaza, una actualización lo reabre sin perder lo que capturaste.</div>':'<div class="aviso oro">🔒 <b>Diagnóstico blindado</b> por el director. Solo lectura: lo que ves ya está en el SIGEA.</div>')}
@@ -974,7 +985,7 @@ function renderChrome(){
     if(e==='blindado')av='<div class="aviso oro">🔒 <b>Periodo '+h+' blindado</b> por el director. Solo lectura. Si hay que corregir algo, el director lo hace y te llega una actualización.</div>';
     else if(e==='enviado')av='<div class="aviso azul">📤 <b>Periodo '+h+' enviado (provisional).</b> Se vuelve definitivo cuando el director lo acepte y lo blinde. Si la corona lo rechaza, una actualización lo reabre sin perder lo que capturaste.</div>';
     else if(e==='apagado')av='<div class="aviso">🌙 <b>Periodo '+h+' dormido.</b> '+D.razon[h]+'</div>';
-    else av='<div class="aviso azul">✍️ Captura con calma: la página guarda tu avance sola en este teléfono. '+(envWeb()?'También se respalda en la bodega.':'De vez en cuando usa <b>⋯ → Guardar mi avance</b> para tener un respaldo que sí puedas ver.')+'</div>';}
+    else av='<div class="aviso azul">✍️ Captura con calma: la página guarda tu avance sola en este teléfono o laptop. '+(envWeb()?'También se respalda en la bodega.':'De vez en cuando usa <b>⋯ → Guardar mi avance</b> para tener un respaldo que sí puedas ver.')+'</div>';}
   $("#avisoHoja").innerHTML=av;
   var sb='';
   if(h!=='DIAG'&&h!=='RES'&&EST[h]!=='apagado'){var f=faltanCal(h),iv=falVacias(h),ab=(EST[h]==='abierto');
@@ -989,7 +1000,7 @@ function barra(){var tx=$("#barTx"),b=$("#barBtn"),h=S.hoja;b.style.display='';b
   var f=(h==='DIAG'?faltanDiag():faltanCal(h));
   if(f>0){tx.innerHTML='Faltan '+f+(f>1?' calificaciones':' calificación')+'<small>El envío se enciende cuando estén todas</small>';b.textContent='Revisar';}
   else{tx.innerHTML='¡Todo capturado! ✓<small>Ya puedes enviar</small>';b.textContent='Revisar y enviar';b.className='btn verde';}}
-function render(){lvSiCambio();persistir();renderChrome();var h=S.hoja,v='';
+function render(){if(S.hoja==='RES'&&!resAbre())S.hoja='DIAG';lvSiCambio();persistir();renderChrome();var h=S.hoja,v='';
   if(h==='RES')v=vistaResumen();else if(h==='DIAG')v=vistaDiag();
   else if(EST[h]==='apagado')v='<div class="card"><div class="hint">Cuando el director cierre el periodo anterior, esta hoja despierta sola: te llega un archivito de actualización y se abre aquí, con todo lo cerrado en solo lectura.</div></div>';
   else v=(S.sub==='obs')?vistaObs(h):(S.sub==='ina'?vistaIna(h):vistaCalifs(h));
@@ -1001,15 +1012,15 @@ document.addEventListener('click',function(e){
   var t=e.target.closest('[data-h],[data-s],[data-campo],[data-dcampo],[data-mes],[data-ci],[data-ip],[data-im],[data-rp],[data-rv],[data-bol],[data-print],[data-printall],[data-d]');
   if(!t){if(!e.target.closest('#menu,#dots'))$("#menu").classList.remove('on');return}
   var p=S.hoja;
-  if(t.dataset.h){var hv=t.dataset.h;if(hv!=='RES'&&hv!=='DIAG'&&EST[hv]==='apagado'){toast('🔒 '+D.razon[hv]);return}S.hoja=hv;S.sub='cal';render();return}
+  if(t.dataset.h){var hv=t.dataset.h;if(hv==='RES'&&!resAbre()){toast('🔒 Generales se habilita cuando envías el Diagnóstico o el Periodo 1.');return}if(hv!=='RES'&&hv!=='DIAG'&&EST[hv]==='apagado'){toast('🔒 '+D.razon[hv]);return}S.hoja=hv;S.sub='cal';render();return}
   if(t.dataset.s){S.sub=t.dataset.s;render();return}
   if(t.dataset.dcampo!==undefined){S.dcampo=parseInt(t.dataset.dcampo,10);render();return}/* Ladrillo459 */
   if(t.dataset.campo!==undefined){S.campo=parseInt(t.dataset.campo,10);render();return}
   if(t.dataset.mes!==undefined){S.mes=+t.dataset.mes;render();return}
   if(t.dataset.rp!==undefined){_espPerSel=(t.dataset.rp==='DIAG'||t.dataset.rp==='gen')?t.dataset.rp:parseInt(t.dataset.rp,10);render();return}
-  if(t.dataset.rv!==undefined){_resVista=t.dataset.rv;render();return}
+  if(t.dataset.rv!==undefined){if((t.dataset.rv==='tabla'&&!resTabla())||(t.dataset.rv==='graf'&&!resGraf())){toast(t.dataset.rv==='tabla'?'🔒 La tabla se habilita cuando envías el Periodo 1.':'🔒 Las gráficas se habilitan cuando envías el Diagnóstico o el Periodo 1.');return}_resVista=t.dataset.rv;render();return}
   if(t.dataset.print!==undefined){imprimir([t.dataset.print]);return}
-  if(t.dataset.printall!==undefined){imprimir(D.alumnos.map(function(a){return a.id}));return}
+  if(t.dataset.printall!==undefined){if(!resRep()){toast('🔒 Los reportes de evaluación se habilitan cuando el director blinda el Periodo 1.');return}imprimir(D.alumnos.map(function(a){return a.id}));return}
   if(t.dataset.bol){sheet(boleta(t.dataset.bol));var x=$('#shX');if(x)x.onclick=cerrar;return}
   if(t.dataset.d){demo(t.dataset.d);return}
   var me=mesesP(p)[S.mes];
@@ -1063,7 +1074,7 @@ function revisar(p){if(p==='DIAG')return revisarDiag();var f=faltanCal(p),iv=fal
   h+='<div class="rvh">INASISTENCIAS Y OBSERVACIONES</div>';
   if(ex>0)h+='<button class="rv mal" data-goina="1"><span>Inasistencias que pasan de los días hábiles</span><span class="r">'+ex+(ex===1?' casilla':' casillas')+' ›</span></button>';
   h+=iv===0?'<div class="rv ok"><span>Inasistencias</span><span class="r">✓ completas</span></div>':'<button class="rv" data-goina="1" style="border-color:#e3c677;background:#fffbea"><span>Inasistencias</span><span class="r" style="color:#7a5a00">'+iv+' casillas vacías ›</span></button>';
-  h+='<div class="rv ok"><span>Observaciones (opcionales)</span><span class="r">'+oe+' escritas</span></div>';
+  h+='<div class="rv ok"><span>Observaciones</span><span class="r">'+oe+' escritas</span></div>';
   h+='<div style="display:flex;gap:10px;margin-top:14px"><button class="btn gris" id="shC" style="flex:1">Seguir capturando</button><button class="btn verde" id="shE" style="flex:1.4" '+((f>0||ex>0)?'disabled':'')+'>📤 Enviar</button></div>';
   sheet(h);$('#shC').onclick=cerrar;
   $('#shE').onclick=function(){if(iv>0)pregCero(p,iv);else confirmaEnviar(p)};
