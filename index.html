@@ -144,6 +144,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .bv .fecha{color:#b9a7c9;font-size:1rem;margin:0}.bv .ciclo{color:#7f6e92;margin:3px 0 0;font-size:.9rem}
 .bv .nom{color:#8a7a96;font-size:.8rem;margin:8px 0 0}
 .cuatro,.num{text-align:center}
+.cic{margin:20px auto 0;max-width:520px}.cic-t{text-align:center;font-size:.82rem;color:#C9A227;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px}.cic-b{height:10px;border-radius:6px;background:rgba(255,255,255,.07);border:1px solid rgba(201,162,39,.2);overflow:hidden}.cic-b i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#8c6d24,#C9A227,#F4E4A6);box-shadow:0 0 12px rgba(201,162,39,.5);transition:width 1.1s ease}
 .cuatro{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
 .num{background:#1c141d;border:1px solid #3a2c2a;border-radius:16px;padding:14px 4px 11px}
 .num b{display:block;font-size:1.9rem;color:#f4e3a8;line-height:1}.num small{display:block;margin-top:6px;color:#b9a7c9;letter-spacing:.1em;font-size:.62rem}
@@ -1272,6 +1273,18 @@ function irA(v){var de=VISTA;irA0(v);if(de===v)return;try{history.pushState({sv:
 function sube(v){var st=hEst();if(st&&st.sv&&st.prev===v){try{history.back();return;}catch(e){}}try{history.replaceState({sv:v,prev:(st&&st.prev)||null},'',location.href);}catch(e){}irA0(v);}
 window.addEventListener('popstate',function(e){var s=e&&e.state;if(!s||!s.sv||!K||!QQ)return;irA0(s.sv);});
 function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+/* Ladrillo559: «DIA n DE total · pct%» del ciclo, calcado de la corona. Se cuenta con el calendario que ya trae tu pantalla de permisos:
+   lunes a viernes entre el inicio y el fin del ciclo, menos los dias que la escuela no labora (inhabiles, CTE y registro de calificaciones). */
+var CIC={cargando:false,probado:false};
+function cicloCalc(){var i=PM.info;if(!i||!i.desde||!i.hasta)return null;var D=pmDatos();if(!D.desde||!D.hasta)return null;
+  var tot=0,el=0,d=new Date(D.desde.getFullYear(),D.desde.getMonth(),D.desde.getDate()),v=0;
+  while(d<=D.hasta&&v<500){var f=pmIso(d);if(d.getDay()!==0&&d.getDay()!==6&&!D.inh[f]&&!D.esp[f]){tot++;if(d<=D.hoy)el++;}d=pmSuma(d,1);v++;}
+  if(!tot)return null;var fin=D.hoy>D.hasta;return {el:fin?tot:el,tot:tot,pct:fin?100:Math.round(el*100/tot),fin:fin};}
+function cicloPinta(){var e=$('cic');if(!e)return;var c=cicloCalc();if(!c){e.style.display='none';return;}
+  $('cicT').textContent=c.fin?'✅ Ciclo concluido · 100%':('día '+c.el+' de '+c.tot+' · '+c.pct+'%');e.style.display='';
+  setTimeout(function(){var f=$('cicF');if(f)f.style.width=c.pct+'%';},120);}
+function cicloVe(){cicloPinta();if(PM.info||CIC.cargando||CIC.probado||!B||!K)return;CIC.cargando=true;
+  llama('perm_info').then(function(r){CIC.cargando=false;CIC.probado=true;if(r&&r.ok&&r.info&&!PM.info)PM.info=r.info;cicloPinta();}).catch(function(){CIC.cargando=false;});}
 function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';if(!HINI){HINI=true;try{history.replaceState({sv:VISTA,prev:null},'',location.href);}catch(e){}}
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
@@ -1309,13 +1322,14 @@ function pinta(q,aviso){
      '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
      '<p class="fecha">'+esc(fechaHoy())+'</p><p class="ciclo">'+esc((q.ciclo?'Ciclo '+q.ciclo.replace('-',' — ')+(gtxt?' · ':''):'')+gtxt)+'</p>'+
      (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
+     '<div class="cic" id="cic" style="display:none"><div class="cic-t" id="cicT"></div><div class="cic-b"><i id="cicF"></i></div></div>'+
      (PER?'':'<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>')+
      '<button class="atn" id="atn"></button>'+
      '<div class="accesos"><button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button>'+(PER?'':'<a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>')+
      '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button></div>'+
      '<button class="insta" id="instal"'+(DIP?'':' style="display:none"')+'>📲 Poner SIGEA en tu pantalla de inicio<small>Entra de un toque, sin buscar el enlace</small></button>'+
      '<button class="entrar" id="entrar">Entrar →</button><button class="salir-b" id="salir">Cerrar sesión</button>';
-    $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};$('instal').onclick=function(){if(!DIP)return;var d=DIP;DIP=null;try{d.prompt();}catch(e){}$('instal').style.display='none';};
+    $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};$('instal').onclick=function(){if(!DIP)return;var d=DIP;DIP=null;try{d.prompt();}catch(e){}$('instal').style.display='none';};cicloVe();
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
