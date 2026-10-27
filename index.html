@@ -392,7 +392,7 @@ function quien(q){
 function saludoHora(){var hr=new Date().getHours();return hr<12?'Buenos días':hr<19?'Buenas tardes':'Buenas noches';}
 function fechaHoy(){var f=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});return f.charAt(0).toUpperCase()+f.slice(1);}
 var OBRA={
- permisos:['🗓️','Mis permisos','Aquí pedirás tus permisos picando los días en un calendario, y verás cuántos días llevas.'],
+ permisos:['🗓️','Mis permisos y constancias','Aquí pedirás tus permisos picando los días en un calendario, y verás cuántos días llevas.'],
  avisos:['💬','Avisos','Aquí te llegarán los avisos del director.'],
  entregas:['📤','Entregas','Aquí subirás tus documentos en PDF y verás qué te falta entregar.'],
  calendario:['📅','Calendario','Aquí verás las fechas importantes del ciclo.'],
@@ -411,7 +411,7 @@ function atItems(){
   if(q.abierto){var nom=q.abierto==='DIAG'?'Diagnóstico abierto':'Periodo '+q.abierto+' abierto';
     it.push({pt:'#e0b83a',t:nom,s:'Captura las calificaciones de tu grupo',h:'calificaciones.html'+HR});}
   if(PEND>0)it.push({pt:'#ff5577',t:PEND+(PEND===1?' aviso por confirmar':' avisos por confirmar'),s:'Del director · ábrelos en el Pizarrón de avisos',p:1});
-  if(COMP>0)it.push({pt:'#e0b83a',t:COMP===1?'Falta entregar un comprobante de gestoría':'Faltan por entregar '+COMP+' comprobantes de gestoría',s:'Entrega una copia a la Dirección · ábrelo en Mis permisos',m:1});
+  if(COMP>0)it.push({pt:'#e0b83a',t:COMP===1?'Falta entregar un comprobante de gestoría':'Faltan por entregar '+COMP+' comprobantes de gestoría',s:'Entrega una copia a la Dirección · ábrelo en Mis permisos y constancias',m:1});
   if(DES.lista&&DES.nuevos>0)it.push({pt:'#8cc21f',t:DES.nuevos===1?'Hay una descarga nueva':'Hay '+DES.nuevos+' descargas nuevas',s:'Circulares y oficios · ábrelos en Descargas',d:1});
   if(ENT.lista){var pe=entPend();if(pe>0)it.push({pt:'#e0b83a',t:pe===1?'Tienes un documento por entregar':'Tienes '+pe+' documentos por entregar',s:'Ábrelos en Entregas',e:1});}
   return it;}
@@ -736,7 +736,7 @@ function pmPedirVista(){
   var pm=PM.mes,prev=new Date(pm.getFullYear(),pm.getMonth()-1,1),sig=new Date(pm.getFullYear(),pm.getMonth()+1,1);
   var dPrev=!!(D.desde&&new Date(pm.getFullYear(),pm.getMonth(),0)<D.desde)||(!PM.atras&&new Date(pm.getFullYear(),pm.getMonth(),0)<new Date(D.hoy.getFullYear(),D.hoy.getMonth(),0));
   var dSig=!!(D.hasta&&sig>D.hasta);
-  var h='<div class="pz-top"><button class="volv" id="pmAtras">‹ Mis permisos</button></div>'+
+  var h='<div class="pz-top"><button class="volv" id="pmAtras">‹ Mis permisos y constancias</button></div>'+
    '<div class="pm-card pm-cal"><h2 style="margin:0 0 4px;font-size:1.15rem">'+(es?'Solicitar un permiso':'Solicitar una gestoría')+'</h2>'+
    '<p class="nota">'+(es?'Toca el primer día. Después escoge cuántos días: hasta '+Math.min(3,D.rest)+' seguidos.':'Toca el primer día de tu trámite. Después escoge cuántos días necesitas.')+'</p>'+
    '<div class="pm-nav"><button id="pmPrev"'+(dPrev?' disabled':'')+' aria-label="Mes anterior">‹</button><b>'+PM_MES[pm.getMonth()]+' '+pm.getFullYear()+'</b><button id="pmSig"'+(dSig?' disabled':'')+' aria-label="Mes siguiente">›</button></div>'+
@@ -761,9 +761,9 @@ function pmPedirVista(){
   return h+'</div>';}
 function pintaPerm(){
   sala.onclick=null;
-  var enc='<div class="bv"><h1 style="font-size:1.4rem">🗓️ Mis permisos</h1></div>';
+  var enc='<div class="bv"><h1 style="font-size:1.4rem">🗓️ Mis permisos y constancias</h1></div>';
   if(PM.paso===1){sala.innerHTML=pmPedirVista();}
-  else if(PM.sol){sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Mis permisos</button></div>'+'<div class="bv"><h1 style="font-size:1.4rem">🗂️ Mis solicitudes</h1></div>'+pmSolVista();}
+  else if(PM.sol){sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Mis permisos y constancias</button></div>'+'<div class="bv"><h1 style="font-size:1.4rem">🗂️ Mis solicitudes</h1></div>'+pmSolVista();}
   else{sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Sala</button></div>'+enc+pmLista();}
   var q=function(i){return $(i);};
   if(q('pmSala'))q('pmSala').onclick=function(){if(PM.sol){PM.sol=false;pintaPerm();try{window.scrollTo(0,0);}catch(e){}return;}sube('sala');};
@@ -1293,7 +1293,7 @@ function pinta(q,aviso){
   var cofres=
    '<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></div></button>'+
    '<a class="cofre c-esc link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></a>'+
-   '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
+   '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button>'+
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button></div>'+
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
@@ -1302,7 +1302,7 @@ function pinta(q,aviso){
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></div></button>'+
-   '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
+   '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
