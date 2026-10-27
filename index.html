@@ -483,7 +483,7 @@ function pintaPiz(){
     h+='</div>';}
   h+='<div class="pz-repisa"></div></div></div>'+(pzHayPal(L)?'<p class="pz-ley">✓ enviado · <b>✓✓</b>la Dirección lo vio</p>':'')+(PZNOTA?'<p class="nota" style="text-align:center;margin-top:12px">'+esc(PZNOTA)+'</p>':'');
   sala.innerHTML=h;
-  $('pzAtras').onclick=function(){irA('sala');};
+  $('pzAtras').onclick=function(){sube('sala');};
   sala.onclick=pzClic;}
 function pintaCesto(CS){
   var h='<div class="pz-top"><button class="volv" id="pzAtras">‹ Pizarrón</button></div><div class="pz-marco"><div class="pz-pizarra">'+
@@ -752,7 +752,7 @@ function pintaPerm(){
   else if(PM.sol){sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Mis permisos</button></div>'+'<div class="bv"><h1 style="font-size:1.4rem">🗂️ Mis solicitudes</h1></div>'+pmSolVista();}
   else{sala.innerHTML='<div class="pz-top"><button class="volv" id="pmSala">‹ Sala</button></div>'+enc+pmLista();}
   var q=function(i){return $(i);};
-  if(q('pmSala'))q('pmSala').onclick=function(){if(PM.sol){PM.sol=false;pintaPerm();try{window.scrollTo(0,0);}catch(e){}return;}irA('sala');};
+  if(q('pmSala'))q('pmSala').onclick=function(){if(PM.sol){PM.sol=false;pintaPerm();try{window.scrollTo(0,0);}catch(e){}return;}sube('sala');};
   if(q('pmRei'))q('pmRei').onclick=pmCarga;
   if(q('pmAtras'))q('pmAtras').onclick=function(){PM.paso=0;PM.ini=null;PM.motivo='';PM.atras=false;pintaPerm();};
   if(q('pmPrev'))q('pmPrev').onclick=function(){PM.mes=new Date(PM.mes.getFullYear(),PM.mes.getMonth()-1,1);pintaPerm();};
@@ -882,7 +882,7 @@ function pintaEnt(){
     h+='<p class="pm-ayuda">Toca «Subir» en cada papelito para mandar tu archivo al director. Puedes verlo o cambiarlo cuando quieras mientras el pedido siga abierto.</p>'+
        '<div class="en-act"><button class="pm-b" id="enRei">'+(ENT.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
   sala.innerHTML=h;
-  var a=$('enSala');if(a)a.onclick=function(){irA('sala');};
+  var a=$('enSala');if(a)a.onclick=function(){sube('sala');};
   var r=$('enRei');if(r)r.onclick=entCarga;
   var md=$('enMand');if(md)md.onclick=entAbrePropio;
   sala.onclick=function(e){var t=e.target.closest?e.target.closest('button'):null;if(!t)return;var ac=t.getAttribute('data-en'),id=t.getAttribute('data-i');
@@ -1077,7 +1077,7 @@ function pintaDes(){
        '<p class="pm-ayuda">Lo más nuevo va arriba, por mes. «nuevo» se quita cuando bajas o ves el documento.</p>'+
        '<div class="en-act"><button class="pm-b" id="deRei">'+(DES.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
   sala.innerHTML=h;
-  var a=$('deSala');if(a)a.onclick=function(){irA('sala');};
+  var a=$('deSala');if(a)a.onclick=function(){sube('sala');};
   var r=$('deRei');if(r)r.onclick=desCarga;
   var q=$('deQ');if(q)q.oninput=function(){DES.q=this.value;var l=$('deLista');if(l)l.innerHTML=desLista();};
   sala.onclick=function(e){var t=e.target.closest?e.target.closest('button'):null;if(!t)return;var ac=t.getAttribute('data-de'),id=t.getAttribute('data-i');
@@ -1142,7 +1142,7 @@ function pintaEnl(){
        '<p class="pm-ayuda">Lo más nuevo va arriba. «nuevo» se quita cuando abres el enlace. Se abre en otra pestaña.</p>'+
        '<div class="en-act"><button class="pm-b" id="elRei">'+(ENL.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
   sala.innerHTML=h;
-  var a=$('elSala');if(a)a.onclick=function(){irA('sala');};
+  var a=$('elSala');if(a)a.onclick=function(){sube('sala');};
   var r=$('elRei');if(r)r.onclick=enlCarga;
   var q=$('elQ');if(q)q.oninput=function(){ENL.q=this.value;var l=$('elLista');if(l)l.innerHTML=enlLista();};
   sala.onclick=function(e){
@@ -1238,7 +1238,7 @@ function pintaCal(){
     else h+=prox.map(function(x){var p=pmD(x.f);return '<div class="ca-ev"><div class="f">'+p.getDate()+'<small>'+CAL_MN[p.getMonth()].slice(0,3).toUpperCase()+'</small></div><span class="bar" style="background:'+CAL_COL[x.e.k]+'"></span><div><b>'+esc(x.e.t)+'</b><em>'+esc(x.e.s)+'</em></div></div>';}).join('');
     h+='<div class="en-act"><button class="pm-b" id="caRei">'+(CAL.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
   sala.innerHTML=h;
-  var s=$('caSala');if(s)s.onclick=function(){irA('sala');};
+  var s=$('caSala');if(s)s.onclick=function(){sube('sala');};
   var r=$('caRei');if(r)r.onclick=calCarga;
   var pv=$('caPrev');if(pv)pv.onclick=function(){CAL.mes=new Date(CAL.mes.getFullYear(),CAL.mes.getMonth()-1,1);pintaCal();};
   var nx=$('caNext');if(nx)nx.onclick=function(){CAL.mes=new Date(CAL.mes.getFullYear(),CAL.mes.getMonth()+1,1);pintaCal();};
@@ -1252,9 +1252,15 @@ function calDia(f){
 var VISTA=null;
 function dentro(){try{return sessionStorage.getItem('sigea_sala_dentro')==='1';}catch(e){return false;}}
 function marca(v){try{if(v)sessionStorage.setItem('sigea_sala_dentro','1');else sessionStorage.removeItem('sigea_sala_dentro');}catch(e){}}
-function irA(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+/* Ladrillo557: la flecha «atras» del telefono sube un escalon dentro de la sala */
+var HINI=false;
+function hEst(){try{return history.state;}catch(e){return null;}}
+function irA(v){var de=VISTA;irA0(v);if(de===v)return;try{history.pushState({sv:v,prev:de},'',location.href);}catch(e){}}
+function sube(v){var st=hEst();if(st&&st.sv&&st.prev===v){try{history.back();return;}catch(e){}}try{history.replaceState({sv:v,prev:(st&&st.prev)||null},'',location.href);}catch(e){}irA0(v);}
+window.addEventListener('popstate',function(e){var s=e&&e.state;if(!s||!s.sv||!K||!QQ)return;irA0(s.sv);});
+function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 function pinta(q,aviso){
-  sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';
+  sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';if(!HINI){HINI=true;try{history.replaceState({sv:VISTA,prev:null},'',location.href);}catch(e){}}
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
   var PER=(q.perfil==='personal');if(PER)gtxt='';
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
@@ -1281,7 +1287,7 @@ function pinta(q,aviso){
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
      '<button class="entrar" id="atras" style="font-size:1rem;padding:12px 28px;margin-top:28px">‹ Volver a la bienvenida</button><button class="salir-b" id="salir">Cerrar sesión</button>';
-    $('atras').onclick=function(){irA('bv');};
+    $('atras').onclick=function(){sube('bv');};
   }else{
     var hrn=new Date().getHours(),ico=hrn<12?'🌅':hrn<19?'☀️':'🌙';
     var tot=q.tot,al=q.altas||0,ba=q.bajas||0,has=(typeof tot==='number');
@@ -1292,9 +1298,8 @@ function pinta(q,aviso){
      (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
      (PER?'':'<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>')+
      '<button class="atn" id="atn"></button>'+
-     '<div class="accesos">'+(PER?'':'<a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>')+
-     '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button>'+
-     '<button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button></div>'+
+     '<div class="accesos"><button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button>'+(PER?'':'<a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>')+
+     '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button></div>'+
      '<button class="entrar" id="entrar">Entrar →</button><button class="salir-b" id="salir">Cerrar sesión</button>';
     $('atn').onclick=abreAtn;$('entrar').onclick=function(){irA('sala');};
     pintaAtn();
