@@ -357,10 +357,11 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 var SIGEA_BODEGA='';
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+/* Ladrillo570: letras de las bodegas (n = 26-27, p = Taller); el enlace largo sigue valiendo */var BCORTAS={n:'https://script.google.com/macros/s/AKfycbw0cNYsqyeoLWOoXJ1gZ69TqHfYTNlazbU4eLI6n5axc4vRn1S2iW1b3RqSbfmfgyrv/exec',p:'https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec'};function bLarga(v){return Object.prototype.hasOwnProperty.call(BCORTAS,v)?BCORTAS[v]:v}function bCorta(u){for(var c in BCORTAS){if(BCORTAS[c]===u)return c}return u}
 var K='',B=SIGEA_BODEGA,S1=false,ADIOS=false;
 try{var h=(location.hash||'').replace(/^#/,'');if(h==='adios')ADIOS=true;
   if(h.indexOf('=')<0)K=decodeURIComponent(h);
-  else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=v;if(n==='s'&&v==='1')S1=true;});
+  else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=bLarga(v);if(n==='s'&&v==='1')S1=true;});
 }catch(e){}
 /* Ladrillo558: la sala se acuerda de tu llave en ESTE aparato (para el icono de la pantalla de inicio) */
 var LL='sigea_sala__llave';
@@ -1293,7 +1294,7 @@ function pinta(q,aviso){
   sala.onclick=null;QQ=q;if(VISTA===null)VISTA=(S1||dentro())?'sala':'bv';if(!HINI){HINI=true;try{history.replaceState({sv:VISTA,prev:null},'',location.href);}catch(e){}}
   var w=quien(q),g=q.grupo||{},gtxt=(g.grado?g.grado+'° '+(g.letra||''):'');
   var PER=(q.perfil==='personal');if(PER)gtxt='';
-  HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
+  HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(bCorta(B)):'');
   var cofres=
    '<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+pizTxt()+'</span></div><span class="pz-glo" id="cPizGlo"'+(PEND?'':' hidden')+'>'+PEND+'</span></button>'+
    '<a class="cofre c-esc link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></a>'+

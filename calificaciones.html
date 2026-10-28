@@ -971,7 +971,7 @@ function fijaEnc(){var hb=document.querySelector('.hojasbar'),g=document.querySe
   try{var mo=new MutationObserver(fijaEnc);['vista','hojas','subtabs'].forEach(function(i){var e=document.getElementById(i);if(e)mo.observe(e,{childList:true,subtree:true})})}catch(e){}})();
 /* ===== armazón ===== */
 function renderChrome(){
-  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k)+(SIGEA_WEB.b?'&b='+encodeURIComponent(SIGEA_WEB.b):'');/* Ladrillo554 */sb.hidden=false;var cs=$("#salirB");if(cs)cs.hidden=false;}}catch(e){}
+  $("#hEsc").textContent=D.escuela.nombre;$("#hGrp").textContent='Captura del docente · '+D.grupo.grado+'° '+D.grupo.letra;try{var sb=$("#salaB");if(sb&&window.SIGEA_WEB&&SIGEA_WEB.k){sb.href='index.html#k='+encodeURIComponent(SIGEA_WEB.k)+(SIGEA_WEB.b?'&b='+encodeURIComponent(SIGEA_WEB.bc||SIGEA_WEB.b):'');/* Ladrillo554 */sb.hidden=false;var cs=$("#salirB");if(cs)cs.hidden=false;}}catch(e){}
   $("#info").textContent=D.docente+' · Ciclo '+D.ciclo+' · Página '+D.pagina+' · actualización '+D.actualizacion+' · generada desde el SIGEA el '+D.generada;
   var hh='',ph=['DIAG',1,2,3];
   ph.forEach(function(p){var e=EST[p],lab=(p==='DIAG')?'Diagnóstico':'Periodo '+p,sel=(S.hoja===String(p)),c='hoja';
@@ -1491,10 +1491,11 @@ P.setAttribute('style','position:fixed;left:0;top:0;right:0;bottom:0;z-index:999
 document.body.appendChild(P);
 function pinta(ico,tit,msg,reint){P.innerHTML='<div style="max-width:420px"><div style="font-size:44px">'+ico+'</div><h2 style="margin:8px 0">'+tit+'</h2><p style="color:#7b8498;line-height:1.4">'+msg+'</p>'+(reint?'<button id="webReint" style="border:none;background:#1f2d4a;color:#fff;border-radius:10px;padding:11px 20px;font-size:1em">Reintentar</button>':'')+'</div>';
   if(reint)document.getElementById('webReint').onclick=function(){busca();};}
+/* Ladrillo570: letras de las bodegas (n = 26-27, p = Taller); el enlace largo sigue valiendo */var BCORTAS={n:'https://script.google.com/macros/s/AKfycbw0cNYsqyeoLWOoXJ1gZ69TqHfYTNlazbU4eLI6n5axc4vRn1S2iW1b3RqSbfmfgyrv/exec',p:'https://script.google.com/macros/s/AKfycbwSzbtVYd-DdopI8tC95Ao1gWXiWzQf4_wZHJQolq5GBTyuGtwLvJrkMj1JkV01clKVUQ/exec'};function bLarga(v){return Object.prototype.hasOwnProperty.call(BCORTAS,v)?BCORTAS[v]:v}function bCorta(u){for(var c in BCORTAS){if(BCORTAS[c]===u)return c}return u}
 var K='',B=SIGEA_BODEGA;
 try{var h=(location.hash||'').replace(/^#/,'');
   if(h.indexOf('=')<0)K=decodeURIComponent(h);
-  else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=v;});
+  else h.split('&').forEach(function(x){var i=x.indexOf('='),n=x.slice(0,i),v=decodeURIComponent(x.slice(i+1));if(n==='k')K=v;if(n==='b'&&!SIGEA_BODEGA)B=bLarga(v);});
 }catch(e){}
 function hh(s){var a=0x811c9dc5,b=0x1b873593;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b^c,2246822519);}return (a>>>0).toString(36)+(b>>>0).toString(36);}
 var CK='sigea_web_'+hh(K);
@@ -1502,7 +1503,7 @@ function leeCache(){try{return JSON.parse(localStorage.getItem(CK)).p||null;}cat
 function guardaCache(p){try{localStorage.setItem(CK,JSON.stringify({p:p}));}catch(e){}}
 function borraCache(){try{localStorage.removeItem(CK);}catch(e){}}
 function arranca(p,aviso){
-  window.SIGEA_WEB={k:K,b:B,paq:p};
+  window.SIGEA_WEB={k:K,b:B,bc:bCorta(B),paq:p};
   var js=JSON.stringify(p).replace(/<\//g,'<\\/').replace(new RegExp('['+String.fromCharCode(8232)+String.fromCharCode(8233)+']','g'),function(c){return c.charCodeAt(0)===8232?'\\u2028':'\\u2029';});
   P.remove();
   corre(TXT.replace(MARCA,function(){return js;}));
