@@ -88,6 +88,8 @@ body{
 .cofre.grande{grid-column:1 / -1;min-height:150px;flex-direction:row;align-items:center;gap:14px;justify-content:flex-start}
 .cofre.grande .ico{font-size:3rem}.cofre.grande h3{font-size:1.3rem;margin:0 0 8px}
 .cofre.grande>div{position:relative;z-index:1}
+.pz-glo{position:absolute;z-index:2;top:12px;right:14px;min-width:28px;height:28px;padding:0 8px;border-radius:99px;background:#ff3b57;color:#fff;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.4),0 0 0 2px rgba(255,255,255,.85)}
+.pz-glo[hidden]{display:none}/* Ladrillo569 */
 .c-azur{background:linear-gradient(145deg,#3b95ff,var(--azur) 45%,var(--azur2))}
 .c-nar{background:linear-gradient(145deg,#ffab4a,var(--nar) 45%,var(--nar2))}
 .c-esc{background:linear-gradient(145deg,#ff5577,var(--esc) 45%,var(--esc2))}
@@ -453,7 +455,9 @@ function mandaPz(x,texto,fin){
     if(!(r&&r.ok)){quitaPz(opt);PZNOTA='No se pudo enviar: '+((r&&r.error)||'intenta otra vez');pintaPiz();return;}
     traeAvisos();})
   .catch(function(){ENV=false;quitaPz(opt);PZNOTA='Sin señal: no se pudo enviar. Intenta otra vez.';pintaPiz();});}
-function pintaCofrePz(){var e=$('cPizEt');if(e)e.textContent=PEND?PEND+' por confirmar':'Al día';}
+/* Ladrillo569: mensajito y globito del Pizarron */
+function pizTxt(){return PEND?'🔔 '+PEND+(PEND===1?' aviso por confirmar':' avisos por confirmar'):'Al día';}
+function pintaCofrePz(){var e=$('cPizEt'),g=$('cPizGlo');if(e)e.textContent=pizTxt();if(g){g.textContent=PEND;g.hidden=!PEND;}}
 function refrescaPz(){var L=armaPz();PEND=L.filter(function(x){return !x.ent;}).length;pintaAtn();pintaCofrePz();if(VISTA==='piz')pintaPiz();}
 function pzPal(m){var v=!!(m&&m.visto);return '<span class="pz-pal'+(v?' v':'')+'" title="'+(v?'La Dirección lo vio':'Enviado')+'">'+(v?'✓✓':'✓')+'</span>';}
 function pzHayPal(L){return L.some(function(x){return !!x.ent||x.res.length>0;});}
@@ -1291,7 +1295,7 @@ function pinta(q,aviso){
   var PER=(q.perfil==='personal');if(PER)gtxt='';
   HR='#k='+encodeURIComponent(K)+((B&&!SIGEA_BODEGA)?'&b='+encodeURIComponent(B):'');
   var cofres=
-   '<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></div></button>'+
+   '<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+pizTxt()+'</span></div><span class="pz-glo" id="cPizGlo"'+(PEND?'':' hidden')+'>'+PEND+'</span></button>'+
    '<a class="cofre c-esc link" id="cCal" href="calificaciones.html'+HR+'"><span class="ico">📘</span><h3>Mis calificaciones</h3><span class="et">'+esc(gtxt?'Grupo '+gtxt:'Abrir')+'</span></a>'+
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button>'+
@@ -1301,7 +1305,7 @@ function pinta(q,aviso){
    '<button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button>'+
    '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
-  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+(PEND?PEND+' por confirmar':'Al día')+'</span></div></button>'+
+  if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+pizTxt()+'</span></div><span class="pz-glo" id="cPizGlo"'+(PEND?'':' hidden')+'>'+PEND+'</span></button>'+
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
