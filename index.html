@@ -264,6 +264,69 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .el-card .el-sit{font-size:.78rem}
 a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .pm-b.fus{border:0;background:linear-gradient(145deg,#ff6ec7,#e0309a 50%,#9c1068);color:#fff}
+/* BIBLIOTECA (ladrillo 574): el librero en 3D. Todo lleva el prefijo bb- para no mezclarse con el resto de la sala. */
+.bb-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.bb-tools input{flex:1;min-width:150px;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit}
+.bb-tools button{height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 13px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
+.bb-tools button.on{background:#f3d9a8;color:#3a1c0d;border-color:#f3d9a8}
+.bb-sigue{margin:0 0 16px}.bb-sigue h3{margin:0 0 8px;font-size:.92rem;color:#f3d9a8}
+.bb-sigue .bb-fila{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.bb-sc{flex:0 0 auto;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:8px 12px 8px 8px;cursor:pointer;min-width:220px}
+.bb-sc img,.bb-sc .bb-sp{width:42px;height:59px;border-radius:4px;object-fit:cover;box-shadow:0 3px 8px #0008;background:#3a2a22}
+.bb-sc b{display:block;font-size:.86rem}.bb-sc small{color:#cdb99f}
+.bb-barra{height:5px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:5px;width:120px}.bb-barra i{display:block;height:100%;background:#7bd88f}
+.bb-mueble{position:relative;display:grid;grid-template-columns:46px 1fr 46px;grid-template-rows:auto 1fr auto;border-radius:10px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.65))}
+.bb-cornisa{grid-column:1/4;height:58px;border-radius:12px 12px 4px 4px;position:relative;background:linear-gradient(180deg,#a8633a 0,#7b3f20 18%,#5a2a14 55%,#3b1a0c 100%);box-shadow:inset 0 2px 0 #d49a68,inset 0 -6px 0 #2b1208,0 6px 10px rgba(0,0,0,.5)}
+.bb-cornisa:before{content:"";position:absolute;left:10px;right:10px;top:14px;height:26px;border-radius:4px;background:repeating-linear-gradient(90deg,#4a2210 0 14px,#6a3419 14px 16px);box-shadow:inset 0 2px 3px #0008}
+.bb-mayor{position:absolute;left:50%;top:7px;transform:translateX(-50%);padding:6px 22px;border-radius:8px;background:linear-gradient(180deg,#f7de9a,#d9a93c 55%,#a8761a);color:#3a2306;font:800 .9rem Georgia,serif;letter-spacing:.06em;box-shadow:0 2px 5px #0009,inset 0 1px 0 #fff8;white-space:nowrap;z-index:2}
+.bb-poste{background-image:url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2246%22%20height%3D%22150%22%20viewBox%3D%220%200%2046%20150%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20x2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232a1008%22/%3E%3Cstop%20offset%3D%22.3%22%20stop-color%3D%22%239a5530%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23d08a56%22/%3E%3Cstop%20offset%3D%22.72%22%20stop-color%3D%22%237a3d20%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23241008%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2246%22%20height%3D%22150%22%20fill%3D%22%232b140b%22/%3E%3Cg%20fill%3D%22url%28%23g%29%22%3E%3Crect%20x%3D%2216%22%20y%3D%220%22%20width%3D%2214%22%20height%3D%22150%22/%3E%3Cellipse%20cx%3D%2223%22%20cy%3D%2220%22%20rx%3D%2211%22%20ry%3D%227%22/%3E%3Crect%20x%3D%2212%22%20y%3D%2234%22%20width%3D%2222%22%20height%3D%224%22%20rx%3D%222%22/%3E%3Cellipse%20cx%3D%2223%22%20cy%3D%2275%22%20rx%3D%2221%22%20ry%3D%2226%22/%3E%3Crect%20x%3D%2212%22%20y%3D%22112%22%20width%3D%2222%22%20height%3D%224%22%20rx%3D%222%22/%3E%3Cellipse%20cx%3D%2223%22%20cy%3D%22132%22%20rx%3D%2211%22%20ry%3D%227%22/%3E%3C/g%3E%3C/svg%3E");background-repeat:repeat-y;background-size:46px 150px;filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
+.bb-poste.l{box-shadow:inset -6px 0 8px rgba(0,0,0,.35)}.bb-poste.r{box-shadow:inset 6px 0 8px rgba(0,0,0,.35)}
+.bb-cuerpo{grid-row:2;background:linear-gradient(90deg,#1c0e08,#24120a 8%,#24120a 92%,#1c0e08);padding:0 0 4px;box-shadow:inset 0 0 40px rgba(0,0,0,.85)}
+.bb-zocalo{grid-column:1/4;height:44px;border-radius:4px 4px 10px 10px;background:linear-gradient(180deg,#6a3419,#3b1a0c 55%,#24100a);box-shadow:inset 0 2px 0 #b8794a}
+.bb-estante{position:relative;padding-top:10px;transition:opacity .25s}.bb-estante.apag{opacity:.35}
+.bb-libros{display:flex;align-items:flex-end;gap:4px;padding:26px 26px 0;min-height:190px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0 3px,rgba(0,0,0,.05) 3px 6px),linear-gradient(180deg,#1d0f09,#2c160c)}
+.bb-libros.bb-vac{min-height:120px}
+.bb-tabla{position:relative;height:30px;border-radius:2px 2px 6px 6px;background:linear-gradient(180deg,#d49a68 0,#a8633a 10%,#7b3f20 55%,#4a2210 100%);box-shadow:0 8px 10px rgba(0,0,0,.55),inset 0 1px 0 #f0c090}
+.bb-placa{position:absolute;left:50%;top:5px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:2px 12px 2px 6px;height:20px;border-radius:5px;background:linear-gradient(180deg,#f7de9a,#d9a93c 55%,#a8761a);color:#3a2306;font:800 .66rem Georgia,serif;letter-spacing:.05em;white-space:nowrap;box-shadow:0 1px 3px #0009,inset 0 1px 0 #fff8;max-width:96%}
+.bb-placa i{width:13px;height:13px;border-radius:3px;display:inline-block;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}
+.bb-vacio{align-self:center;color:#8d7058;font:italic .85rem Georgia,serif;padding:0 8px 26px}
+.bb-libro{perspective:800px;position:relative;flex:0 0 auto;width:var(--w);height:var(--h);cursor:pointer;transform-style:preserve-3d;margin-top:auto;-webkit-tap-highlight-color:transparent}
+.bb-libro.sel{z-index:30}
+.bb-cu{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-origin:50% 100%}
+@media (hover:hover){.bb-libro:hover .bb-cu{transform:translateZ(26px) rotateY(-22deg)}}
+.bb-libro.sel .bb-cu,.bb-libro.sel:hover .bb-cu{transform:translateZ(150px) translateY(-26px) rotateY(-90deg) scale(1.15)}
+.bb-f{position:absolute;backface-visibility:hidden}
+.bb-lomo{inset:0;transform:translateZ(var(--d));border-radius:2px 3px 3px 2px;overflow:hidden;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.18) 14%,rgba(0,0,0,0) 40%,rgba(0,0,0,.25) 100%),linear-gradient(180deg,var(--c1),var(--c2) 60%,var(--c3));box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.bb-lomo:before,.bb-lomo:after{content:"";position:absolute;left:0;right:0;height:6px;border-top:1.5px solid #f2d37a;border-bottom:1.5px solid #f2d37a;opacity:.9}
+.bb-lomo:before{top:9px}.bb-lomo:after{bottom:9px}
+.bb-lomo b{position:absolute;inset:24px 2px 24px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font:700 12px Georgia,serif;color:#fff7e6;text-shadow:0 1px 2px #0009;line-height:1.05;text-align:center;overflow:hidden}
+.bb-nuevo{position:absolute;top:-1px;right:3px;width:9px;height:26px;background:#ffd34d;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:0 0 6px #ffd34d}
+.bb-prog{position:absolute;left:3px;right:3px;bottom:14px;height:4px;border-radius:5px;background:rgba(0,0,0,.4);overflow:hidden}.bb-prog i{display:block;height:100%;background:#7bd88f}
+.bb-tapa{width:var(--dd);height:100%;left:calc((var(--w) - var(--dd))/2);transform:rotateY(90deg) translateZ(calc(var(--w)/2));border-radius:3px;overflow:hidden;background:linear-gradient(160deg,var(--c1),var(--c3));box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.bb-tapa img{width:100%;height:100%;display:block;object-fit:cover}
+.bb-tapa .bb-sp{display:flex;align-items:center;justify-content:center;height:100%;padding:10px;text-align:center;font:700 .8rem Georgia,serif;color:#fff7e6}
+.bb-atras{inset:0;transform:translateZ(calc(var(--d)*-1)) rotateY(180deg);background:var(--c3)}
+.bb-izq{width:var(--dd);height:100%;left:calc((var(--w) - var(--dd))/2);transform:rotateY(-90deg) translateZ(calc(var(--w)/2));background:linear-gradient(90deg,var(--c3),var(--c2))}
+.bb-tope{width:100%;height:var(--dd);top:calc(var(--dd)/-2);transform:rotateX(90deg);background:repeating-linear-gradient(0deg,#f7efe0 0 2px,#e6dac4 2px 3px)}
+.bb-libro.dim{opacity:.22;filter:grayscale(.6)}.bb-libro.brilla .bb-cu{filter:drop-shadow(0 0 8px #ffd34d)}
+.bb-ficha{position:fixed;left:50%;bottom:14px;transform:translate(-50%,160%);visibility:hidden;width:min(520px,calc(100% - 20px));background:linear-gradient(180deg,#fff9ec,#f1e3c6);color:#33200f;border-radius:18px;padding:12px 14px;display:flex;gap:14px;align-items:center;box-shadow:0 14px 40px #000a;transition:transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s .45s;z-index:60}
+.bb-ficha.on{transform:translate(-50%,0);visibility:visible;transition-delay:0s}
+.bb-ficha img,.bb-ficha .bb-sp{width:78px;height:109px;border-radius:5px;object-fit:cover;box-shadow:0 5px 12px #0006;background:#d9c7a2;flex:0 0 auto}
+.bb-ficha h2{margin:0 0 3px;font:800 1.02rem Georgia,serif;color:#33200f}.bb-ficha .m{font-size:.8rem;color:#6a5238}
+.bb-ficha .est{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;margin-top:4px}.bb-ficha .est i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.bb-ficha .acc{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.bb-leer{border:0;border-radius:11px;padding:9px 18px;font:inherit;font-weight:800;font-size:.9rem;color:#fff;background:linear-gradient(135deg,#e0457b,#8b1a4f);cursor:pointer}
+.bb-cerrar{border:1px solid #c9b48f;background:transparent;border-radius:11px;padding:8px 12px;font:inherit;font-weight:700;font-size:.8rem;color:#6a5238;cursor:pointer}
+.bb-ficha .bb-barra{background:#d8c7a3;width:160px}
+.bb-lg{margin:0 0 18px}.bb-lg h3{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:1rem}.bb-lg h3 i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.bb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.bb-tj{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;cursor:pointer;text-align:center}
+.bb-tj img,.bb-tj .bb-sp{width:100%;aspect-ratio:270/378;object-fit:cover;border-radius:6px;box-shadow:0 5px 12px #0007;background:#3a2a22;display:flex;align-items:center;justify-content:center}
+.bb-tj b{display:block;margin-top:7px;font-size:.88rem}.bb-tj small{color:#cdb99f}
+.bb-tj .nu{display:inline-block;background:#ffd34d;color:#3a2306;border-radius:99px;font-weight:800;font-size:.66rem;padding:1px 8px;margin-left:5px}
+.bb-toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-140%);visibility:hidden;background:#fff;color:#33200f;border-radius:12px;padding:10px 16px;font-weight:700;box-shadow:0 8px 24px #0008;transition:transform .4s,visibility 0s .4s;z-index:90;max-width:calc(100% - 24px);text-align:center}
+.bb-toast.on{transform:translate(-50%,0);visibility:visible;transition-delay:0s}
+@media(max-width:640px){.bb-mueble{grid-template-columns:26px 1fr 26px}.bb-poste{background-size:26px 85px}.bb-libros{padding:24px 10px 0}.bb-mayor{font-size:.72rem;padding:5px 12px}.bb-cornisa{height:50px}}
 .ca-nav{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 12px}.ca-nav b{font-size:1.1rem;letter-spacing:.02em}
 .ca-fl{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:var(--oro);font:inherit;font-weight:900;font-size:1.1rem;cursor:pointer;padding:0}.ca-fl[disabled]{opacity:.3;cursor:default}
 .ca-sem,.ca-dias{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
@@ -430,7 +493,7 @@ function traeComp(){
   llama('perm_mis').then(function(r){if(r&&r.ok){COMP=compCuenta(r.solicitudes);pintaAtn();}}).catch(function(){});}
 function traeAvisos(){
   if(!B||!K)return;
-  traeComp();traeEnt();traeDes();traeEnl();
+  traeComp();traeEnt();traeDes();traeEnl();traeBib();
   llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
 function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
   return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
@@ -1180,6 +1243,103 @@ function enlCarga(){
 function traeEnl(){
   if(!B||!K||Date.now()-ENL.T<60000)return;ENL.T=Date.now();
   llama('enl_mis').then(function(r){if(r&&r.ok){ENL.lista=r.enlaces||[];enlCuenta();var e=$('cElEt');if(e)e.textContent=enlEt();}}).catch(function(){});}
+/* BIBLIOTECA (ladrillo 574): el LIBRERO en 3D. El maestro ve los libros que le tocan, parados por estante; el lector viene en el siguiente paso.
+   Nada se baja ni se borra: aqui solo se ve y se escoge. */
+var BIB={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,sel:-1,q:'',vista:'librero'};
+var BB_COL=[['#b4506c','#8b3a52','#5d2237'],['#4b9bff','#1c6fd6','#0e4a9a'],['#31b6a1','#16806f','#0b5247'],['#f0b84a','#d98f1b','#a2620a'],['#a07df0','#7b4fd0','#4c2a95'],['#f59a62','#e0662b','#a8420e'],['#8c96aa','#5d6678','#3b4252']];
+var BB_NOM=['Acuerdos secretariales','Decretos','Planes y programas','Consejo Técnico y organización escolar','Convivencia e inclusión','Trámites y formatos','Otros'];
+function bibEt(){if(!BIB.lista)return 'Libros para leer';if(!BIB.lista.length)return 'Nada por ahora';return BIB.nuevos?(BIB.nuevos===1?'1 nuevo':BIB.nuevos+' nuevos'):'Al día';}
+function bibCuenta(){BIB.nuevos=(BIB.lista||[]).filter(function(x){return x.nuevo;}).length;}
+function bibNom(n){var e=BIB.estantes||[],i;for(i=0;i<e.length;i++){if(Number(e[i].numero)===n&&e[i].nombre)return String(e[i].nombre);}return BB_NOM[n-1]||'';}
+function bibImg(x){var p=String(x.portada||'');if(p.indexOf('png:')===0)return 'data:image/png;base64,'+p.slice(4);if(p.indexOf('jpg:')===0)return 'data:image/jpeg;base64,'+p.slice(4);return '';}
+function bibCol(n){return BB_COL[Math.max(1,Math.min(7,Number(n)||7))-1];}
+function bibPort(x,cl){var u=bibImg(x);return u?'<img src="'+u+'" alt="">':'<div class="bb-sp">'+esc(x.titulo)+'</div>';}
+function bibLibro(x,i){
+  var c=bibCol(x.estante),pg=Number(x.paginas)||20,w=Math.max(26,Math.min(64,Math.round(18+pg*0.22))),h=150+((i*37)%5)*6+(pg>100?10:0),dd=Math.round(h*0.714*0.96),t=String(x.titulo||''),av=Number(x.avance)||0;
+  return '<div class="bb-libro" data-bi="'+i+'" style="--w:'+w+'px;--h:'+h+'px;--d:'+Math.round(dd/2)+'px;--dd:'+dd+'px;--c1:'+c[0]+';--c2:'+c[1]+';--c3:'+c[2]+'">'+
+   '<div class="bb-cu"><div class="bb-f bb-lomo"><b>'+esc(t.length>30?t.slice(0,28)+'…':t)+'</b>'+(x.nuevo?'<span class="bb-nuevo"></span>':'')+(av>0?'<div class="bb-prog"><i style="width:'+av+'%"></i></div>':'')+'</div>'+
+   '<div class="bb-f bb-tapa">'+bibPort(x)+'</div><div class="bb-f bb-atras"></div><div class="bb-f bb-izq"></div><div class="bb-f bb-tope"></div></div></div>';
+}
+function bibLibrero(){
+  var h='<div class="bb-mueble"><div class="bb-cornisa"><div class="bb-mayor">BIBLIOTECA · TELESECUNDARIA 171</div></div><div class="bb-poste l" style="grid-row:2"></div><div class="bb-cuerpo">',n;
+  for(n=1;n<=7;n++){
+    var ls=(BIB.lista||[]).map(function(x,i){return Number(x.estante)===n?bibLibro(x,i):'';}).join('');
+    h+='<div class="bb-estante"><div class="bb-libros'+(ls?'':' bb-vac')+'">'+(ls||'<div class="bb-vacio">Todavía no hay libros en este estante</div>')+'</div><div class="bb-tabla"><div class="bb-placa"><i style="background:'+bibCol(n)[0]+'"></i>'+esc(bibNom(n))+'</div></div></div>';
+  }
+  return h+'</div><div class="bb-poste r" style="grid-row:2"></div><div class="bb-zocalo"></div></div>';
+}
+function bibLista(){
+  var l='',n;
+  for(n=1;n<=7;n++){
+    var g=(BIB.lista||[]).map(function(x,i){return Number(x.estante)===n?'<div class="bb-tj" data-bi="'+i+'">'+bibPort(x)+'<b>'+esc(x.titulo)+(x.nuevo?'<span class="nu">nuevo</span>':'')+'</b><small>'+(Number(x.paginas)?x.paginas+' páginas':'')+(Number(x.avance)?' · '+x.avance+'%':'')+'</small></div>':'';}).join('');
+    if(g)l+='<div class="bb-lg"><h3><i style="background:'+bibCol(n)[0]+'"></i>'+esc(bibNom(n))+'</h3><div class="bb-grid">'+g+'</div></div>';
+  }
+  return l||'<p class="pm-vacio">Todavía no hay libros.</p>';
+}
+function bibSigue(){
+  var s=(BIB.lista||[]).map(function(x,i){var av=Number(x.avance)||0;return (av>0&&av<100)?'<div class="bb-sc" data-bi="'+i+'">'+bibPort(x)+'<div><b>'+esc(x.titulo)+'</b><small>Sigues en el '+av+'%</small><div class="bb-barra"><i style="width:'+av+'%"></i></div></div></div>':'';}).join('');
+  return s?'<div class="bb-sigue"><h3>▶ Sigue leyendo</h3><div class="bb-fila">'+s+'</div></div>':'';
+}
+function bibFicha(i){
+  var x=(BIB.lista||[])[i];if(!x)return '';var av=Number(x.avance)||0;
+  return bibPort(x)+'<div style="flex:1"><h2>'+esc(x.titulo)+'</h2><div class="m">'+(x.autor?esc(x.autor)+' · ':'')+(Number(x.paginas)?x.paginas+' páginas':'')+'</div><span class="est"><i style="background:'+bibCol(x.estante)[0]+'"></i>'+esc(bibNom(Number(x.estante)))+'</span>'+
+    (av?'<div class="bb-barra"><i style="width:'+av+'%"></i></div><div class="m">Vas en el '+av+'%</div>':(x.nuevo?'<div class="m"><b>★ Nuevo</b> · todavía no lo abres</div>':''))+
+    '<div class="acc"><button class="bb-leer" data-bb="leer" data-bi="'+i+'">'+(av?'Seguir leyendo':'Leer')+'</button><button class="bb-cerrar" data-bb="cerrar">Cerrar</button></div></div>';
+}
+function bibToast(t){var e=$('biToast');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(bibToast.t);bibToast.t=setTimeout(function(){e.classList.remove('on');},2600);}
+function bibToca(i){
+  var x=(BIB.lista||[])[i];if(!x)return;
+  if(BIB.sel===i){bibToast('El lector de libros viene en camino. Muy pronto podrás leer «'+String(x.titulo).replace(/[<>]/g,'')+'» aquí.');return;}
+  BIB.sel=i;
+  var ls=document.querySelectorAll('.bb-libro');for(var k=0;k<ls.length;k++){ls[k].classList.toggle('sel',Number(ls[k].getAttribute('data-bi'))===i);}
+  var f=$('biFicha');if(f){f.innerHTML=bibFicha(i);f.classList.add('on');}
+}
+function bibCierra(){BIB.sel=-1;var ls=document.querySelectorAll('.bb-libro');for(var k=0;k<ls.length;k++)ls[k].classList.remove('sel');var f=$('biFicha');if(f)f.classList.remove('on');}
+function bibBusca(){
+  var q=desSin(BIB.q).trim(),ls=document.querySelectorAll('.bb-libro'),k;
+  for(k=0;k<ls.length;k++){
+    var x=(BIB.lista||[])[Number(ls[k].getAttribute('data-bi'))]||{},ok=!q||desSin(x.titulo+' '+x.autor+' '+bibNom(Number(x.estante))).indexOf(q)>=0;
+    ls[k].classList.toggle('dim',!ok);ls[k].classList.toggle('brilla',!!q&&ok);}
+  var es=document.querySelectorAll('.bb-estante');
+  for(k=0;k<es.length;k++){es[k].classList.toggle('apag',!!q&&!es[k].querySelector('.bb-libro:not(.dim)'));}
+}
+function pintaBib(){
+  sala.onclick=null;
+  var h='<div class="pz-top"><button class="volv" id="biSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">📚 Biblioteca</h1></div>';
+  if(BIB.cargando&&!BIB.lista)h+='<p class="pm-vacio">Buscando tus libros…</p>';
+  else if(BIB.err&&!BIB.lista)h+='<div class="pm-aviso">'+esc(BIB.err)+'</div><div class="en-act"><button class="pm-b" data-bb="rei">↻ Intentar otra vez</button></div>';
+  else{
+    if(BIB.err)h+='<div class="pm-aviso">'+esc(BIB.err)+' Esto es lo último que pude leer.</div>';
+    if(!(BIB.lista||[]).length)h+='<p class="pm-vacio">Todavía no hay libros para ti. Cuando el director suba uno, aparecerá aquí. 📭</p>';
+    else h+='<div class="bb-tools"><input id="biQ" type="search" placeholder="🔍 Buscar por título o estante" value="'+esc(BIB.q)+'" autocomplete="off"><button data-bb="v" data-v="librero" class="'+(BIB.vista==='librero'?'on':'')+'">🪵 Librero</button><button data-bb="v" data-v="lista" class="'+(BIB.vista==='lista'?'on':'')+'">☰ Lista</button></div>'+
+       bibSigue()+(BIB.vista==='lista'?bibLista():bibLibrero())+
+       '<p class="pm-ayuda">Toca un libro para sacarlo del estante; tócalo otra vez para leerlo. La marca amarilla es «nuevo».</p>';
+    h+='<div class="en-act"><button class="pm-b" data-bb="rei">'+(BIB.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
+  h+='<div class="bb-ficha" id="biFicha"></div><div class="bb-toast" id="biToast"></div>';
+  sala.innerHTML=h;
+  var a=$('biSala');if(a)a.onclick=function(){irA('sala');};
+  var q=$('biQ');if(q)q.oninput=function(){BIB.q=this.value;bibBusca();};
+  if(BIB.sel>=0&&(BIB.lista||[])[BIB.sel]){var f=$('biFicha');if(f){f.innerHTML=bibFicha(BIB.sel);f.classList.add('on');}var ls=document.querySelectorAll('.bb-libro');for(var k=0;k<ls.length;k++){ls[k].classList.toggle('sel',Number(ls[k].getAttribute('data-bi'))===BIB.sel);}}
+  bibBusca();
+  sala.onclick=function(e){
+    var t=e.target.closest?e.target.closest('[data-bb]'):null;
+    if(t){var m=t.getAttribute('data-bb');
+      if(m==='cerrar'){bibCierra();return;}
+      if(m==='leer'){bibToast('El lector de libros viene en camino. Muy pronto podrás leerlo aquí.');return;}
+      if(m==='rei'){bibCarga();return;}
+      if(m==='v'){BIB.vista=t.getAttribute('data-v');BIB.sel=-1;pintaBib();return;}}
+    var b=e.target.closest?e.target.closest('[data-bi]'):null;
+    if(b&&b.getAttribute('data-bb')===null){bibToca(Number(b.getAttribute('data-bi')));}};
+}
+function bibCarga(){
+  if(!B||!K)return;BIB.cargando=true;BIB.err='';if(VISTA==='bib')pintaBib();
+  llama('bib_mis').then(function(r){BIB.cargando=false;BIB.T=Date.now();
+    if(r&&r.ok){BIB.lista=r.libros||[];BIB.estantes=r.estantes||null;BIB.err='';BIB.sel=-1;bibCuenta();}else BIB.err='No pude leer la Biblioteca ('+((r&&r.error)||'respuesta rara')+').';
+    if(VISTA==='bib')pintaBib();var e=$('cBiEt');if(e)e.textContent=bibEt();})
+  .catch(function(){BIB.cargando=false;BIB.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='bib')pintaBib();});}
+function traeBib(){
+  if(!B||!K||Date.now()-BIB.T<60000)return;BIB.T=Date.now();
+  llama('bib_mis').then(function(r){if(r&&r.ok){BIB.lista=r.libros||[];BIB.estantes=r.estantes||null;bibCuenta();var e=$('cBiEt');if(e)e.textContent=bibEt();}}).catch(function(){});}
 /* CALENDARIO (ladrillo 531): el mes de la sala. Junta lo que la sala ya sabe: dias de la escuela (perm_info), entregas con fecha (ent_mis) y permisos propios. Solo MIRA. */
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1277,7 +1437,7 @@ function hEst(){try{return history.state;}catch(e){return null;}}
 function irA(v){var de=VISTA;irA0(v);if(de===v)return;try{history.pushState({sv:v,prev:de},'',location.href);}catch(e){}}
 function sube(v){var st=hEst();if(st&&st.sv&&st.prev===v){try{history.back();return;}catch(e){}}try{history.replaceState({sv:v,prev:(st&&st.prev)||null},'',location.href);}catch(e){}irA0(v);}
 window.addEventListener('popstate',function(e){var s=e&&e.state;if(!s||!s.sv||!K||!QQ)return;irA0(s.sv);});
-function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl'||v==='bib');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='bib'&&B&&K)bibCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 /* Ladrillo559: «DIA n DE total · pct%» del ciclo, calcado de la corona. Se cuenta con el calendario que ya trae tu pantalla de permisos:
    lunes a viernes entre el inicio y el fin del ciclo, menos los dias que la escuela no labora (inhabiles, CTE y registro de calificaciones). */
 var CIC={cargando:false,probado:false};
@@ -1304,16 +1464,17 @@ function pinta(q,aviso){
    '<div class="sec">Para todo el personal</div><div class="cofres">'+
    '<button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button>'+
    '<button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button>'+
-   '<button class="cofre c-tea apagado" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et">En construcción</span></button>'+
+   '<button class="cofre c-tea" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button>'+
    '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+pizTxt()+'</span></div><span class="pz-glo" id="cPizGlo"'+(PEND?'':' hidden')+'>'+PEND+'</span></button>'+
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
-   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button></div>';
+   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button><button class="cofre c-tea" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
   if(VISTA==='ent'){pintaEnt();return;}
   if(VISTA==='des'){pintaDes();return;}
   if(VISTA==='enl'){pintaEnl();return;}
+  if(VISTA==='bib'){pintaBib();return;}
   if(VISTA==='cal'){pintaCal();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
@@ -1338,7 +1499,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else if(o==='biblioteca')irA('bib');else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
