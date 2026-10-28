@@ -106,6 +106,7 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:.86em}
 .ob-lim{float:right;border:1px solid var(--line);background:#fff;color:var(--mute);border-radius:10px;padding:5px 10px;font-size:.74em;font-weight:700;font-family:inherit;cursor:pointer}
 .ob-barra .ob-lim{float:none;font-size:.8em;padding:7px 12px}
 .ob-lim:disabled{opacity:.4;cursor:default}
+.ob-cnt{align-self:center;font-size:.8em;color:var(--mute);font-weight:600}/* Ladrillo568: contador suave de observaciones */
 .ob-lim[data-listo="1"]{background:#fff0f1;border-color:var(--rojo);color:var(--rojo)}
 .ob-lim.ob-und{background:#eaf5f0;border-color:var(--verde);color:var(--verde)}
 @media print{.ob-lim,.ob-barra{display:none!important}}
@@ -540,9 +541,9 @@ function obTexto(p,id){return (pcap(p).obs[id]||'')}
 function obBtn(p,a,off){if(off)return '';var hay=obTexto(p,a.id).trim()!=='';
   return '<button class="ob-lim" data-olim="'+a.id+'" '+(hay?'':'disabled')+' title="Limpiar la observación de este alumno">🧹 Limpiar</button>';}
 function obBarra(p,dis){if(dis)return '';var n=obsEscritas(p);
-  return '<div class="ob-barra"><button class="ob-lim" data-olimall="1" '+(n?'':'disabled')+'>🧹 Limpiar todas ('+n+')</button>'+
+  return '<div class="ob-barra"><button class="ob-lim" data-olimall="1" '+(n?'':'disabled')+'>🧹 Limpiar todas ('+n+')</button><span class="ob-cnt" id="obCnt">✍️ '+n+' de '+activos().length+' escritas</span>'+
     (OBUNDO&&OBUNDO.p===p?'<button class="ob-lim ob-und" id="obUndo" data-oundo="1">↩ Deshacer limpieza</button>':'')+'</div>';}
-function obRefresca(){var p=S.hoja,n=obsEscritas(p),a=$('[data-olimall]');
+function obRefresca(){var p=S.hoja,n=obsEscritas(p),a=$('[data-olimall]');var _c=document.getElementById('obCnt');if(_c)_c.textContent='✍️ '+n+' de '+activos().length+' escritas';
   if(a){a.disabled=!n;if(a.dataset.listo!=='1')a.textContent='🧹 Limpiar todas ('+n+')'}
   document.querySelectorAll('[data-olim]').forEach(function(x){x.disabled=obTexto(p,x.dataset.olim).trim()===''})}
 document.addEventListener('click',function(e){var b=e.target.closest('[data-olim],[data-olimall],[data-oundo]');if(!b||b.disabled)return;
@@ -1404,10 +1405,12 @@ function hojaRecibo(p){var R=reciboFilas(p),dg=R.dg,nom=dg?'DIAGNÓSTICO':'PERIO
   h+='<div class="rep-h"><b>ESCUELA TELESECUNDARIA 171 «24 DE FEBRERO»</b><span>'+D.grupo.grado+'° GRADO, GRUPO "'+D.grupo.letra+'"  ·  CCT: '+D.escuela.cct+'</span><span>CICLO ESCOLAR: '+D.ciclo+'</span><span class="vino">RECIBO DE OFICIALIZACIÓN · '+nom+'</span></div><img src="'+D.logo_der+'" class="ld" alt=""></div>';
   var txc='<p class="rec-tx">Se hace constar que las '+(dg?'calificaciones del diagnóstico':'calificaciones de este periodo')+', capturadas por <b>'+esc(D.docente)+'</b>, fueron revisadas y quedaron <b>oficiales</b>. '+fe+' Este recibo muestra exactamente lo que quedó registrado.</p>';
   var nc=R.cols.length,wm=Math.max(4,Math.floor(56/nc));
-  h+='<table class="rec-t"><colgroup><col style="width:4%"><col style="width:28%">'+R.cols.map(function(){return '<col style="width:'+wm+'%">';}).join('')+(dg?'':'<col style="width:6%"><col style="width:5%">')+'</colgroup>';
-  h+='<thead><tr><th>N.°</th><th>ALUMNO</th>'+R.cols.map(function(c){return '<th>'+esc(String(c.corto||c.nombre).toUpperCase())+'</th>';}).join('')+(dg?'':'<th>PROM.</th><th>INAS.</th>')+'</tr></thead><tbody>';
-  R.rows.forEach(function(r){h+='<tr'+(r.baja?' class="bj"':'')+'><td>'+r.n+'</td><td class="l">'+esc(r.nombre)+(r.baja?' (BAJA)':'')+'</td>'+r.vals.map(function(v){return '<td'+((v!==''&&v<6)?' class="rj"':'')+'>'+v+'</td>';}).join('')+(dg?'':'<td><b>'+(r.prom===''?'':(r.prom===10?'10':Number(r.prom).toFixed(1)))+'</b></td><td>'+r.fa+'</td>')+'</tr>';});
+  h+='<table class="rec-t"><colgroup><col style="width:4%"><col style="width:28%">'+R.cols.map(function(){return '<col style="width:'+wm+'%">';}).join('')+(dg?'<col style="width:7%">':'<col style="width:6%"><col style="width:5%">')+'</colgroup>';/* Ladrillo568: el Diagnostico tambien lleva PROM. */
+  h+='<thead><tr><th>N.°</th><th>ALUMNO</th>'+R.cols.map(function(c){return '<th>'+esc(String(c.corto||c.nombre).toUpperCase())+'</th>';}).join('')+(dg?'<th>PROM.</th>':'<th>PROM.</th><th>INAS.</th>')+'</tr></thead><tbody>';
+  R.rows.forEach(function(r){h+='<tr'+(r.baja?' class="bj"':'')+'><td>'+r.n+'</td><td class="l">'+esc(r.nombre)+(r.baja?' (BAJA)':'')+'</td>'+r.vals.map(function(v){return '<td'+((v!==''&&v<6)?' class="rj"':'')+'>'+v+'</td>';}).join('')+'<td><b>'+(typeof r.prom!=='number'?'':(r.prom===10?'10':Number(r.prom).toFixed(1)))+'</b></td>'+(dg?'':'<td>'+r.fa+'</td>')+'</tr>';});
   h+='</tbody></table>';
+  if(dg){var _pg=promOficial(R.rows.filter(function(r){return !r.baja&&typeof r.prom==='number'}).map(function(r){return r.prom}));/* Ladrillo568: promedio grupal del Diagnostico */
+    if(_pg!=='')h+='<p class="rec-pg" style="text-align:right;font-size:.9em;margin:6px 2px;font-weight:700">Promedio grupal · Diagnóstico: '+(_pg===10?'10':Number(_pg).toFixed(1))+'</p>';}
   h+=txc;h+='<div class="rec-fi"><div>'+firmaHueco()+'<div class="ln"></div><b>'+esc(D.docente)+'</b><br>'+esc(D.rotulo)+'</div><div>'+firmaSello()+'<div class="ln"></div><b>DIRECTOR(A)</b></div></div>';
   h+='<div class="rep-sello">👑 Generado desde el SIGEA · Huella de verificación: '+hu+' · Actualización '+D.actualizacion+'</div></section>';
   return h;}
