@@ -1990,10 +1990,10 @@ function lecMkLee(){
   var x=LEC.x;if(!x)return [];
   if(LEC_MK.id===String(x.id))return LEC_MK.l;
   LEC_MK.id=String(x.id);LEC_MK.l=[];
-  try{var a=JSON.parse(localStorage.getItem('sigea_lec_mk_'+x.id)||'[]');if(Array.isArray(a))LEC_MK.l=a.filter(function(m){return m&&typeof m.c==='number'&&typeof m.f==='number';}).slice(0,100);}catch(e){}
+  try{var a=JSON.parse(localStorage.getItem('sigea_lec_mk_'+x.id)||'[]');if(Array.isArray(a))LEC_MK.l=a.filter(function(m){return m&&typeof m.c==='number'&&typeof m.f==='number';}).slice(0,100).map(function(m){if(!/^[a-z0-9]{3,24}$/.test(String(m.i||''))){m.i=lecNtId('m');lecNtSucio=1;}if(!m.w){m.w=Date.now();lecNtSucio=1;}return m;});if(lecNtSucio){lecNtSucio=0;try{localStorage.setItem('sigea_lec_mk_'+x.id,JSON.stringify(LEC_MK.l));}catch(e2){}}}catch(e){}
   return LEC_MK.l;
 }
-function lecMkGuarda(){try{localStorage.setItem('sigea_lec_mk_'+LEC.x.id,JSON.stringify(LEC_MK.l));}catch(e){}}
+function lecMkGuarda(){try{localStorage.setItem('sigea_lec_mk_'+LEC.x.id,JSON.stringify(LEC_MK.l));}catch(e){}lecNtProgra();}
 function lecMkPag(m){
   var c=Math.max(0,Math.min(LEC.cap.length-1,m.c)),ini=LEC.secP[c]||0,fin=(c+1<LEC.cap.length)?(LEC.secP[c+1]||0):LEC.np;
   return lecAPag(ini+Math.floor(m.f/1000*Math.max(1,fin-ini)));
@@ -2010,6 +2010,7 @@ function lecMkAqui(){
   return r;
 }
 function lecMkEst(){
+  lecNtInicia();
   var b=document.querySelector('#lcBox [data-lc="mk"]');if(!b||!LEC.x)return;
   b.classList.toggle('on',lecMkAqui().length>0);
 }
@@ -2024,7 +2025,7 @@ function lecMk(){
     m={c:i,f:Math.round((p-ini+0.5)/len*1000)};
   }else m={c:LEC.i,f:Math.round(lecFrac()*1000)};
   m.t=LEC.pag?'':String(lecVozTexto()||'').replace(/\s+/g,' ').trim().slice(0,90);
-  m.w=Date.now();L.push(m);lecMkGuarda();lecMkEst();lecAv('Marcador puesto');
+  m.w=Date.now();m.i=lecNtId('m');L.push(m);lecMkGuarda();lecMkEst();lecAv('Marcador puesto');
 }
 function lecMkHtml(){
   var L=lecMkLee();if(!L.length)return '';
@@ -2053,7 +2054,7 @@ function lecSbLee(){
   }catch(e){}
   return LEC_SB.l;
 }
-function lecSbGuarda(){try{localStorage.setItem('sigea_lec_sub_'+LEC.x.id,JSON.stringify(LEC_SB.l));}catch(e){}}
+function lecSbGuarda(){try{localStorage.setItem('sigea_lec_sub_'+LEC.x.id,JSON.stringify(LEC_SB.l));}catch(e){}lecNtProgra();}
 function lecSbTexto(root){var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),n,o='';while((n=w.nextNode()))o+=n.nodeValue;return o;}
 function lecSbOff(root,node,off){var r=document.createRange();try{r.setStart(root,0);r.setEnd(node,off);}catch(e){return -1;}return r.toString().length;}
 function lecSbUbica(T,r){
@@ -2141,7 +2142,7 @@ function lecSbNuevo(k){
   var p=LEC_SB.pend;if(!p)return;
   var L=lecSbLee(),j;
   if(p.i){
-    for(j=0;j<L.length;j++){if(L[j].i===p.i)L[j].k=k;}
+    for(j=0;j<L.length;j++){if(L[j].i===p.i){L[j].k=k;L[j].w=Date.now();}}
     lecSbGuarda();
     Array.prototype.forEach.call($('lcBox').querySelectorAll('mark.lc-sb[data-i="'+p.i+'"]'),function(m){m.className='lc-sb k'+k;});
   }else{
@@ -2197,6 +2198,88 @@ function lecSbIr(i){
     var cu=$('lcCuerpo'),rr=m.getBoundingClientRect(),cr=cu.getBoundingClientRect();cu.scrollTop+=rr.top-cr.top-cr.height*0.3;LEC.mov=true;lecBarra();lecProgra();
   };
   if(LEC.i!==r.c){lecMuestra(r.c,0).then(function(){setTimeout(go,520);}).catch(function(){});}else go();
+}
+/* ===== NOTAS EN LA BODEGA (ladrillo 583): los marcadores y subrayados de cada maestro viajan con su llave a la bodega y lo siguen a otro aparato.
+   Gana la nota mas nueva; lo que quitas aqui se avisa a la bodega (se marca, no se borra). Si la bodega no sabe de notas (aun no es la v19), todo sigue como antes, solo en este aparato. ===== */
+var LEC_NT={off:false,id:'',tm:0,run:false,pend:false};
+var lecNtSucio=0;
+function lecNtId(p){return p+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36);}
+function lecNtSnapLee(id){try{var o=JSON.parse(localStorage.getItem('sigea_lec_ns_'+id)||'{}');return (o&&typeof o==='object')?o:{};}catch(e){return {};}}
+function lecNtSnapGuarda(id,o){try{localStorage.setItem('sigea_lec_ns_'+id,JSON.stringify(o));}catch(e){}}
+function lecNtRec(t,o,n,w){
+  if(!o||typeof o!=='object')return null;
+  var r;
+  if(t==='mk'){
+    if(typeof o.c!=='number'||typeof o.f!=='number')return null;
+    r={c:o.c|0,f:o.f|0,t:String(o.t||'').slice(0,90)};
+  }else if(t==='sb'){
+    if(typeof o.c!=='number'||typeof o.s!=='number'||typeof o.e!=='number'||typeof o.t!=='string'||!o.t)return null;
+    r={c:o.c|0,s:o.s|0,e:o.e|0,t:o.t.slice(0,600),p:String(o.p||'').slice(0,20),q:String(o.q||'').slice(0,20),k:(o.k===1||o.k===2)?o.k:0};
+  }else return null;
+  r.i=n;r.w=w;return r;
+}
+function lecNtJson(r){var o={},k;for(k in r){if(k!=='i')o[k]=r[k];}return JSON.stringify(o);}
+function lecNtGuardaLocal(id){
+  try{localStorage.setItem('sigea_lec_mk_'+id,JSON.stringify(LEC_MK.l));}catch(e){}
+  try{localStorage.setItem('sigea_lec_sub_'+id,JSON.stringify(LEC_SB.l));}catch(e){}
+}
+function lecSbRefresca(){
+  var b=$('lcBox');if(!b)return;
+  Array.prototype.forEach.call(b.querySelectorAll('mark.lc-sb'),function(m){var p=m.parentNode;while(m.firstChild)p.insertBefore(m.firstChild,m);p.removeChild(m);p.normalize();});
+  if(LEC.pref.v==='libro')lecSbTodo();else{var t=$('lcTxt');if(t)lecSbAplica(t,LEC.i);}
+}
+function lecNtProgra(){
+  if(LEC_NT.off||!LEC.x||!B||!K)return;
+  if(LEC_NT.run){LEC_NT.pend=true;return;}
+  clearTimeout(LEC_NT.tm);LEC_NT.tm=setTimeout(function(){LEC_NT.tm=0;lecNtSync();},4000);
+}
+function lecNtInicia(){
+  var x=LEC.x;if(!x||LEC_NT.off||!LEC.cap.length||!B||!K||LEC_NT.id===String(x.id))return;
+  LEC_NT.id=String(x.id);setTimeout(function(){lecNtSync();},1500);
+}
+function lecNtSalida(){
+  LEC_NT.id='';
+  if(LEC_NT.tm){clearTimeout(LEC_NT.tm);LEC_NT.tm=0;lecNtSync();}
+}
+function lecNtSync(){
+  var x=LEC.x;if(!x||LEC_NT.off||LEC_NT.run||!B||!K)return Promise.resolve();
+  var id=String(x.id);LEC_NT.run=true;LEC_NT.pend=false;
+  return llama('bib_notas',{id:id}).then(function(r){
+    if(!r||!r.ok)throw new Error(String((r&&r.error)||'sin respuesta'));
+    if(!LEC.x||String(LEC.x.id)!==id)return;
+    var MK=lecMkLee(),SB=lecSbLee(),S={},Lm={},snap=lecNtSnapLee(id),cam={mk:false,sb:false},push=[],now=Date.now();
+    (r.notas||[]).forEach(function(s){if(s&&/^[a-z0-9]{3,24}$/.test(String(s.nid))&&(s.tipo==='mk'||s.tipo==='sb'))S[s.nid]=s;});
+    MK.forEach(function(m){Lm[m.i]={t:'mk',r:m,L:MK};});
+    SB.forEach(function(s){Lm[s.i]={t:'sb',r:s,L:SB};});
+    Object.keys(S).forEach(function(nid){
+      var s=S[nid],l=Lm[nid],w=Number(s.w)||0,rec=null;
+      if(s.borrado){
+        if(l&&l.r.w<=w){l.L.splice(l.L.indexOf(l.r),1);cam[l.t]=true;delete Lm[nid];}
+        return;
+      }
+      try{rec=lecNtRec(s.tipo,JSON.parse(s.json),nid,w);}catch(e){rec=null;}
+      if(!rec)return;
+      if(!l){
+        if(snap[nid]!==undefined&&snap[nid]>=w)return;
+        var Lx=(s.tipo==='mk')?MK:SB;
+        if(Lx.length>=(s.tipo==='mk'?100:300))return;
+        Lx.push(rec);Lm[nid]={t:s.tipo,r:rec,L:Lx};cam[s.tipo]=true;
+      }else if(w>l.r.w&&l.t===s.tipo){
+        var ix=l.L.indexOf(l.r);l.L[ix]=rec;Lm[nid]={t:l.t,r:rec,L:l.L};cam[l.t]=true;
+      }
+    });
+    Object.keys(Lm).forEach(function(nid){
+      var l=Lm[nid],s=S[nid];
+      if(!s||(Number(s.w)||0)<l.r.w)push.push({nid:nid,tipo:l.t,json:lecNtJson(l.r),w:l.r.w,borrado:0});
+    });
+    Object.keys(snap).forEach(function(nid){
+      if(!Lm[nid]&&S[nid]&&!S[nid].borrado&&(Number(S[nid].w)||0)<=snap[nid])push.push({nid:nid,tipo:S[nid].tipo,json:'{}',w:now,borrado:1});
+    });
+    if(cam.mk||cam.sb){lecNtGuardaLocal(id);if(cam.mk)lecMkEst();if(cam.sb)lecSbRefresca();}
+    var seq=Promise.resolve(),k;
+    for(k=0;k<push.length;k+=40){(function(lote){seq=seq.then(function(){return llama('bib_notas_guardar',{id:id,notas:lote});}).then(function(g){if(!g||!g.ok)throw new Error(String((g&&g.error)||'no se guardo'));});})(push.slice(k,k+40));}
+    return seq.then(function(){var ns={};Object.keys(Lm).forEach(function(nid){ns[nid]=Lm[nid].r.w;});lecNtSnapGuarda(id,ns);});
+  }).catch(function(e){if(/desconocida/i.test(String(e&&e.message||e)))LEC_NT.off=true;}).then(function(){LEC_NT.run=false;if(LEC_NT.pend)lecNtProgra();});
 }
 function lecInicio(){
   var x=LEC.x,d=String(x.donde||''),a=Number(x.avance)||0,l=null,m;
@@ -2351,7 +2434,7 @@ function pintaLec(){
 function lecOculta(){
   var b=$('lcBox');if(!b||b.hidden)return;
   if(LEC.sucio)lecGuarda();
-  lecVozPara();lecBqCierra(true);lecSbCierra();
+  lecVozPara();lecBqCierra(true);lecSbCierra();lecNtSalida();
   b.hidden=true;document.body.style.overflow='';LEC.panel='';lecUrls();
   LEC.urlsL.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});LEC.urlsL=[];LEC.bh='';LEC.F={};
   var t=$('lcTxt');if(t)t.innerHTML='';var hh=$('lcHojas');if(hh)hh.innerHTML='';LEC.i=-1;LEC.tok++;LEC.rt++;
