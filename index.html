@@ -230,6 +230,7 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pm-bt .i{font-size:1.7rem}.pm-bt small{display:block;font-weight:600;font-size:.76rem;opacity:.9;margin-top:2px}
 .pm-bt.a{background:linear-gradient(145deg,#ffab4a,var(--nar) 45%,var(--nar2))}
 .pm-bt.b{background:linear-gradient(145deg,#a98aff,var(--mor) 45%,var(--mor2))}
+.pm-bt.t{background:linear-gradient(145deg,#3fd0dc,var(--tea) 45%,var(--tea2))}
 .pm-bt.c{position:relative;background:linear-gradient(145deg,#2a3563,#18213f);border:1px solid #f3d388;box-shadow:0 8px 20px rgba(0,0,0,.3),0 0 0 2px rgba(243,211,136,.18)}
 .pm-bds{position:absolute;top:-9px;right:14px;display:flex;gap:6px}
 .pm-bd{border-radius:99px;padding:2px 9px;font-size:.74rem;font-weight:800;color:#fff;background:#e8335a}
@@ -855,20 +856,21 @@ function pmResumen(D){
     (D.pendDias?'<p class="nota" style="margin:8px 0 0">Tienes '+D.pendDias+(D.pendDias===1?' día':' días')+' en revisión: ya cuentan para lo que puedes solicitar.</p>':'')+'</div>';}
 function pmEstado(s){return {pendiente:'En revisión',aprobado:'Aprobado',rechazado:'No aprobado',revertido:'Cancelado por la Dirección',cancelado:'Cancelado por ti'}[s]||s;}
 function pmPedido(s){
-  var tp=s.tipo==='gestoria'?'Gestoría':'Permiso económico',fl=s.fechas||[];
+  var tp=s.tipo==='gestoria'?'Gestoría':(s.tipo==='constancia'?'Constancia de servicio activo':'Permiso económico'),fl=s.fechas||[];
   var h='<div class="pm-ped"><div class="cab"><span class="tp">'+tp.toUpperCase()+'</span><span class="pm-chip '+esc(s.estado)+'">'+esc(pmEstado(s.estado))+'</span></div>'+
     '<div class="fe">'+esc(pmTxt(fl))+' <span>('+(Number(s.dias)||fl.length)+(Number(s.dias)===1?' día':' días')+')</span></div>';
+  if(s.tipo==='constancia')h='<div class="pm-ped"><div class="cab"><span class="tp">'+tp.toUpperCase()+'</span><span class="pm-chip '+esc(s.estado)+'">'+esc(pmEstado(s.estado))+'</span></div>'+(pmCrea(s)?'<div class="fe">Solicitada el '+esc(pmCrea(s))+'</div>':'');
   if(s.tipo==='gestoria'&&(s.motivo||s.detalle))h+='<div class="mo">'+esc(s.detalle||s.motivo)+'</div>';
   if((s.estado==='rechazado'||s.estado==='revertido')&&s.motivo_resol)h+='<div class="rz"><b>Motivo:</b> '+esc(s.motivo_resol)+'</div>';
   if(s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='pendiente')h+='<div class="pm-aviso" style="margin:10px 0 0">📎 <b>Comprobante pendiente:</b> entrega a la Dirección una copia del comprobante de tu trámite.</div>';
   else if(s.tipo==='gestoria'&&s.estado==='aprobado'&&s.comprobante==='entregado')h+='<div style="margin-top:8px;font-size:.84rem;font-weight:700;color:#7ee6b9">✓ Comprobante entregado</div>';
   var ac='';
   if(s.estado==='pendiente')ac+='<button class="pm-b" data-pm="cancela" data-i="'+esc(s.id)+'">Cancelar solicitud</button>';
-  if(s.estado==='aprobado'&&s.tiene_pdf)ac+='<button class="pm-b ok" data-pm="pdf" data-i="'+esc(s.id)+'">⬇ Descargar mi ficha</button>';
+  if(s.estado==='aprobado'&&s.tiene_pdf)ac+='<button class="pm-b ok" data-pm="pdf" data-i="'+esc(s.id)+'">⬇ Descargar mi '+(s.tipo==='constancia'?'constancia':'ficha')+'</button>';
   return h+(ac?'<div class="ac">'+ac+'</div>':'')+'</div>';}
 function pmLista(){
   var D=pmDatos(),i=D.i,h='';
-  var lista=(PM.mis||[]).filter(function(s){return s.tipo!=='constancia';});
+  var lista=(PM.mis||[]);
   if(PM.cargando&&!PM.info)return '<div class="pm-card"><p class="pm-vacio">Cargando tus permisos…</p></div>';
   if(PM.err&&!PM.info)return '<div class="pm-aviso">'+esc(PM.err)+'</div><button class="btn sec2" id="pmRei">Intentar otra vez</button>';
   if(!PM.info)return '<div class="pm-aviso">Tu pantalla de permisos todavía no está lista. Avísale al director para que la prepare.</div>';
@@ -878,6 +880,7 @@ function pmLista(){
   var restP=Dp.rest;
   h+='<div class="pm-bts"><button class="pm-bt a" data-pm="nuevo" data-t="permiso"'+(restP<1?' disabled':'')+'><span class="i">🗓️</span><span>Solicitar un permiso<small>'+(restP<1?'Ya no te quedan días por solicitar':'Hasta 3 días seguidos · te quedan '+restP)+'</small></span></button>'+
     '<button class="pm-bt b" data-pm="nuevo" data-t="gestoria"><span class="i">📄</span><span>Solicitar una gestoría<small>Para un trámite · no cuenta de tus 9 días</small></span></button>'+
+    '<button class="pm-bt t" data-pm="constancia"'+(pmConstPend()?' disabled':'')+'><span class="i">🎓</span><span>Solicitar una constancia<small>'+(pmConstPend()?'Ya tienes una solicitud en revisión':'Servicio activo')+'</small></span></button>'+
     '<button class="pm-bt c" data-pm="sol"><span class="i">🗂️</span><span>Mis solicitudes<small>Ver todas · filtrar · anteriores</small></span>'+pmBadges(lista)+'</button></div>';
   if(PM.nota)h+='<div class="pm-aviso">'+esc(PM.nota)+'</div>';
   return h+pmUltima(lista);}
@@ -894,10 +897,10 @@ function pmUltima(lista){
   return h+pmPedido(lista[0]);}
 var SOL_RECIENTES=8,SOL_MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function pmSolVista(){
-  var lista=(PM.mis||[]).filter(function(s){return s.tipo!=='constancia';});
+  var lista=(PM.mis||[]);
   if(PM.cargando&&!PM.mis)return '<div class="pm-card"><p class="pm-vacio">Cargando tus solicitudes…</p></div>';
   var nG=compCuenta(lista),nN=lista.filter(function(s){return pmNoApr(s)&&PM.nv.indexOf(s.id)>=0;}).length;
-  var T=[['todas','Todas',0],['permiso','Permisos',0],['gestoria','Gestorías',nG]],E=[['pendiente','En revisión',0],['aprobado','Aprobadas',0],['no','No aprobadas',nN]];
+  var T=[['todas','Todas',0],['permiso','Permisos',0],['gestoria','Gestorías',nG],['constancia','Constancias',0]],E=[['pendiente','En revisión',0],['aprobado','Aprobadas',0],['no','No aprobadas',nN]];
   var h='<div class="sl-lbl">Tipo</div><div class="pz-filtros" style="margin:0 0 4px">'+T.map(function(f){
     return '<button class="pz-f'+(PM.ft===f[0]?' on':'')+'" data-pm="sft" data-v="'+f[0]+'">'+f[1]+(f[2]?'<i class="am">'+f[2]+'</i>':'')+'</button>';}).join('')+'</div>'+
     '<div class="sl-lbl">Estado</div><div class="pz-filtros" style="margin:0 0 14px">'+E.map(function(f){
@@ -999,6 +1002,7 @@ function pintaPerm(){
     if(a==='sfe'){var ve=t.getAttribute('data-v')||'';PM.fe=PM.fe===ve?'':ve;PM.vi=false;pintaPerm();return;}
     if(a==='svi'){PM.vi=!PM.vi;pintaPerm();return;}
     if(a==='cancela'){pmCancela(t.getAttribute('data-i'));return;}
+    if(a==='constancia'){pmAvisoConst();return;}
     if(a==='pdf'){pmAvisoFicha(t.getAttribute('data-i'));return;}
   };}
 var PM_SIGLAS='SEP|ISSSTE|CTE|IMSS|SAT|INE|RFC|CURP|CCT';
@@ -1040,6 +1044,22 @@ function pmEnvia(){
     if(x&&x.ok){PM.paso=0;PM.ini=null;PM.motivo='';PM.nota='✓ Tu solicitud se envió. El director lo revisará y te avisará en tu Pizarrón.';pmCarga();return;}
     PM.nota='No se pudo enviar: '+((x&&x.error)||'intenta otra vez');PM.paso=0;pmCarga();})
   .catch(function(){PM.envio=false;PM.nota='Sin señal: no se pudo enviar. Intenta otra vez.';PM.paso=0;pintaPerm();});}
+/* Ladrillo589: CONSTANCIA de servicio activo (mismo camino que los permisos: la pides, la Dirección la aprueba, la bajas aquí). */
+function pmConstPend(){return (PM.mis||[]).some(function(s){return s.tipo==='constancia'&&s.estado==='pendiente';});}
+function pmCrea(s){var d=new Date(s.creado);return isNaN(d)?'':d.getDate()+' de '+PM_MES[d.getMonth()]+' de '+d.getFullYear();}
+function pmErrSol(e){var t=String(e||'');if(/ya tienes ese pedido pendiente/i.test(t))return 'ya tienes una solicitud de constancia en revisión';var m=t.match(/ya tienes (\d+) pedidos pendientes/i);if(m)return 'ya tienes '+m[1]+' solicitudes pendientes';return t||'intenta otra vez';}
+function pmAvisoConst(){
+  abrir('<div class="obra"><div class="gr">🎓</div><h2>Constancia de servicio activo</h2>'+
+    '<p class="nota" style="font-size:.95rem;line-height:1.5">La Dirección revisa tu solicitud y, si la aprueba, aquí mismo podrás descargar tu constancia en PDF. Te avisaremos en tu Pizarrón.</p></div>'+
+    '<button class="btn" id="csOk">Solicitar mi constancia</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
+  hoja.classList.add('cen');
+  var b=$('csOk');if(b)b.onclick=function(){b.disabled=true;cerrar();pmEnviaConst();};}
+function pmEnviaConst(){
+  if(PM.envio||pmConstPend())return;PM.envio=true;pintaPerm();
+  llama('perm_pedir',{tipo:'constancia'}).then(function(x){PM.envio=false;
+    if(x&&x.ok){PM.nota='✓ Tu solicitud de constancia se envió. El director la revisará y te avisará en tu Pizarrón.';pmCarga();return;}
+    PM.nota='No se pudo enviar: '+pmErrSol(x&&x.error);pmCarga();})
+  .catch(function(){PM.envio=false;PM.nota='Sin señal: no se pudo enviar. Intenta otra vez.';pintaPerm();});}
 function pmCancela(id){
   abrirC('<div class="obra"><div class="gr">✋</div><h2>¿Cancelar esta solicitud?</h2><p class="nota">El director ya no lo verá. Después puedes solicitar otro.</p></div><button class="btn" id="pmSi">Sí, cancelar la solicitud</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
   $('pmSi').onclick=function(){$('pmSi').disabled=true;
@@ -1047,6 +1067,7 @@ function pmCancela(id){
     .catch(function(){cerrar();PM.nota='Sin señal: no se pudo cancelar.';pintaPerm();});};}
 function pmAvisoFicha(id){
   var s=null;(PM.mis||[]).forEach(function(x){if(x.id===id)s=x;});
+  if(s&&s.tipo==='constancia'){var bc=null;Array.prototype.forEach.call(sala.querySelectorAll('[data-pm="pdf"]'),function(x){if(x.getAttribute('data-i')===id)bc=x;});pmPdf(id,bc);return;}
   var ges=!!(s&&s.tipo==='gestoria');
   var tx=ges?'Imprime tu ficha, fírmala y entrégala en la Dirección de la escuela. Quedará en espera y será validada cuando entregues la copia del comprobante de tu trámite.'
             :'Imprime tu ficha, fírmala y preséntala en la Dirección de la escuela para que sea validada.';
@@ -1056,14 +1077,14 @@ function pmAvisoFicha(id){
   var b=$('fiOk');if(b)b.onclick=function(){cerrar();var bt=null,bs=sala.querySelectorAll('[data-pm="pdf"]');
     Array.prototype.forEach.call(bs,function(x){if(x.getAttribute('data-i')===id)bt=x;});pmPdf(id,bt);};}
 function pmPdf(id,btn){
-  if(btn){btn.disabled=true;btn.textContent='Preparando…';}
+  var tx0=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='Preparando…';}
   llama('perm_pdf',{id:id}).then(function(x){
     if(!(x&&x.ok&&x.base64))throw new Error((x&&x.error)||'no llegó el archivo');
     var bin=atob(x.base64),u=new Uint8Array(bin.length);for(var k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);
     var url=URL.createObjectURL(new Blob([u],{type:'application/pdf'})),a=document.createElement('a');
     a.href=url;a.download=x.nombre||'permiso.pdf';document.body.appendChild(a);a.click();
     setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},4000);
-    if(btn){btn.disabled=false;btn.textContent='⬇ Descargar mi ficha';}})
+    if(btn){btn.disabled=false;btn.textContent=tx0||'⬇ Descargar mi ficha';}})
   .catch(function(e){PM.nota='No pude bajar tu ficha: '+(e&&e.message||'intenta otra vez');pintaPerm();});}
 function limpia(){try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&(k.indexOf('sigea_web_')===0||k.indexOf('sigea_av_')===0||k.indexOf('sigea_sala_')===0))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);});}catch(e){}marca(false);}
 function despedida(){estado('👋','Hasta pronto','Tu sala quedó cerrada en este aparato. Para volver, abre tu enlace de WhatsApp.');}
