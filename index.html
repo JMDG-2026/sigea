@@ -1870,7 +1870,7 @@ function lecBqHits(base,q){
 }
 function lecBqPon(q){
   var base=(LEC.bhM&&LEC.bh===LEC.bhM)?LEC.bh0:LEC.bh;
-  LEC.bh0=base;LEC.bhM=lecBqHtml(base,q);LEC.bh=LEC.bhM;lecArma();
+  LEC.bh0=base;LEC.bhM=lecBqHtml(base,q);LEC.bh=LEC.bhM;lecArma();LEC.p=lecAPag(LEC.p);lecPinta();
 }
 function lecBqQuita(){
   if(LEC.bhM&&LEC.bh===LEC.bhM){var base=LEC.bh0;LEC.bh=base;LEC.bhM=null;LEC.bh0=null;lecRearma();}
