@@ -445,6 +445,17 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .bb-leer{border:0;border-radius:11px;padding:9px 18px;font:inherit;font-weight:800;font-size:.9rem;color:#fff;background:linear-gradient(135deg,#e0457b,#8b1a4f);cursor:pointer}
 .bb-cerrar{border:1px solid #c9b48f;background:transparent;border-radius:11px;padding:8px 12px;font:inherit;font-weight:700;font-size:.8rem;color:#6a5238;cursor:pointer}
 .bb-ficha .bb-barra{background:#d8c7a3;width:160px}
+.bb-star{position:absolute;top:5px;left:50%;transform:translateX(-50%);color:#ffd34d;font-size:13px;line-height:1;text-shadow:0 1px 2px #000;pointer-events:none}
+.bb-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.bb-chip{display:inline-flex;align-items:center;gap:4px;border-radius:99px;font-size:.7rem;font-weight:800;padding:2px 9px;background:#ffe9a8;color:#5b3a06}
+.bb-chip.v{background:#cfe8ff;color:#0e3a6b}
+.bb-res{margin-top:7px;background:rgba(255,255,255,.55);border-left:3px solid #c9a23f;border-radius:6px;padding:6px 9px;font-size:.78rem;color:#4a3519;max-height:6.2em;overflow:auto;white-space:pre-wrap}
+.bb-res b{display:block;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;color:#8a6417;margin-bottom:2px}
+.bb-vnota{margin-top:6px;font-size:.72rem;color:#0e3a6b}
+.bb-rec{margin:0 0 16px}.bb-rec h3{margin:0 0 8px;font-size:.92rem;color:#ffe08a}
+.bb-rec .bb-fila{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.bb-rec .bb-sc{min-width:200px}
+.bb-ficha{max-height:calc(100vh - 28px);overflow:auto}
 .bb-lg{margin:0 0 18px}.bb-lg h3{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:1rem}.bb-lg h3 i{width:14px;height:14px;border-radius:4px;display:inline-block}
 .bb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
 .bb-tj{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;cursor:pointer;text-align:center}
@@ -1385,7 +1396,7 @@ function bibPort(x,cl){var u=bibImg(x);return u?'<img src="'+u+'" alt="">':'<div
 function bibLibro(x,i){
   var c=bibCol(x.estante),pg=Number(x.paginas)||20,w=Math.max(26,Math.min(64,Math.round(18+pg*0.22))),h=150+((i*37)%5)*6+(pg>100?10:0),dd=Math.round(h*0.714*0.96),t=String(x.titulo||''),av=Number(x.avance)||0;
   return '<div class="bb-libro" data-bi="'+i+'" style="--w:'+w+'px;--h:'+h+'px;--d:'+Math.round(dd/2)+'px;--dd:'+dd+'px;--c1:'+c[0]+';--c2:'+c[1]+';--c3:'+c[2]+'">'+
-   '<div class="bb-cu"><div class="bb-f bb-lomo"><b>'+esc(t.length>30?t.slice(0,28)+'…':t)+'</b>'+(x.nuevo?'<span class="bb-nuevo"></span>':'')+(av>0?'<div class="bb-prog"><i style="width:'+av+'%"></i></div>':'')+'</div>'+
+   '<div class="bb-cu"><div class="bb-f bb-lomo"><b>'+esc(t.length>30?t.slice(0,28)+'…':t)+'</b>'+((x.nuevo||bibVerNueva(x))?'<span class="bb-nuevo"></span>':'')+(x.recomendado?'<span class="bb-star">★</span>':'')+(av>0?'<div class="bb-prog"><i style="width:'+av+'%"></i></div>':'')+'</div>'+
    '<div class="bb-f bb-tapa">'+bibPort(x)+'</div><div class="bb-f bb-atras"></div><div class="bb-f bb-izq"></div><div class="bb-f bb-tope"></div></div></div>';
 }
 function bibLibrero(){
@@ -1399,7 +1410,7 @@ function bibLibrero(){
 function bibLista(){
   var l='',n;
   for(n=1;n<=7;n++){
-    var g=(BIB.lista||[]).map(function(x,i){return Number(x.estante)===n?'<div class="bb-tj" data-bi="'+i+'">'+bibPort(x)+'<b>'+esc(x.titulo)+(x.nuevo?'<span class="nu">nuevo</span>':'')+'</b><small>'+(Number(x.paginas)?x.paginas+' páginas':'')+(Number(x.avance)?' · '+x.avance+'%':'')+'</small></div>':'';}).join('');
+    var g=(BIB.lista||[]).map(function(x,i){return Number(x.estante)===n?'<div class="bb-tj" data-bi="'+i+'">'+bibPort(x)+'<b>'+esc(x.titulo)+(x.nuevo?'<span class="nu">nuevo</span>':'')+(x.recomendado?'<span class="nu">⭐</span>':'')+(bibVerNueva(x)?'<span class="nu">versión nueva</span>':'')+'</b><small>'+(Number(x.paginas)?x.paginas+' páginas':'')+(Number(x.avance)?' · '+x.avance+'%':'')+'</small></div>':'';}).join('');
     if(g)l+='<div class="bb-lg"><h3><i style="background:'+bibCol(n)[0]+'"></i>'+esc(bibNom(n))+'</h3><div class="bb-grid">'+g+'</div></div>';
   }
   return l||'<p class="pm-vacio">Todavía no hay libros.</p>';
@@ -1408,11 +1419,35 @@ function bibSigue(){
   var s=(BIB.lista||[]).map(function(x,i){var av=Number(x.avance)||0;return (av>0&&av<100)?'<div class="bb-sc" data-bi="'+i+'">'+bibPort(x)+'<div><b>'+esc(x.titulo)+'</b><small>Sigues en el '+av+'%</small><div class="bb-barra"><i style="width:'+av+'%"></i></div></div></div>':'';}).join('');
   return s?'<div class="bb-sigue"><h3>▶ Sigue leyendo</h3><div class="bb-fila">'+s+'</div></div>':'';
 }
+function bibVerClave(x){return 'sigea_bib_ver_'+x.id;}
+function bibVerVista(x){var v=Number(x.version)||1;try{localStorage.setItem(bibVerClave(x),String(v));}catch(e){}}
+function bibVerNueva(x){
+  var v=Number(x.version)||1;if(v<2)return false;
+  var s=null;try{s=localStorage.getItem(bibVerClave(x));}catch(e){}
+  var n=s?Number(s):(Number(x.avance)>0?1:v);
+  return n<v;
+}
+function bibChips(x){
+  var c='';
+  if(x.recomendado)c+='<span class="bb-chip">⭐ Recomendado</span>';
+  if(bibVerNueva(x))c+='<span class="bb-chip v">🆕 Versión nueva</span>';
+  return c?'<div class="bb-chips">'+c+'</div>':'';
+}
+function bibResenaHtml(x){
+  var r=String(x.resena||'').trim(),h='';
+  if(r)h+='<div class="bb-res"><b>Del director</b>'+esc(r)+'</div>';
+  if(bibVerNueva(x))h+='<div class="bb-vnota">El director actualizó este libro. Tu avance y tus notas se conservan; si alguna nota quedó movida de lugar, revísala.</div>';
+  return h;
+}
+function bibRecom(){
+  var s=(BIB.lista||[]).map(function(x,i){return x.recomendado?'<div class="bb-sc" data-bi="'+i+'">'+bibPort(x)+'<div><b>'+esc(x.titulo)+'</b><small>'+(Number(x.avance)>0?'Vas en el '+x.avance+'%':(x.nuevo?'Nuevo':'Sin abrir'))+'</small></div></div>':'';}).join('');
+  return s?'<div class="bb-rec"><h3>⭐ Recomendados por el director</h3><div class="bb-fila">'+s+'</div></div>':'';
+}
 function bibFicha(i){
   var x=(BIB.lista||[])[i];if(!x)return '';var av=Number(x.avance)||0;
-  return bibPort(x)+'<div style="flex:1"><h2>'+esc(x.titulo)+'</h2><div class="m">'+(x.autor?esc(x.autor)+' · ':'')+(Number(x.paginas)?x.paginas+' páginas':'')+'</div><span class="est"><i style="background:'+bibCol(x.estante)[0]+'"></i>'+esc(bibNom(Number(x.estante)))+'</span>'+
+  return bibPort(x)+'<div style="flex:1"><h2>'+esc(x.titulo)+'</h2><div class="m">'+(x.autor?esc(x.autor)+' · ':'')+(Number(x.paginas)?x.paginas+' páginas':'')+'</div><span class="est"><i style="background:'+bibCol(x.estante)[0]+'"></i>'+esc(bibNom(Number(x.estante)))+'</span>'+bibChips(x)+
     (av?'<div class="bb-barra"><i style="width:'+av+'%"></i></div><div class="m">Vas en el '+av+'%</div>':(x.nuevo?'<div class="m"><b>★ Nuevo</b> · todavía no lo abres</div>':''))+
-    '<div class="acc"><button class="bb-leer" data-bb="leer" data-bi="'+i+'">'+(av?'Seguir leyendo':'Leer')+'</button><button class="bb-cerrar" data-bb="cerrar">Cerrar</button></div></div>';
+    bibResenaHtml(x)+'<div class="acc"><button class="bb-leer" data-bb="leer" data-bi="'+i+'">'+(av?'Seguir leyendo':'Leer')+'</button><button class="bb-cerrar" data-bb="cerrar">Cerrar</button></div></div>';
 }
 function bibToast(t){var e=$('biToast');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(bibToast.t);bibToast.t=setTimeout(function(){e.classList.remove('on');},2600);}
 function bibToca(i){
@@ -1440,7 +1475,7 @@ function pintaBib(){
     if(BIB.err)h+='<div class="pm-aviso">'+esc(BIB.err)+' Esto es lo último que pude leer.</div>';
     if(!(BIB.lista||[]).length)h+='<p class="pm-vacio">Todavía no hay libros para ti. Cuando el director suba uno, aparecerá aquí. 📭</p>';
     else h+='<div class="bb-tools"><input id="biQ" type="search" placeholder="🔍 Buscar por título o estante" value="'+esc(BIB.q)+'" autocomplete="off"><button data-bb="v" data-v="librero" class="'+(BIB.vista==='librero'?'on':'')+'">🪵 Librero</button><button data-bb="v" data-v="lista" class="'+(BIB.vista==='lista'?'on':'')+'">☰ Lista</button></div>'+
-       bibSigue()+(BIB.vista==='lista'?bibLista():bibLibrero())+
+       bibRecom()+bibSigue()+(BIB.vista==='lista'?bibLista():bibLibrero())+
        '<p class="pm-ayuda">Toca un libro para sacarlo del estante; tócalo otra vez para leerlo. La marca amarilla es «nuevo».</p>';
     h+='<div class="en-act"><button class="pm-b" data-bb="rei">'+(BIB.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
   h+='<div class="bb-ficha" id="biFicha"></div><div class="bb-toast" id="biToast"></div>';
@@ -2442,7 +2477,7 @@ function lecOculta(){
 }
 function bibLee(i){
   var x=(BIB.lista||[])[i];if(!x)return;
-  var tok=++LEC.tok,key=x.id+'|'+x.bytes+'|'+x.creado;
+  var tok=++LEC.tok,key=x.id+'|'+x.bytes+'|'+x.creado+(Number(x.version)>1?'|v'+x.version:'');bibVerVista(x);
   LEC.x=x;LEC.i=-1;LEC.cap=[];LEC.idx=[];LEC.zip=null;LEC.panel='';LEC.sucio=false;LEC.pag=/pag/i.test(String(x.modo||''));
   lecPref();
   if(VISTA!=='lec')irA('lec');else pintaLec();
