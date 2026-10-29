@@ -343,6 +343,14 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .lc-leaf.d{left:50%;right:0;transform-origin:left center}
 .lc-leaf.i{left:0;right:50%;transform-origin:right center}
 .lc-leaf .lc-h.rev{transform:rotateY(180deg)}
+.lc-cvh{position:absolute;top:0;height:100%;transform-style:preserve-3d;display:none;z-index:5;pointer-events:none}
+.lc-st{position:absolute;top:0;height:100%;transform-style:preserve-3d}
+.lc-st>.f,.lc-st>.b{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--lbg)}
+.lc-st>.b{transform:rotateY(180deg)}
+.lc-st .in{position:absolute;top:0;height:100%}
+.lc-st .lc-h{box-shadow:none;border-radius:0}
+.lc-st .sm{position:absolute;inset:0;pointer-events:none;background:#000;opacity:0}
+.lc-cvs{position:absolute;top:0;height:100%;pointer-events:none;opacity:0;z-index:4}
 .lc-sec{break-before:column}
 .lc-sec:first-child{break-before:auto}
 .lc-sec.pg{height:var(--lph)}
@@ -1507,7 +1515,7 @@ function traeBib(){
   llama('bib_mis').then(function(r){if(r&&r.ok){BIB.lista=r.libros||[];BIB.estantes=r.estantes||null;bibCuenta();lecPon('lista|'+K,{l:BIB.lista,e:BIB.estantes});bibApaga(false);var e=$('cBiEt');if(e)e.textContent=bibEt();}else if(r&&/desconocida/i.test(String(r.error||'')))bibApaga(true);}).catch(function(){if(BIB.lista)return;lecGet('lista|'+K).then(function(c){if(c&&c.l&&!BIB.lista){BIB.lista=c.l;BIB.estantes=c.e||null;bibCuenta();var e=$('cBiEt');if(e)e.textContent=bibEt();}});});}
 /* LECTOR (ladrillos 575 y 576): abre el EPUB de la Biblioteca DENTRO de la sala, sin descargarlo. Lo trae de la bodega por trozos (bib_leer), lo abre con una mini-herramienta propia (un EPUB es un ZIP)
    y lo guarda en el celular (IndexedDB) para poder leerlo sin señal. Recuerda donde te quedaste (bib_avance + una copia local). Solo MIRA el libro: no cambia nada del libro ni de la bodega salvo el avance de ESTA persona. */
-var LEC={x:null,i:-1,cap:[],cum:[],tot:1,idx:[],zip:null,opf:'',nav:'',urls:[],tok:0,rt:0,tmr:0,sucio:false,pag:false,est:'',mov:false,pref:{s:2,m:'dia',f:'serif',v:'libro',so:1,ve:620,vz:1},panel:'',p:0,np:1,dbl:false,F:{},paso:0,secP:[],bh:'',urlsL:[],busy:false,rz:0};
+var LEC={x:null,i:-1,cap:[],cum:[],tot:1,idx:[],zip:null,opf:'',nav:'',urls:[],tok:0,rt:0,tmr:0,sucio:false,pag:false,est:'',mov:false,pref:{s:2,m:'dia',f:'serif',v:'libro',so:1,ve:620,vz:1,ef:'curva'},panel:'',p:0,np:1,dbl:false,F:{},paso:0,secP:[],bh:'',urlsL:[],busy:false,rz:0};
 var LEC_S=[15,17,18,20,22,25,28];
 function lecDB(){return new Promise(function(ok,no){try{var r=indexedDB.open('sigea_biblioteca',1);r.onupgradeneeded=function(){r.result.createObjectStore('k');};r.onsuccess=function(){ok(r.result);};r.onerror=function(){no(r.error);};}catch(e){no(e);}});}
 function lecGet(k){return lecDB().then(function(db){return new Promise(function(ok,no){var q=db.transaction('k').objectStore('k').get(k);q.onsuccess=function(){ok(q.result||null);};q.onerror=function(){no(q.error);};});}).catch(function(){return null;});}
@@ -1595,7 +1603,7 @@ function lecAbreZip(u8){
 }
 function lecMime(p){var e=String(p).split('.').pop().toLowerCase();return {png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',svg:'image/svg+xml',webp:'image/webp'}[e]||'application/octet-stream';}
 function lecUrls(){LEC.urls.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});LEC.urls=[];}
-function lecPref(){try{var p=JSON.parse(localStorage.getItem('sigea_lec_pref')||'null');if(p){if(p.s>=0&&p.s<LEC_S.length)LEC.pref.s=p.s|0;if(/^(dia|sepia|noche)$/.test(p.m))LEC.pref.m=p.m;if(/^(serif|sans)$/.test(p.f))LEC.pref.f=p.f;if(/^(libro|seguido)$/.test(p.v))LEC.pref.v=p.v;if(p.so===0||p.so===1)LEC.pref.so=p.so;if(p.ve===280||p.ve===620)LEC.pref.ve=p.ve;if(p.vz===0||p.vz===1||p.vz===2)LEC.pref.vz=p.vz;}}catch(e){}}
+function lecPref(){try{var p=JSON.parse(localStorage.getItem('sigea_lec_pref')||'null');if(p){if(p.s>=0&&p.s<LEC_S.length)LEC.pref.s=p.s|0;if(/^(dia|sepia|noche)$/.test(p.m))LEC.pref.m=p.m;if(/^(serif|sans)$/.test(p.f))LEC.pref.f=p.f;if(/^(libro|seguido)$/.test(p.v))LEC.pref.v=p.v;if(p.so===0||p.so===1)LEC.pref.so=p.so;if(p.ve===280||p.ve===620)LEC.pref.ve=p.ve;if(p.ef==='simple'||p.ef==='curva')LEC.pref.ef=p.ef;if(p.vz===0||p.vz===1||p.vz===2)LEC.pref.vz=p.vz;}}catch(e){}}
 function lecPrefGuarda(){try{localStorage.setItem('sigea_lec_pref',JSON.stringify(LEC.pref));}catch(e){}}
 function lecAplica(){var b=$('lcBox');if(!b)return;b.className='lc '+LEC.pref.m+' '+LEC.pref.f+(LEC.pag?' pag':'')+(LEC.pref.v==='libro'?' libro':'');b.style.setProperty('--ls',LEC_S[LEC.pref.s]+'px');}
 function lecEtCap(i){var e='',k;for(k=0;k<LEC.idx.length;k++){if(LEC.idx[k].c<=i)e=LEC.idx[k].t;}return e||(LEC.cap[i]&&LEC.cap[i].t)||('Sección '+(i+1));}
@@ -1721,6 +1729,7 @@ function lecArma(){
   for(k=0;k<LEC.cap.length;k++){if(LEC.secP[k]==null)LEC.secP[k]=k?LEC.secP[k-1]:0;}
   var r=$('lcReg');if(r)r.max=LEC.np;
   lecSbTodo();
+  lecCvBuild(lw,lh,W,H,G);
 }
 function lecPonHoja(c,p){var ok=p>=0&&p<LEC.np;c.h.classList.toggle('vacia',!ok);c.fl.style.transform='translateX('+(-Math.max(0,p)*LEC.paso)+'px)';c.np.textContent=ok?String(p+1):'';}
 function lecPinta(){var F=LEC.F;if(!F.todas)return;if(LEC.dbl){lecPonHoja(F.L,LEC.p);lecPonHoja(F.R,LEC.p+1);}else lecPonHoja(F.B,LEC.p);LEC.i=lecPos().i;lecBarra();if(LEC_VZ.on&&!LEC_VZ.pausa)lecVozInicia();}
@@ -1732,16 +1741,18 @@ function lecPrep(dir){
     c.g=dir>0?F.gd:F.gi;
     if(dir>0){lecPonHoja(F.L,LEC.p);lecPonHoja(F.R,t+1);lecPonHoja(c.g.f,LEC.p+1);lecPonHoja(c.g.r,t);}
     else{lecPonHoja(F.L,t);lecPonHoja(F.R,LEC.p+1);lecPonHoja(c.g.f,LEC.p);lecPonHoja(c.g.r,t+1);}
-    c.el=c.g.l;c.so=null;
+    c.el=c.g.l;c.so=null;if(lecCvOk())lecCvPrep(c);
   }else{
     c.el=F.P.h;c.so=F.P.so;
     if(dir>0){lecPonHoja(F.P,LEC.p);lecPonHoja(F.B,t);}else{lecPonHoja(F.P,t);lecPonHoja(F.B,LEC.p);}
+    if(lecCvOk())lecCvPrep(c);
   }
   c.el.style.display='block';c.el.style.transition='none';if(c.so)c.so.style.transition='none';
   LEC.busy=true;lecAng(c,0);void c.el.offsetWidth;return c;
 }
-function lecAng(c,pr){c.pr=pr;var a=LEC.dbl?(c.dir>0?-180*pr:180*pr):(c.dir>0?-112*pr:-112*(1-pr));c.el.style.transform='rotateY('+a+'deg)';if(c.so)c.so.style.opacity=c.dir>0?pr:1-pr;}
+function lecAng(c,pr){if(c.cv)return lecCvAng(c,pr);c.pr=pr;var a=LEC.dbl?(c.dir>0?-180*pr:180*pr):(c.dir>0?-112*pr:-112*(1-pr));c.el.style.transform='rotateY('+a+'deg)';if(c.so)c.so.style.opacity=c.dir>0?pr:1-pr;}
 function lecAcaba(c,ok,ms){
+  if(c.cv)return lecCvAcaba(c,ok,ms);
   c.el.style.transition='transform '+ms+'ms cubic-bezier(.4,.1,.3,1)';if(c.so)c.so.style.transition='opacity '+ms+'ms';
   lecAng(c,ok);
   setTimeout(function(){
@@ -1751,6 +1762,87 @@ function lecAcaba(c,ok,ms){
   },ms+30);
 }
 function lecVolteo(dir,rapido){var c=lecPrep(dir);if(!c)return;lecFff(!rapido);lecAcaba(c,1,rapido?240:LEC.pref.ve);}
+/* HOJA QUE SE CURVA (ladrillo 587): la hoja que gira se parte en tiras y cada tira se inclina un poco mas que la anterior, asi la hoja se dobla como papel.
+   Las tiras se arman solas, poco a poco, despues de abrir el libro (cada una trae su copia del texto); mientras no esten listas, el volteo es el de siempre.
+   Solo en libros de texto y no muy grandes; en los libros "como paginas" o muy grandes se usa el giro simple. Se puede escoger en Letra: Hoja = Curva o Simple. */
+var LEC_CVMAX=170000,LEC_CVN=12,LEC_CVK=0.55;
+function lecCvOk(){var cv=LEC.F&&LEC.F.cv;return !!(cv&&cv.listo&&LEC.pref.ef!=='simple'&&LEC.pref.v==='libro');}
+function lecCvBuild(lw,lh,W,H,G){
+  var F=LEC.F;F.cv=null;
+  if(LEC.pag||LEC.pref.ef==='simple'||String(LEC.bh||'').length>LEC_CVMAX)return;
+  var lib=$('lcHojas');if(!lib)return;
+  var dbl=LEC.dbl,N=LEC_CVN,pw=dbl?lw/2:lw;
+  var h=document.createElement('div');h.className='lc-cvh';
+  var si=document.createElement('div'),sd=document.createElement('div');
+  si.className='lc-cvs';sd.className='lc-cvs';
+  si.style.cssText='left:0;width:'+pw+'px;background:linear-gradient(270deg,rgba(0,0,0,.45),rgba(0,0,0,0) 70%)';
+  sd.style.cssText='left:'+(dbl?pw:0)+'px;width:'+pw+'px;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(0,0,0,0) 70%)';
+  var cv={h:h,si:si,sd:sd,n:N,pw:pw,w:pw/N,s:[],listo:false};
+  lib.appendChild(si);lib.appendChild(sd);lib.appendChild(h);F.cv=cv;
+  var i=0;
+  var talla=function(c){var f=c.fl;f.style.width=W+'px';f.style.height=H+'px';f.style.columnWidth=W+'px';f.style.columnGap=G+'px';f.style.columnFill='auto';};
+  var cara=function(el,cls){
+    var m=document.createElement('div');m.className=cls;var ni=document.createElement('div');ni.className='in';ni.style.width=pw+'px';
+    var c=lecCara('');ni.appendChild(c.h);m.appendChild(ni);var sm=document.createElement('div');sm.className='sm';m.appendChild(sm);el.appendChild(m);
+    talla(c);F.todas.push(c);
+    if(lecSbLee().length)Array.prototype.forEach.call(c.fl.querySelectorAll('section.lc-sec'),function(sc){lecSbAplica(sc,Number(sc.getAttribute('data-c'))||0);});
+    return {c:c,ni:ni,sm:sm};
+  };
+  var sig=function(){
+    if(LEC.F.cv!==cv)return;
+    var fin=Math.min(N,i+2);
+    for(;i<fin;i++){
+      var el=document.createElement('div');el.className='lc-st';el.style.width=(cv.w+1.2)+'px';
+      var fr=cara(el,'f'),dr=dbl?cara(el,'b'):null;
+      h.appendChild(el);cv.s.push({el:el,fr:fr,dr:dr});
+    }
+    if(i<N)setTimeout(sig,45);else cv.listo=true;
+  };
+  setTimeout(sig,120);
+}
+function lecCvPrep(c){
+  var F=LEC.F,cv=F.cv,dbl=LEC.dbl,dir=c.dir,N=cv.n,w=cv.w,pw=cv.pw,i,izq=!(dbl&&dir<0);
+  var fp=dbl?(dir>0?LEC.p+1:LEC.p):(dir>0?LEC.p:c.t),bp=dbl?(dir>0?c.t:c.t+1):0;
+  cv.h.style.left=dbl?(dir>0?'50%':'0'):'0';cv.h.style.width=dbl?'50%':'100%';
+  for(i=0;i<N;i++){
+    var s=cv.s[i];
+    s.el.style.left=izq?'0':(pw-w-1.2)+'px';s.el.style.transformOrigin=(izq?'left':'right')+' center';
+    lecPonHoja(s.fr.c,fp);s.fr.ni.style.left=(izq?-(i*w):-(pw-(i+1)*w))+'px';
+    if(s.dr){lecPonHoja(s.dr.c,bp);s.dr.ni.style.left=(izq?-(pw-(i+1)*w):-(i*w))+'px';}
+  }
+  c.cv=true;c.el=cv.h;c.so=null;
+}
+function lecCvAng(c,pr){
+  c.pr=pr;var F=LEC.F,cv=F.cv,dbl=LEC.dbl,dir=c.dir,N=cv.n,w=cv.w,ss=cv.s,i;
+  var a0=dbl?(dir>0?-180*pr:180*pr):(dir>0?-112*pr:-112*(1-pr));
+  var sp=dbl?pr:(dir>0?pr:1-pr);
+  var g=(dbl&&dir<0)?-1:1;
+  var rel=g*LEC_CVK*(75/N)*Math.sin(Math.PI*sp),x=0,z=0;
+  for(i=0;i<N;i++){
+    var th=a0+i*rel,r=th*Math.PI/180;
+    ss[i].el.style.transform='translate3d('+(g*x)+'px,0,'+z+'px) rotateY('+th+'deg)';
+    x+=w*Math.cos(r);z-=g*w*Math.sin(r);
+    var o=Math.abs(Math.cos(r)),os=Math.min(.6,(1-o)*.55+(i>0?Math.abs(rel)*.02:0));
+    ss[i].fr.sm.style.opacity=os;if(ss[i].dr)ss[i].dr.sm.style.opacity=os;
+  }
+  var sen=Math.min(1,Math.sin(Math.PI*Math.min(1,sp))*2+.2);
+  if(dbl){
+    if(dir>0){cv.sd.style.opacity=(1-pr)*.9*sen;cv.si.style.opacity=pr*.55*Math.min(1,(1-pr)*8);}
+    else{cv.si.style.opacity=(1-pr)*.9*sen;cv.sd.style.opacity=pr*.55*Math.min(1,(1-pr)*8);}
+  }else{cv.si.style.opacity=0;cv.sd.style.opacity=Math.sin(Math.PI*Math.min(1,sp))*.5;}
+}
+function lecCvAcaba(c,ok,ms){
+  var p0=c.pr,m=ok?1:0,t0=performance.now(),dur=Math.max(80,ms);
+  var paso=function(now){
+    var u=Math.min(1,(now-t0)/dur),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+    lecCvAng(c,p0+(m-p0)*e);
+    if(u<1){requestAnimationFrame(paso);return;}
+    if(ok)LEC.p=c.t;
+    c.el.style.display='none';var cv=LEC.F.cv;if(cv){cv.si.style.opacity=0;cv.sd.style.opacity=0;}
+    LEC.busy=false;lecPinta();if(ok)lecProgra();
+  };
+  requestAnimationFrame(paso);
+}
 function lecAPag(p){p=Math.max(0,Math.min(LEC.np-1,p));return LEC.dbl?p-(p%2):p;}
 function lecSalta(p){p=lecAPag(p);if(p===LEC.p||LEC.busy)return;if(Math.abs(p-LEC.p)===(LEC.dbl?2:1))return lecVolteo(p>LEC.p?1:-1);LEC.p=p;lecFff(true);lecPinta();lecProgra();}
 function lecLibroAbre(c,frac){
@@ -2351,7 +2443,7 @@ function lecPanel(q){
     else h+='<div class="lc-fila"><span>Tamaño</span><button data-lc="t-">A−</button><b>'+pc+' %</b><button data-lc="t+">A+</button></div>';
     h+='<div class="lc-fila"><span>Fondo</span>'+[['dia','Día'],['sepia','Sepia'],['noche','Noche']].map(function(o){return '<button data-lc="m" data-v="'+o[0]+'" class="'+on(LEC.pref.m===o[0])+'">'+o[1]+'</button>';}).join('')+'</div>';
     if(!LEC.pag)h+='<div class="lc-fila"><span>Tipo</span><button data-lc="f" data-v="serif" class="'+on(LEC.pref.f==='serif')+'">Con serifa</button><button data-lc="f" data-v="sans" class="'+on(LEC.pref.f==='sans')+'">Sin serifa</button></div>';
-    if(lib)h+='<div class="lc-fila"><span>Sonido</span><button data-lc="so" data-v="1" class="'+on(LEC.pref.so)+'">🔊 Sí</button><button data-lc="so" data-v="0" class="'+on(!LEC.pref.so)+'">🔇 No</button></div><div class="lc-fila"><span>Volteo</span><button data-lc="ve" data-v="620" class="'+on(LEC.pref.ve===620)+'">Suave</button><button data-lc="ve" data-v="280" class="'+on(LEC.pref.ve===280)+'">Rápido</button></div>';
+    if(lib)h+='<div class="lc-fila"><span>Sonido</span><button data-lc="so" data-v="1" class="'+on(LEC.pref.so)+'">🔊 Sí</button><button data-lc="so" data-v="0" class="'+on(!LEC.pref.so)+'">🔇 No</button></div><div class="lc-fila"><span>Volteo</span><button data-lc="ve" data-v="620" class="'+on(LEC.pref.ve===620)+'">Suave</button><button data-lc="ve" data-v="280" class="'+on(LEC.pref.ve===280)+'">Rápido</button></div>'+'<div class="lc-fila"><span>Hoja</span><button data-lc="ef" data-v="curva" class="'+on(LEC.pref.ef!=='simple')+'">📖 Curva</button><button data-lc="ef" data-v="simple" class="'+on(LEC.pref.ef==='simple')+'">▭ Simple</button></div>';
   }
   p.innerHTML=h;p.className='lc-panel on';
 }
@@ -2405,6 +2497,7 @@ function lecCaja(){
     if(m==='vz-v'){LEC.pref.vz=Number(t.getAttribute('data-v'))|0;lecPrefGuarda();re();return;}
     if(m==='so'){LEC.pref.so=Number(t.getAttribute('data-v'))?1:0;lecPrefGuarda();if(LEC.pref.so)lecFff(false);re();return;}
     if(m==='ve'){LEC.pref.ve=Number(t.getAttribute('data-v'))===280?280:620;lecPrefGuarda();re();return;}
+    if(m==='ef'){LEC.pref.ef=(t.getAttribute('data-v')==='simple')?'simple':'curva';lecPrefGuarda();re();lecRearma();return;}
     if(m==='t-'||m==='t+'){LEC.pref.s=Math.max(0,Math.min(LEC_S.length-1,LEC.pref.s+(m==='t+'?1:-1)));var f=lecFrac();lecPrefGuarda();lecAplica();re();if(LEC.pref.v==='libro')lecRearma();else{var cu=$('lcCuerpo');if(cu){var mm=cu.scrollHeight-cu.clientHeight;cu.scrollTop=mm>0?Math.round(mm*f):0;}}return;}
     if(m==='m'||m==='f'){LEC.pref[m]=t.getAttribute('data-v');lecPrefGuarda();lecAplica();re();return;}
   };
