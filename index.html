@@ -355,6 +355,21 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .lc-bur{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);background:var(--lac);color:var(--lbg);padding:8px 14px;border-radius:12px;font-weight:800;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .15s;text-align:center;z-index:5;max-width:90%}
 .lc-bur.on{opacity:1}
 .lc-top button.on{background:var(--lac);color:var(--lbg)}
+.lc-txt mark.lc-mk,.lc-tl mark.lc-mk{background:#ffe066!important;color:#111!important;border-radius:3px;box-shadow:0 0 0 1px #e0b800}
+.lc-txt mark.lc-mk.act,.lc-tl mark.lc-mk.act{background:#ff9a3c!important;box-shadow:0 0 0 2px #d9680a}
+.lc.noche mark.lc-mk{background:#7a6400!important;color:#fff!important;box-shadow:none}.lc.noche mark.lc-mk.act{background:#c25a00!important}
+.lc-bus{display:none;position:absolute;left:8px;right:8px;top:calc(60px + env(safe-area-inset-top));background:var(--lbar);color:var(--ltx);border:1px solid var(--lbd);border-radius:16px;box-shadow:0 14px 40px rgba(0,0,0,.35);padding:10px;z-index:3}
+.lc-bus.on{display:block}
+.lc-bf{display:flex;gap:6px;align-items:center}
+.lc-bf input{flex:1 1 auto;min-width:0;height:42px;border:1px solid var(--lbd);border-radius:12px;background:var(--lbg);color:var(--ltx);font:inherit;font-size:1rem;padding:0 12px;margin:0}
+.lc-bf button{flex:0 0 auto;min-width:40px;height:42px;border:1px solid var(--lbd);border-radius:12px;background:transparent;color:var(--ltx);font:inherit;font-weight:800;cursor:pointer;padding:0}
+.lc-bc{font-size:.78rem;opacity:.85;margin:8px 2px 2px}
+.lc-bl{max-height:36vh;overflow:auto;margin:6px 0 0;padding:0;list-style:none}
+.lc-bl li{display:flex;gap:8px;padding:8px 6px;border-top:1px solid var(--lbd);cursor:pointer;font-size:.88rem;line-height:1.35;margin:0}
+.lc-bl li.on{background:rgba(127,127,127,.18)}
+.lc-bl li i{flex:0 0 auto;min-width:54px;font-style:normal;font-weight:800;font-size:.78rem;color:var(--lac);padding-top:2px}
+.lc-bl li mark{background:#ffd54a;color:#000;border-radius:3px;padding:0 2px}
+.lc-bus.min .lc-bl{display:none}
 .lc-av{position:absolute;left:50%;top:72px;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;border-radius:10px;padding:8px 14px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .3s;z-index:6;max-width:90%;text-align:center}
 .lc-av.on{opacity:1}
 /* BIBLIOTECA (ladrillo 574): el librero en 3D. Todo lleva el prefijo bb- para no mezclarse con el resto de la sala. */
@@ -1809,6 +1824,144 @@ function lecVozPausa(){
   if(LEC_VZ.pausa){LEC_VZ.pausa=false;lecVozBtn();var tok=++LEC_VZ.tok;try{speechSynthesis.cancel();}catch(e){}lecVozDi(tok);}
   else{LEC_VZ.pausa=true;LEC_VZ.tok++;try{speechSynthesis.cancel();}catch(e){}lecVozBtn();}
 }
+/* ===== LUPA (ladrillo 580): buscar dentro del libro, sin importar acentos ni mayusculas; marca las palabras y salta a la hoja ===== */
+var LEC_BQ={on:false,q:'',hits:[],i:-1,tm:0,tk:0,min:false};
+function lecBqNorm(t){var o='',k;for(k=0;k<t.length;k++)o+=t.charAt(k).normalize('NFD').charAt(0).toLowerCase();return o;}
+function lecBqNodos(raiz){var w=document.createTreeWalker(raiz,NodeFilter.SHOW_TEXT,null),a=[],n;while((n=w.nextNode())){if(n.parentNode&&/^(script|style)$/i.test(n.parentNode.nodeName))continue;a.push(n);}return a;}
+function lecBqPartes(t,nq){var nt=lecBqNorm(t),pos=0,ix,r=[];while((ix=nt.indexOf(nq,pos))>=0){r.push([ix,ix+nq.length]);pos=ix+nq.length;}return r;}
+function lecBqEnvuelve(raiz,nq){
+  lecBqNodos(raiz).forEach(function(nd){
+    var t=nd.nodeValue,pt=lecBqPartes(t,nq);if(!pt.length)return;
+    var fr=document.createDocumentFragment(),u=0;
+    pt.forEach(function(p){if(p[0]>u)fr.appendChild(document.createTextNode(t.slice(u,p[0])));var m=document.createElement('mark');m.className='lc-mk';m.textContent=t.slice(p[0],p[1]);fr.appendChild(m);u=p[1];});
+    if(u<t.length)fr.appendChild(document.createTextNode(t.slice(u)));
+    nd.parentNode.replaceChild(fr,nd);
+  });
+}
+function lecBqSinMarcas(raiz){
+  var ms=raiz.querySelectorAll('mark.lc-mk'),k;
+  for(k=0;k<ms.length;k++){var m=ms[k];m.parentNode.replaceChild(document.createTextNode(m.textContent),m);}
+  if(ms.length)raiz.normalize();
+}
+function lecBqHtml(base,q){var d=new DOMParser().parseFromString(base,'text/html').body;lecBqEnvuelve(d,lecBqNorm(q));return d.innerHTML;}
+function lecBqBase(){
+  if(LEC.bhM&&LEC.bh===LEC.bhM)return Promise.resolve(LEC.bh0);
+  if(LEC.bh)return Promise.resolve(LEC.bh);
+  return lecLibroHtml().then(function(){return LEC.bh;});
+}
+function lecBqHits(base,q){
+  var d=new DOMParser().parseFromString(base,'text/html').body,nq=lecBqNorm(q),ss=d.querySelectorAll('section.lc-sec'),hits=[],a,b,k;
+  var lim=function(s){return String(s).replace(/\s+/g,' ');};
+  for(a=0;a<ss.length&&hits.length<500;a++){
+    var c=Number(ss[a].getAttribute('data-c'))||0,nodos=lecBqNodos(ss[a]);
+    for(b=0;b<nodos.length&&hits.length<500;b++){
+      var nd=nodos[b],pt=lecBqPartes(nd.nodeValue,nq);if(!pt.length)continue;
+      var bl=nd.parentNode.closest?nd.parentNode.closest('p,li,div,h1,h2,h3,h4,h5,h6,blockquote,td'):null;if(!bl)bl=nd.parentNode;
+      var off=0,hh=lecBqNodos(bl),tx=bl.textContent;
+      for(k=0;k<hh.length&&hh[k]!==nd;k++)off+=hh[k].nodeValue.length;
+      pt.forEach(function(p){
+        if(hits.length>=500)return;
+        var i0=off+p[0],i1=off+p[1],ini=Math.max(0,i0-32),fin=Math.min(tx.length,i1+44);
+        hits.push({c:c,pag:0,pre:(ini>0?'…':'')+lim(tx.slice(ini,i0)),mid:lim(tx.slice(i0,i1)),post:lim(tx.slice(i1,fin))+(fin<tx.length?'…':'')});
+      });
+    }
+  }
+  return hits;
+}
+function lecBqPon(q){
+  var base=(LEC.bhM&&LEC.bh===LEC.bhM)?LEC.bh0:LEC.bh;
+  LEC.bh0=base;LEC.bhM=lecBqHtml(base,q);LEC.bh=LEC.bhM;lecArma();
+}
+function lecBqQuita(){
+  if(LEC.bhM&&LEC.bh===LEC.bhM){var base=LEC.bh0;LEC.bh=base;LEC.bhM=null;LEC.bh0=null;lecRearma();}
+}
+function lecBqPaginas(){
+  var F=LEC.F,fl=F.todas&&F.todas[0].fl;if(!fl)return;
+  var ms=fl.querySelectorAll('mark.lc-mk'),r0=fl.getBoundingClientRect(),H=LEC_BQ.hits,k;
+  for(k=0;k<ms.length&&k<H.length;k++){var rr=ms[k].getClientRects()[0];H[k].pag=rr?Math.max(0,Math.floor((rr.left-r0.left)/LEC.paso+0.02)):0;}
+}
+function lecBqVista(){
+  var b=$('lcBus');if(!b)return;
+  b.className='lc-bus'+(LEC_BQ.on?' on':'')+(LEC_BQ.min?' min':'');
+  var q=$('lcBq');if(q)q.disabled=!!LEC.pag;
+}
+function lecBqLista(){
+  var ul=$('lcBl'),H=LEC_BQ.hits,lib=LEC.pref.v==='libro';if(!ul)return;ul.innerHTML='';
+  H.slice(0,60).forEach(function(h,j){
+    var li=document.createElement('li'),i=document.createElement('i'),sp=document.createElement('span'),mk=document.createElement('mark');
+    li.setAttribute('data-lc','bus-r');li.setAttribute('data-j',String(j));
+    i.textContent=lib?'Pág. '+(h.pag+1):'Cap. '+(h.c+1);
+    sp.appendChild(document.createTextNode(h.pre));mk.textContent=h.mid;sp.appendChild(mk);sp.appendChild(document.createTextNode(h.post));
+    li.appendChild(i);li.appendChild(sp);ul.appendChild(li);
+  });
+}
+function lecBqBusca(){
+  var inp=$('lcBq');if(!inp)return;
+  var q=(inp.value||'').trim(),lib=LEC.pref.v==='libro',tk=++LEC_BQ.tk,t=$('lcTxt'),c=$('lcBc');
+  LEC_BQ.q=q;LEC_BQ.hits=[];LEC_BQ.i=-1;LEC_BQ.min=false;lecBqVista();lecBqLista();
+  if(t)lecBqSinMarcas(t);
+  if(q.length<2){if(lib)lecBqQuita();c.textContent='Escribe al menos 2 letras.';return;}
+  if(!LEC.cap.length){c.textContent='El libro todavía se está abriendo…';return;}
+  c.textContent='Buscando…';
+  lecBqBase().then(function(base){
+    if(tk!==LEC_BQ.tk)return;
+    var H=lecBqHits(base,q),j=0,k;LEC_BQ.hits=H;lecBqLista();
+    if(!H.length){if(lib)lecBqQuita();c.textContent='No encontré «'+q+'» en este libro.';return;}
+    if(lib){lecBqPon(q);lecBqPaginas();for(k=0;k<H.length;k++){if(H[k].pag>=LEC.p){j=k;break;}}}
+    else{for(k=0;k<H.length;k++){if(H[k].c>=LEC.i){j=k;break;}}}
+    lecBqVa(j);
+  }).catch(function(){c.textContent='No pude buscar en este libro.';});
+}
+function lecBqVa(j){
+  var H=LEC_BQ.hits,n=H.length,k;if(!n)return;
+  j=((j%n)+n)%n;LEC_BQ.i=j;var h=H[j],lis=$('lcBl').children,c=$('lcBc'),mas=(n>=500?'+':'');
+  for(k=0;k<lis.length;k++)lis[k].className=(k===j?'on':'');
+  if(lis[j]&&lis[j].scrollIntoView)lis[j].scrollIntoView({block:'nearest'});
+  if(LEC.pref.v==='libro'){
+    if(LEC.busy){setTimeout(function(){if(LEC_BQ.on&&LEC_BQ.i===j)lecBqVa(j);},320);return;}
+    if(!(LEC.bhM&&LEC.bh===LEC.bhM)){if(!LEC.bh)return;lecBqPon(LEC_BQ.q);}
+    lecBqPaginas();
+    for(k=0;k<lis.length&&k<H.length;k++){if(lis[k].firstChild)lis[k].firstChild.textContent='Pág. '+(H[k].pag+1);}
+    var p=lecAPag(h.pag);
+    if(p!==LEC.p)lecSalta(p);
+    Array.prototype.forEach.call($('lcHojas').querySelectorAll('.lc-tl'),function(f){
+      var ms=f.querySelectorAll('mark.lc-mk'),k2;for(k2=0;k2<ms.length;k2++)ms[k2].classList.toggle('act',k2===j);});
+    c.textContent=(j+1)+' de '+n+mas+' · '+lecEtPag(p);
+  }else{
+    c.textContent=(j+1)+' de '+n+mas+' · '+lecEtCap(h.c);
+    var go=function(){
+      var t=$('lcTxt');if(!t||!LEC_BQ.on)return;
+      var ms=t.querySelectorAll('mark.lc-mk'),k3,idx=0;
+      if(!ms.length){lecBqEnvuelve(t,lecBqNorm(LEC_BQ.q));ms=t.querySelectorAll('mark.lc-mk');}
+      for(k3=0;k3<j;k3++){if(H[k3].c===h.c)idx++;}
+      for(k3=0;k3<ms.length;k3++)ms[k3].classList.toggle('act',k3===idx);
+      if(ms[idx]){var cu=$('lcCuerpo'),r=ms[idx].getBoundingClientRect(),cr=cu.getBoundingClientRect();cu.scrollTop+=r.top-cr.top-cr.height*0.3;LEC.mov=true;lecBarra();lecProgra();}
+    };
+    if(LEC.i!==h.c){lecMuestra(h.c,0).then(function(){setTimeout(go,520);}).catch(function(){});}else go();
+  }
+}
+function lecBqIr(j){
+  var inp=$('lcBq'),f=(document.activeElement===inp);
+  if(f)inp.blur();
+  lecBqVa(j);
+  if(f)setTimeout(function(){if(LEC_BQ.on&&LEC_BQ.i>=0)lecBqVa(LEC_BQ.i);},600);
+}
+function lecBqAbre(){
+  if(LEC.panel)lecPanel(LEC.panel);
+  LEC_BQ.on=true;LEC_BQ.min=false;lecBqVista();
+  var c=$('lcBc'),q=$('lcBq');
+  if(LEC.pag){c.textContent='Este libro es de páginas con imágenes: no hay texto que buscar.';return;}
+  if(!LEC_BQ.hits.length)c.textContent='Escribe al menos 2 letras.';
+  setTimeout(function(){if(LEC_BQ.on&&q)q.focus();},60);
+}
+function lecBqCierra(todo){
+  LEC_BQ.on=false;LEC_BQ.tk++;LEC_BQ.hits=[];LEC_BQ.i=-1;LEC_BQ.min=false;
+  var q=$('lcBq'),t=$('lcTxt');if(q){q.value='';q.blur();}
+  if(todo){LEC.bhM=null;LEC.bh0=null;}
+  else{lecBqQuita();if(t)lecBqSinMarcas(t);}
+  var ul=$('lcBl');if(ul)ul.innerHTML='';
+  lecBqVista();
+}
 function lecInicio(){
   var x=LEC.x,d=String(x.donde||''),a=Number(x.avance)||0,l=null,m;
   try{l=JSON.parse(localStorage.getItem('sigea_lec_'+x.id)||'null');}catch(e){}
@@ -1856,11 +2009,11 @@ function lecSale(){
 function lecCaja(){
   var b=$('lcBox');if(b)return b;
   b=document.createElement('div');b.id='lcBox';b.hidden=true;
-  b.innerHTML='<div class="lc-top"><button data-lc="atras" aria-label="Volver">‹</button><div class="lc-tit"><b id="lcTit"></b><small id="lcSub"></small></div><button data-lc="ind" aria-label="Índice">☰</button><button data-lc="voz" aria-label="Leer en voz alta">🗣️</button><button data-lc="aa" aria-label="Letra y fondo">Aa</button></div>'+
+  b.innerHTML='<div class="lc-top"><button data-lc="atras" aria-label="Volver">‹</button><div class="lc-tit"><b id="lcTit"></b><small id="lcSub"></small></div><button data-lc="ind" aria-label="Índice">☰</button><button data-lc="bus" aria-label="Buscar en el libro">🔍</button><button data-lc="voz" aria-label="Leer en voz alta">🗣️</button><button data-lc="aa" aria-label="Letra y fondo">Aa</button></div>'+
    '<div class="lc-cuerpo" id="lcCuerpo"><div class="lc-txt" id="lcTxt"></div></div>'+
    '<div class="lc-libro" id="lcLibro" hidden><div class="lc-hojas" id="lcHojas"></div></div>'+
    '<div class="lc-pie"><div class="lc-barra"><i id="lcBr"></i></div><input type="range" class="lc-reg" id="lcReg" min="1" max="1" value="1" aria-label="Ir a la página"><div class="lc-nav"><button id="lcPrev" data-lc="ant">‹ Anterior</button><span id="lcInfo"></span><button id="lcSig" data-lc="sig">Siguiente ›</button></div></div>'+
-   '<div class="lc-bur" id="lcBur"></div><div class="lc-av" id="lcAv"></div><div class="lc-panel" id="lcPanel"></div><div class="lc-est" id="lcEst"></div>';
+   '<div class="lc-bur" id="lcBur"></div><div class="lc-av" id="lcAv"></div><div class="lc-bus" id="lcBus"><div class="lc-bf"><input type="search" id="lcBq" placeholder="Buscar en el libro…" autocomplete="off" enterkeyhint="search"><button data-lc="bus-p" aria-label="Anterior">▲</button><button data-lc="bus-s" aria-label="Siguiente">▼</button><button data-lc="bus-x" aria-label="Cerrar la búsqueda">✕</button></div><div class="lc-bc" id="lcBc"></div><ul class="lc-bl" id="lcBl"></ul></div><div class="lc-panel" id="lcPanel"></div><div class="lc-est" id="lcEst"></div>';
   document.body.appendChild(b);
   b.onclick=function(e){
     var a=e.target.closest?e.target.closest('a[data-lh]'):null;
@@ -1875,6 +2028,11 @@ function lecCaja(){
     if(m==='ir'){lecIr(Number(t.getAttribute('data-c')),0);return;}
     if(m==='reint'){if(LEC.x)bibLee(BIB.lista.indexOf(LEC.x));return;}
     if(m==='v'){lecModo(t.getAttribute('data-v'));re();return;}
+    if(m==='bus'){if(LEC_BQ.on)lecBqCierra(false);else lecBqAbre();return;}
+    if(m==='bus-x'){lecBqCierra(false);return;}
+    if(m==='bus-s'){LEC_BQ.min=true;lecBqVista();lecBqIr(LEC_BQ.i+1);return;}
+    if(m==='bus-p'){LEC_BQ.min=true;lecBqVista();lecBqIr(LEC_BQ.i-1);return;}
+    if(m==='bus-r'){LEC_BQ.min=true;lecBqVista();lecBqIr(Number(t.getAttribute('data-j')));return;}
     if(m==='voz'){lecPanel('voz');return;}
     if(m==='vz-play'){lecPanel('');lecVozInicia();return;}
     if(m==='vz-pausa'){lecVozPausa();re();return;}
@@ -1919,6 +2077,9 @@ function lecCaja(){
   st.addEventListener('dragstart',function(e){e.preventDefault();});
   st.addEventListener('pointerup',function(e){suelta(e,false);});
   st.addEventListener('pointercancel',function(e){suelta(e,true);});
+  var bq=$('lcBq');
+  bq.addEventListener('input',function(){clearTimeout(LEC_BQ.tm);LEC_BQ.tm=setTimeout(lecBqBusca,300);});
+  bq.addEventListener('keydown',function(e){e.stopPropagation();if(e.key==='Enter'){e.preventDefault();LEC_BQ.min=true;lecBqVista();lecBqIr(LEC_BQ.i+(e.shiftKey?-1:1));}else if(e.key==='Escape'){lecBqCierra(false);}});
   var rg=$('lcReg'),bu=$('lcBur');
   rg.addEventListener('input',function(){var p=lecAPag(Number(rg.value)-1),q=0,k,c=LEC.idx.length?LEC.idx:[];for(k=0;k<LEC.cap.length;k++){if((LEC.secP[k]||0)<=p)q=k;}
     bu.innerHTML=esc(lecEtPag(p))+'<br><small>'+esc(lecEtCap(q))+'</small>';bu.classList.add('on');$('lcInfo').textContent=lecEtPag(p);if(LEC.F.todas){if(LEC.dbl){lecPonHoja(LEC.F.L,p);lecPonHoja(LEC.F.R,p+1);}else lecPonHoja(LEC.F.B,p);}});
@@ -1941,7 +2102,7 @@ function pintaLec(){
 function lecOculta(){
   var b=$('lcBox');if(!b||b.hidden)return;
   if(LEC.sucio)lecGuarda();
-  lecVozPara();
+  lecVozPara();lecBqCierra(true);
   b.hidden=true;document.body.style.overflow='';LEC.panel='';lecUrls();
   LEC.urlsL.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});LEC.urlsL=[];LEC.bh='';LEC.F={};
   var t=$('lcTxt');if(t)t.innerHTML='';var hh=$('lcHojas');if(hh)hh.innerHTML='';LEC.i=-1;LEC.tok++;LEC.rt++;
