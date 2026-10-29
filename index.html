@@ -1050,7 +1050,7 @@ function pmCrea(s){var d=new Date(s.creado);return isNaN(d)?'':d.getDate()+' de 
 function pmErrSol(e){var t=String(e||'');if(/ya tienes ese pedido pendiente/i.test(t))return 'ya tienes una solicitud de constancia en revisión';var m=t.match(/ya tienes (\d+) pedidos pendientes/i);if(m)return 'ya tienes '+m[1]+' solicitudes pendientes';return t||'intenta otra vez';}
 function pmAvisoConst(){
   abrir('<div class="obra"><div class="gr">🎓</div><h2>Constancia de servicio activo</h2>'+
-    '<p class="nota" style="font-size:.95rem;line-height:1.5">La Dirección revisa tu solicitud y, si la aprueba, aquí mismo podrás descargar tu constancia en PDF. Te avisaremos en tu Pizarrón.</p></div>'+
+    '<p class="nota" style="font-size:.95rem;line-height:1.5">La Dirección revisa tu solicitud. Si la aprueba, te avisaremos en tu Pizarrón y podrás descargar tu constancia en PDF desde «Mis solicitudes».</p></div>'+
     '<button class="btn" id="csOk">Solicitar mi constancia</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
   hoja.classList.add('cen');
   var b=$('csOk');if(b)b.onclick=function(){b.disabled=true;cerrar();pmEnviaConst();};}
@@ -1067,11 +1067,11 @@ function pmCancela(id){
     .catch(function(){cerrar();PM.nota='Sin señal: no se pudo cancelar.';pintaPerm();});};}
 function pmAvisoFicha(id){
   var s=null;(PM.mis||[]).forEach(function(x){if(x.id===id)s=x;});
-  if(s&&s.tipo==='constancia'){var bc=null;Array.prototype.forEach.call(sala.querySelectorAll('[data-pm="pdf"]'),function(x){if(x.getAttribute('data-i')===id)bc=x;});pmPdf(id,bc);return;}
+  /* Ladrillo590: la constancia pasa por la ventanita, como la ficha */
   var ges=!!(s&&s.tipo==='gestoria');
-  var tx=ges?'Imprime tu ficha, fírmala y entrégala en la Dirección de la escuela. Quedará en espera y será validada cuando entregues la copia del comprobante de tu trámite.'
+  var tx=(s&&s.tipo==='constancia')?'Imprime tu constancia. Si no trae firma y sello, pásala por la Dirección de la escuela para que te la firmen y sellen.':ges?'Imprime tu ficha, fírmala y entrégala en la Dirección de la escuela. Quedará en espera y será validada cuando entregues la copia del comprobante de tu trámite.'
             :'Imprime tu ficha, fírmala y preséntala en la Dirección de la escuela para que sea validada.';
-  abrir('<div class="obra"><div class="gr">📄</div><h2>Antes de descargar tu ficha</h2><p class="nota" style="font-size:.95rem;line-height:1.5">'+esc(tx)+'</p></div>'+
+  abrir('<div class="obra"><div class="gr">📄</div><h2>Antes de descargar tu '+(s&&s.tipo==='constancia'?'constancia':'ficha')+'</h2><p class="nota" style="font-size:.95rem;line-height:1.5">'+esc(tx)+'</p></div>'+
     '<button class="btn" id="fiOk">Entendido, descargar</button><button class="btn sec2" onclick="cerrarSala()">Cancelar</button>');
   hoja.classList.add('cen');
   var b=$('fiOk');if(b)b.onclick=function(){cerrar();var bt=null,bs=sala.querySelectorAll('[data-pm="pdf"]');
