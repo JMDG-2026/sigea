@@ -321,6 +321,39 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .lc .lc-txt{margin-left:auto!important;margin-right:auto!important}
 .lc-txt .num{background:none;border:0;border-radius:0;padding:0;text-align:inherit}
 .lc-txt .nota{margin-bottom:0}
+/* MODO LIBRO (ladrillo 576): las hojas del lector. Prefijos lc-h, lc-leaf, lc-sec... */
+.lc.dia{--lmesa:#d9cdb8;--lomo:rgba(120,90,50,.22)}
+.lc.sepia{--lmesa:#b9a37a;--lomo:rgba(90,60,20,.28)}
+.lc.noche{--lmesa:#07080b;--lomo:rgba(0,0,0,.6)}
+.lc-cuerpo[hidden]{display:none}
+.lc-libro{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;perspective:1800px;overflow:hidden;background:var(--lmesa);padding:5px 8px}
+.lc-libro[hidden]{display:none}
+.lc-hojas{position:relative;transform-style:preserve-3d;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.lc-h{position:absolute;inset:0;background:var(--lbg);border-radius:4px 10px 10px 4px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 8px 0 14px -8px var(--lomo);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.lc-h.pliega{z-index:2;transform-origin:left center;will-change:transform}
+.lc-h.izq{border-radius:10px 3px 3px 10px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset -12px 0 16px -12px var(--lomo)}
+.lc-h.der{border-radius:3px 10px 10px 3px}
+.lc-h.vacia .lc-vp{visibility:hidden}
+.lc-so{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%);opacity:0}
+.lc-vp{position:absolute;left:var(--lpx);right:var(--lpx);top:var(--lpy);bottom:calc(var(--lpy) + 22px);overflow:hidden}
+.lc .lc-tl{max-width:none!important;margin:0!important;padding:0!important;position:relative;will-change:transform;font-size:var(--ls)}
+.lc-np{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:.74rem;opacity:.6}
+.lc-lomo{position:absolute;left:50%;top:0;bottom:0;width:36px;margin-left:-18px;background:linear-gradient(90deg,rgba(0,0,0,0),var(--lomo),rgba(0,0,0,0));z-index:6;pointer-events:none}
+.lc-leaf{position:absolute;top:0;bottom:0;transform-style:preserve-3d;z-index:4;display:none}
+.lc-leaf.d{left:50%;right:0;transform-origin:left center}
+.lc-leaf.i{left:0;right:50%;transform-origin:right center}
+.lc-leaf .lc-h.rev{transform:rotateY(180deg)}
+.lc-sec{break-before:column}
+.lc-sec:first-child{break-before:auto}
+.lc-sec.pg{height:var(--lph)}
+.lc-tl img{display:block;max-width:100%;max-height:var(--lph);object-fit:contain;margin:0 auto}
+.lc.pag .lc-tl .lc-sec img{width:100%!important;height:var(--lph)!important;object-fit:contain;display:block}
+.lc-tl p{hyphens:auto;-webkit-hyphens:auto}
+.lc-reg{display:none;width:100%;accent-color:var(--lac);height:30px;margin:0}
+.lc.libro .lc-reg{display:block}
+.lc.libro .lc-barra{display:none}
+.lc-bur{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);background:var(--lac);color:var(--lbg);padding:8px 14px;border-radius:12px;font-weight:800;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .15s;text-align:center;z-index:5;max-width:90%}
+.lc-bur.on{opacity:1}
 /* BIBLIOTECA (ladrillo 574): el librero en 3D. Todo lleva el prefijo bb- para no mezclarse con el resto de la sala. */
 .bb-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .bb-tools input{flex:1;min-width:150px;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit}
@@ -1399,9 +1432,9 @@ function bibCarga(){
 function traeBib(){
   if(!B||!K||Date.now()-BIB.T<60000)return;BIB.T=Date.now();
   llama('bib_mis').then(function(r){if(r&&r.ok){BIB.lista=r.libros||[];BIB.estantes=r.estantes||null;bibCuenta();lecPon('lista|'+K,{l:BIB.lista,e:BIB.estantes});var e=$('cBiEt');if(e)e.textContent=bibEt();}}).catch(function(){if(BIB.lista)return;lecGet('lista|'+K).then(function(c){if(c&&c.l&&!BIB.lista){BIB.lista=c.l;BIB.estantes=c.e||null;bibCuenta();var e=$('cBiEt');if(e)e.textContent=bibEt();}});});}
-/* LECTOR (ladrillo 575): abre el EPUB de la Biblioteca DENTRO de la sala, sin descargarlo. Lo trae de la bodega por trozos (bib_leer), lo abre con una mini-herramienta propia (un EPUB es un ZIP)
+/* LECTOR (ladrillos 575 y 576): abre el EPUB de la Biblioteca DENTRO de la sala, sin descargarlo. Lo trae de la bodega por trozos (bib_leer), lo abre con una mini-herramienta propia (un EPUB es un ZIP)
    y lo guarda en el celular (IndexedDB) para poder leerlo sin señal. Recuerda donde te quedaste (bib_avance + una copia local). Solo MIRA el libro: no cambia nada del libro ni de la bodega salvo el avance de ESTA persona. */
-var LEC={x:null,i:-1,cap:[],cum:[],tot:1,idx:[],zip:null,opf:'',nav:'',urls:[],tok:0,rt:0,tmr:0,sucio:false,pag:false,est:'',mov:false,pref:{s:2,m:'dia',f:'serif'},panel:''};
+var LEC={x:null,i:-1,cap:[],cum:[],tot:1,idx:[],zip:null,opf:'',nav:'',urls:[],tok:0,rt:0,tmr:0,sucio:false,pag:false,est:'',mov:false,pref:{s:2,m:'dia',f:'serif',v:'libro',so:1,ve:620},panel:'',p:0,np:1,dbl:false,F:{},paso:0,secP:[],bh:'',urlsL:[],busy:false,rz:0};
 var LEC_S=[15,17,18,20,22,25,28];
 function lecDB(){return new Promise(function(ok,no){try{var r=indexedDB.open('sigea_biblioteca',1);r.onupgradeneeded=function(){r.result.createObjectStore('k');};r.onsuccess=function(){ok(r.result);};r.onerror=function(){no(r.error);};}catch(e){no(e);}});}
 function lecGet(k){return lecDB().then(function(db){return new Promise(function(ok,no){var q=db.transaction('k').objectStore('k').get(k);q.onsuccess=function(){ok(q.result||null);};q.onerror=function(){no(q.error);};});}).catch(function(){return null;});}
@@ -1456,7 +1489,7 @@ function lecCss(c){
   var out='',re=/([^{}]+)\{([^{}]*)\}/g,m;
   while((m=re.exec(c))){
     var ss=m[1].trim();if(!ss||ss.charAt(0)==='@')continue;
-    out+=ss.split(',').map(function(s){s=s.trim();if(/^(html|body)$/i.test(s))return '.lc-txt';return '.lc-txt '+s.replace(/^(html|body)\s+/i,'');}).join(',')+'{'+m[2].replace(/url\([^)]*\)/g,'none')+'}';}
+    out+=ss.split(',').map(function(s){s=s.trim();if(/^(html|body)$/i.test(s))return '.lc-txt,.lc-tl';var r=s.replace(/^(html|body)\s+/i,'');return '.lc-txt '+r+',.lc-tl '+r;}).join(',')+'{'+m[2].replace(/url\([^)]*\)/g,'none')+'}';}
   return out;
 }
 function lecAbreZip(u8){
@@ -1489,35 +1522,53 @@ function lecAbreZip(u8){
 }
 function lecMime(p){var e=String(p).split('.').pop().toLowerCase();return {png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',svg:'image/svg+xml',webp:'image/webp'}[e]||'application/octet-stream';}
 function lecUrls(){LEC.urls.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});LEC.urls=[];}
-function lecPref(){try{var p=JSON.parse(localStorage.getItem('sigea_lec_pref')||'null');if(p){if(p.s>=0&&p.s<LEC_S.length)LEC.pref.s=p.s|0;if(/^(dia|sepia|noche)$/.test(p.m))LEC.pref.m=p.m;if(/^(serif|sans)$/.test(p.f))LEC.pref.f=p.f;}}catch(e){}}
+function lecPref(){try{var p=JSON.parse(localStorage.getItem('sigea_lec_pref')||'null');if(p){if(p.s>=0&&p.s<LEC_S.length)LEC.pref.s=p.s|0;if(/^(dia|sepia|noche)$/.test(p.m))LEC.pref.m=p.m;if(/^(serif|sans)$/.test(p.f))LEC.pref.f=p.f;if(/^(libro|seguido)$/.test(p.v))LEC.pref.v=p.v;if(p.so===0||p.so===1)LEC.pref.so=p.so;if(p.ve===280||p.ve===620)LEC.pref.ve=p.ve;}}catch(e){}}
 function lecPrefGuarda(){try{localStorage.setItem('sigea_lec_pref',JSON.stringify(LEC.pref));}catch(e){}}
-function lecAplica(){var b=$('lcBox');if(!b)return;b.className='lc '+LEC.pref.m+' '+LEC.pref.f+(LEC.pag?' pag':'');b.style.setProperty('--ls',LEC_S[LEC.pref.s]+'px');}
-function lecFrac(){var c=$('lcCuerpo');if(!c)return 0;var m=c.scrollHeight-c.clientHeight;if(m<=4)return (LEC.i===LEC.cap.length-1)?1:0;return Math.max(0,Math.min(1,c.scrollTop/m));}
+function lecAplica(){var b=$('lcBox');if(!b)return;b.className='lc '+LEC.pref.m+' '+LEC.pref.f+(LEC.pag?' pag':'')+(LEC.pref.v==='libro'?' libro':'');b.style.setProperty('--ls',LEC_S[LEC.pref.s]+'px');}
+function lecEtCap(i){var e='',k;for(k=0;k<LEC.idx.length;k++){if(LEC.idx[k].c<=i)e=LEC.idx[k].t;}return e||(LEC.cap[i]&&LEC.cap[i].t)||('Sección '+(i+1));}
+function lecProgra(){LEC.sucio=true;if(!LEC.tmr)LEC.tmr=setTimeout(function(){LEC.tmr=0;lecGuarda();},5000);}
+function lecFrac(){
+  if(LEC.pref.v==='libro')return lecPos().f;
+  var c=$('lcCuerpo');if(!c)return 0;var m=c.scrollHeight-c.clientHeight;if(m<=4)return (LEC.i===LEC.cap.length-1)?1:0;return Math.max(0,Math.min(1,c.scrollTop/m));
+}
+function lecPos(){
+  var p=LEC.p,i=0,k;for(k=0;k<LEC.secP.length;k++){if(LEC.secP[k]<=p)i=k;}
+  var ini=LEC.secP[i]||0,fin=(i+1<LEC.secP.length)?LEC.secP[i+1]:LEC.np,len=Math.max(1,fin-ini);
+  return {i:i,f:Math.max(0,Math.min(0.999,(p-ini)/len))};
+}
 function lecAvance(){
   if(LEC.i<0||!LEC.cap.length)return 0;
+  if(LEC.pref.v==='libro'){var u=Math.min(LEC.np,LEC.p+(LEC.dbl?2:1));return Math.max(0,Math.min(100,Math.round(u/LEC.np*100)));}
   var f=lecFrac(),a=(LEC.cum[LEC.i]+LEC.cap[LEC.i].w*f)/LEC.tot;
   if(LEC.i===LEC.cap.length-1&&f>=0.97)a=1;
   return Math.max(0,Math.min(100,Math.round(a*100)));
 }
-function lecEtCap(i){var e='',k;for(k=0;k<LEC.idx.length;k++){if(LEC.idx[k].c<=i)e=LEC.idx[k].t;}return e||(LEC.cap[i]&&LEC.cap[i].t)||('Sección '+(i+1));}
+function lecEtPag(p){return LEC.dbl?('Páginas '+(p+1)+(p+2<=LEC.np?'–'+(p+2):'')+' de '+LEC.np):('Página '+(p+1)+' de '+LEC.np);}
 function lecBarra(){
-  var a=lecAvance(),b=$('lcBr'),n=$('lcInfo'),c=$('lcSub'),p=$('lcPrev'),s=$('lcSig');
-  if(b)b.style.width=a+'%';if(n)n.textContent=a+' %  ·  '+(LEC.i+1)+' de '+LEC.cap.length;if(c)c.textContent=lecEtCap(LEC.i);
-  if(p)p.disabled=LEC.i<=0;if(s)s.disabled=LEC.i>=LEC.cap.length-1;
+  var a=lecAvance(),b=$('lcBr'),n=$('lcInfo'),c=$('lcSub'),p=$('lcPrev'),s=$('lcSig'),r=$('lcReg');
+  if(LEC.pref.v==='libro'){
+    if(r){r.max=LEC.np;r.value=LEC.p+1;}
+    if(n)n.textContent=lecEtPag(LEC.p)+'  ·  '+a+' %';
+    if(p)p.disabled=LEC.p<=0;if(s)s.disabled=LEC.p+(LEC.dbl?2:1)>=LEC.np;
+  }else{
+    if(b)b.style.width=a+'%';if(n)n.textContent=a+' %  ·  '+(LEC.i+1)+' de '+LEC.cap.length;
+    if(p)p.disabled=LEC.i<=0;if(s)s.disabled=LEC.i>=LEC.cap.length-1;
+  }
+  if(c)c.textContent=lecEtCap(LEC.i);
 }
 function lecGuarda(){
   var x=LEC.x;if(!x||LEC.i<0)return Promise.resolve(false);
   clearTimeout(LEC.tmr);LEC.tmr=0;LEC.sucio=false;
-  var a=lecAvance(),d='c'+LEC.i+':'+Math.round(lecFrac()*1000);
+  var a=lecAvance(),d;
+  if(LEC.pref.v==='libro'){var q=lecPos();d='c'+q.i+':'+Math.round(q.f*1000);}else d='c'+LEC.i+':'+Math.round(lecFrac()*1000);
   x.avance=a;x.donde=d;x.nuevo=false;
   try{localStorage.setItem('sigea_lec_'+x.id,JSON.stringify({a:a,d:d,t:Date.now()}));}catch(e){}
   if(!B||!K)return Promise.resolve(false);
   return llama('bib_avance',{id:x.id,avance:a,donde:d}).then(function(){return true;}).catch(function(){return false;});
 }
-function lecProgra(){LEC.sucio=true;if(!LEC.tmr)LEC.tmr=setTimeout(function(){LEC.tmr=0;lecGuarda();},5000);}
-function lecMuestra(i,frac){
-  var c=LEC.cap[i];if(!c)return Promise.resolve();
-  var tok=++LEC.rt,nuevas=[],d=new DOMParser().parseFromString(c.html,'text/html'),b=d.body,rm=b.querySelectorAll('script,iframe,object,embed,link,style,meta,form,base,audio,video'),all,jobs=[],k,j;
+/* --- preparar un capitulo: limpia el HTML (nada de scripts ni ligas) y le pone sus imagenes --- */
+function lecPrepara(i,nuevas){
+  var c=LEC.cap[i],d=new DOMParser().parseFromString(c.html,'text/html'),b=d.body,rm=b.querySelectorAll('script,iframe,object,embed,link,style,meta,form,base,audio,video'),all,jobs=[],k,j;
   for(k=0;k<rm.length;k++)rm[k].remove();
   all=b.querySelectorAll('*');
   for(k=0;k<all.length;k++){
@@ -1533,7 +1584,12 @@ function lecMuestra(i,frac){
     if(/^[a-z][a-z0-9+.-]*:/i.test(ref)){q[0].removeAttribute(q[1]);return null;}
     var p=lecRuta(c.h,ref);
     return lecSaca(LEC.zip,p).then(function(u){if(u){var url=URL.createObjectURL(new Blob([u],{type:lecMime(p)}));nuevas.push(url);q[0].setAttribute(q[1],url);}else q[0].removeAttribute(q[1]);}).catch(function(){q[0].removeAttribute(q[1]);});
-  })).then(function(){
+  })).then(function(){return b;});
+}
+function lecMuestra(i,frac){
+  var c=LEC.cap[i];if(!c)return Promise.resolve();
+  var tok=++LEC.rt,nuevas=[];
+  return lecPrepara(i,nuevas).then(function(b){
     if(tok!==LEC.rt){nuevas.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});return;}
     var t=$('lcTxt'),cu=$('lcCuerpo');if(!t||!cu)return;
     var viejas=LEC.urls;LEC.urls=nuevas;viejas.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});
@@ -1544,8 +1600,103 @@ function lecMuestra(i,frac){
     lecPanel('');lecBarra();setTimeout(function(){if(tok===LEC.rt)lecGuarda();},1500);
   });
 }
+/* ===== MODO LIBRO (ladrillo 576): el texto corre en columnas y cada columna es una hoja; en pantalla ancha se ven DOS hojas, como un libro abierto ===== */
+var LEC_AC=null,LEC_RU=null;
+function lecAudio(){if(LEC_AC)return LEC_AC;try{LEC_AC=new (window.AudioContext||window.webkitAudioContext)();var l=Math.floor(LEC_AC.sampleRate*0.4),b=LEC_AC.createBuffer(1,l,LEC_AC.sampleRate),d=b.getChannelData(0),i;for(i=0;i<l;i++)d[i]=Math.random()*2-1;LEC_RU=b;}catch(e){LEC_AC=null;}return LEC_AC;}
+function lecFff(largo){
+  if(!LEC.pref.so)return;var a=lecAudio();if(!a)return;try{if(a.state==='suspended')a.resume();
+  var t=a.currentTime,d=largo?0.36:0.22,s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain(),f2=a.createBiquadFilter();
+  s.buffer=LEC_RU;f.type='bandpass';f.Q.value=0.9;f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(5200,t+d*0.8);
+  f2.type='highpass';f2.frequency.value=500;
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.5,t+0.04);g.gain.exponentialRampToValueAtTime(0.18,t+d*0.5);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  s.connect(f);f.connect(f2);f2.connect(g);g.connect(a.destination);s.start(t);s.stop(t+d+0.05);}catch(e){}
+}
+function lecCara(cls){var h=document.createElement('div');h.className='lc-h '+cls;h.innerHTML='<div class="lc-vp"><div class="lc-txt lc-tl">'+LEC.bh+'</div></div><div class="lc-np"></div><div class="lc-so"></div>';return {h:h,fl:h.querySelector('.lc-tl'),np:h.querySelector('.lc-np'),vp:h.querySelector('.lc-vp'),so:h.querySelector('.lc-so')};}
+function lecGiro(lado){var l=document.createElement('div');l.className='lc-leaf '+lado;var f=lecCara(lado==='d'?'der':'izq'),r=lecCara((lado==='d'?'izq':'der')+' rev');l.appendChild(f.h);l.appendChild(r.h);return {l:l,f:f,r:r};}
+function lecLibroHtml(){
+  var nuevas=[],i,partes=[];
+  var uno=function(k){return lecPrepara(k,nuevas).then(function(b){partes[k]='<section class="lc-sec'+(LEC.pag?' pg':'')+'" data-c="'+k+'">'+b.innerHTML+'</section>';});};
+  var seq=Promise.resolve();
+  for(i=0;i<LEC.cap.length;i++){(function(k){seq=seq.then(function(){return uno(k);});})(i);}
+  return seq.then(function(){LEC.urlsL.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});LEC.urlsL=nuevas;LEC.bh=partes.join('');});
+}
+function lecArma(){
+  var st=$('lcLibro'),lib=$('lcHojas');if(!st||!lib)return;
+  lib.innerHTML='';LEC.F={};
+  LEC.dbl=st.clientWidth>=760;lib.className='lc-hojas'+(LEC.dbl?' doble':'');
+  var lw=Math.min(st.clientWidth-(LEC.dbl?24:16),LEC.dbl?1040:560),lh=Math.min(st.clientHeight-10,LEC.dbl?720:820);
+  lib.style.width=lw+'px';lib.style.height=lh+'px';
+  var px=LEC.pag?10:(LEC.dbl?30:22),py=LEC.pag?10:20;lib.style.setProperty('--lpx',px+'px');lib.style.setProperty('--lpy',py+'px');
+  var F=LEC.F;
+  if(LEC.dbl){
+    F.L=lecCara('izq');F.R=lecCara('der');F.R.h.style.cssText='left:50%;right:0';F.L.h.style.cssText='left:0;right:50%';
+    F.gd=lecGiro('d');F.gi=lecGiro('i');
+    var lo=document.createElement('div');lo.className='lc-lomo';
+    lib.appendChild(F.L.h);lib.appendChild(F.R.h);lib.appendChild(F.gd.l);lib.appendChild(F.gi.l);lib.appendChild(lo);
+    F.todas=[F.L,F.R,F.gd.f,F.gd.r,F.gi.f,F.gi.r];
+  }else{
+    F.B=lecCara('base');F.P=lecCara('pliega');F.P.h.style.display='none';lib.appendChild(F.B.h);lib.appendChild(F.P.h);F.todas=[F.B,F.P];
+  }
+  var W=F.todas[0].vp.clientWidth||Math.round(lw/(LEC.dbl?2:1)-2*px),H=F.todas[0].vp.clientHeight||Math.round(lh-2*py-22),G=40;
+  F.todas.forEach(function(c){var f=c.fl;f.style.width=W+'px';f.style.height=H+'px';f.style.columnWidth=W+'px';f.style.columnGap=G+'px';f.style.columnFill='auto';});
+  lib.style.setProperty('--lph',H+'px');LEC.paso=W+G;LEC.np=Math.max(1,Math.round((F.todas[0].fl.scrollWidth+G)/LEC.paso));
+  var ss=F.todas[0].fl.querySelectorAll('section.lc-sec'),k;LEC.secP=[];
+  for(k=0;k<ss.length;k++){LEC.secP[Number(ss[k].getAttribute('data-c'))]=Math.max(0,Math.min(LEC.np-1,Math.floor(ss[k].offsetLeft/LEC.paso+0.02)));}
+  for(k=0;k<LEC.cap.length;k++){if(LEC.secP[k]==null)LEC.secP[k]=k?LEC.secP[k-1]:0;}
+  var r=$('lcReg');if(r)r.max=LEC.np;
+}
+function lecPonHoja(c,p){var ok=p>=0&&p<LEC.np;c.h.classList.toggle('vacia',!ok);c.fl.style.transform='translateX('+(-Math.max(0,p)*LEC.paso)+'px)';c.np.textContent=ok?String(p+1):'';}
+function lecPinta(){var F=LEC.F;if(!F.todas)return;if(LEC.dbl){lecPonHoja(F.L,LEC.p);lecPonHoja(F.R,LEC.p+1);}else lecPonHoja(F.B,LEC.p);LEC.i=lecPos().i;lecBarra();}
+function lecVolteo(dir,rapido){
+  if(LEC.pref.v!=='libro'||LEC.busy||!LEC.F.todas)return;
+  var F=LEC.F,paso2=LEC.dbl?2:1,t=LEC.p+dir*paso2;
+  if(t<0||t>=LEC.np)return;
+  LEC.busy=true;var ms=rapido?240:LEC.pref.ve;lecFff(!rapido);
+  var fin=function(){LEC.p=t;lecPinta();if(LEC.dbl){F.gd.l.style.display='none';F.gi.l.style.display='none';F.gd.l.style.transition='none';F.gi.l.style.transition='none';}else{F.P.h.style.display='none';F.P.h.style.transition='none';}LEC.busy=false;lecProgra();};
+  if(LEC.dbl){
+    var g=dir>0?F.gd:F.gi,fi=dir>0?'rotateY(-180deg)':'rotateY(180deg)';
+    if(dir>0){lecPonHoja(F.L,LEC.p);lecPonHoja(F.R,t+1);lecPonHoja(g.f,LEC.p+1);lecPonHoja(g.r,t);}
+    else{lecPonHoja(F.L,t);lecPonHoja(F.R,LEC.p+1);lecPonHoja(g.f,LEC.p);lecPonHoja(g.r,t+1);}
+    g.l.style.display='block';g.l.style.transition='none';g.l.style.transform='rotateY(0deg)';void g.l.offsetWidth;
+    g.l.style.transition='transform '+ms+'ms cubic-bezier(.45,.05,.3,1)';g.l.style.transform=fi;
+  }else{
+    var hp=F.P.h,som=F.P.so;hp.style.display='block';hp.style.transition='none';
+    if(dir>0){lecPonHoja(F.P,LEC.p);lecPonHoja(F.B,t);hp.style.transform='rotateY(0deg)';som.style.opacity=0;void hp.offsetWidth;hp.style.transition='transform '+ms+'ms cubic-bezier(.45,.05,.3,1)';som.style.transition='opacity '+ms+'ms';hp.style.transform='rotateY(-112deg)';som.style.opacity=1;}
+    else{lecPonHoja(F.P,t);lecPonHoja(F.B,LEC.p);hp.style.transform='rotateY(-112deg)';som.style.opacity=1;void hp.offsetWidth;hp.style.transition='transform '+ms+'ms cubic-bezier(.3,.05,.45,1)';som.style.transition='opacity '+ms+'ms';hp.style.transform='rotateY(0deg)';som.style.opacity=0;}
+  }
+  setTimeout(fin,ms+30);
+}
+function lecAPag(p){p=Math.max(0,Math.min(LEC.np-1,p));return LEC.dbl?p-(p%2):p;}
+function lecSalta(p){p=lecAPag(p);if(p===LEC.p||LEC.busy)return;if(Math.abs(p-LEC.p)===(LEC.dbl?2:1))return lecVolteo(p>LEC.p?1:-1);LEC.p=p;lecFff(true);lecPinta();lecProgra();}
+function lecLibroAbre(c,frac){
+  var st=$('lcLibro');if(!st)return Promise.resolve();
+  var tok=++LEC.rt;
+  return lecLibroHtml().then(function(){
+    if(tok!==LEC.rt)return;
+    $('lcCuerpo').hidden=true;st.hidden=false;lecAplica();
+    lecArma();
+    var ini=LEC.secP[c]||0,fin=(c+1<LEC.cap.length)?LEC.secP[c+1]:LEC.np;
+    LEC.p=lecAPag(ini+Math.floor((frac||0)*Math.max(1,fin-ini)));
+    var e=$('lcEst');if(e)e.className='lc-est';
+    lecPanel('');lecPinta();setTimeout(function(){if(tok===LEC.rt)lecGuarda();},1500);
+  });
+}
+function lecRearma(){
+  if(LEC.i<0||LEC.pref.v!=='libro'||LEC.busy||!LEC.bh)return;
+  var q=lecPos();lecArma();var ini=LEC.secP[q.i]||0,fin=(q.i+1<LEC.cap.length)?LEC.secP[q.i+1]:LEC.np;
+  LEC.p=lecAPag(ini+Math.floor(q.f*Math.max(1,fin-ini)));lecPinta();
+}
+/* cambiar entre Libro y Seguido sin perder el lugar */
+function lecModo(v){
+  if(LEC.pref.v===v||LEC.i<0)return;
+  var q=(LEC.pref.v==='libro')?lecPos():{i:LEC.i,f:lecFrac()};
+  lecGuarda();LEC.pref.v=v;lecPrefGuarda();lecAplica();
+  if(v==='libro'){$('lcCuerpo').hidden=true;lecLibroAbre(q.i,q.f).catch(function(e){lecFalla(String(e&&e.message||e));});}
+  else{$('lcLibro').hidden=true;$('lcCuerpo').hidden=false;lecMuestra(q.i,q.f).catch(function(e){lecFalla(String(e&&e.message||e));});}
+}
 function lecIr(i,frac){
   if(i<0||i>=LEC.cap.length)return;lecGuarda();
+  if(LEC.pref.v==='libro'){var ini=LEC.secP[i]||0,fin=(i+1<LEC.cap.length)?LEC.secP[i+1]:LEC.np;lecSalta(ini+Math.floor((frac||0)*Math.max(1,fin-ini)));lecPanel('');return;}
   lecMuestra(i,frac||0).catch(function(e){lecFalla(String(e&&e.message||e));});
 }
 function lecInicio(){
@@ -1561,17 +1712,19 @@ function lecFalla(m){var e=$('lcEst');if(!e)return;e.className='lc-est on';e.inn
 function lecPanel(q){
   LEC.panel=(LEC.panel===q)?'':q;var p=$('lcPanel');if(!p)return;
   if(!LEC.panel){p.className='lc-panel';p.innerHTML='';return;}
-  var h='',k;
+  var h='',k,lib=LEC.pref.v==='libro';
   if(LEC.panel==='ind'){
     var l=LEC.idx.length?LEC.idx:LEC.cap.map(function(c,n){return {c:n,t:c.t||('Sección '+(n+1))};}),act=-1;
     for(k=0;k<l.length;k++){if(l[k].c<=LEC.i)act=k;}
     h='<h3>Índice</h3>'+l.map(function(o,n){return '<button data-lc="ir" data-c="'+o.c+'" class="'+(n===act?'on':'')+'">'+esc(o.t)+'</button>';}).join('');
   }else{
-    var pc=Math.round(LEC_S[LEC.pref.s]/18*100);
-    if(LEC.pag)h='<h3>Letra y fondo</h3><p class="lc-nota">Este libro está hecho de páginas con su diseño original, así que la letra no se puede cambiar. El fondo sí.</p>';
-    else h='<h3>Letra y fondo</h3><div class="lc-fila"><span>Tamaño</span><button data-lc="t-">A−</button><b>'+pc+' %</b><button data-lc="t+">A+</button></div>';
-    h+='<div class="lc-fila"><span>Fondo</span>'+[['dia','Día'],['sepia','Sepia'],['noche','Noche']].map(function(o){return '<button data-lc="m" data-v="'+o[0]+'" class="'+(LEC.pref.m===o[0]?'on':'')+'">'+o[1]+'</button>';}).join('')+'</div>';
-    if(!LEC.pag)h+='<div class="lc-fila"><span>Tipo</span><button data-lc="f" data-v="serif" class="'+(LEC.pref.f==='serif'?'on':'')+'">Con serifa</button><button data-lc="f" data-v="sans" class="'+(LEC.pref.f==='sans'?'on':'')+'">Sin serifa</button></div>';
+    var pc=Math.round(LEC_S[LEC.pref.s]/18*100),on=function(c){return c?' on':'';};
+    h='<h3>Lectura</h3><div class="lc-fila"><span>Forma</span><button data-lc="v" data-v="libro" class="'+on(lib)+'">📖 Libro</button><button data-lc="v" data-v="seguido" class="'+on(!lib)+'">↕ Seguido</button></div>';
+    if(LEC.pag)h+='<p class="lc-nota">Este libro está hecho de páginas con su diseño original, así que la letra no se puede cambiar. El fondo sí.</p>';
+    else h+='<div class="lc-fila"><span>Tamaño</span><button data-lc="t-">A−</button><b>'+pc+' %</b><button data-lc="t+">A+</button></div>';
+    h+='<div class="lc-fila"><span>Fondo</span>'+[['dia','Día'],['sepia','Sepia'],['noche','Noche']].map(function(o){return '<button data-lc="m" data-v="'+o[0]+'" class="'+on(LEC.pref.m===o[0])+'">'+o[1]+'</button>';}).join('')+'</div>';
+    if(!LEC.pag)h+='<div class="lc-fila"><span>Tipo</span><button data-lc="f" data-v="serif" class="'+on(LEC.pref.f==='serif')+'">Con serifa</button><button data-lc="f" data-v="sans" class="'+on(LEC.pref.f==='sans')+'">Sin serifa</button></div>';
+    if(lib)h+='<div class="lc-fila"><span>Sonido</span><button data-lc="so" data-v="1" class="'+on(LEC.pref.so)+'">🔊 Sí</button><button data-lc="so" data-v="0" class="'+on(!LEC.pref.so)+'">🔇 No</button></div><div class="lc-fila"><span>Volteo</span><button data-lc="ve" data-v="620" class="'+on(LEC.pref.ve===620)+'">Suave</button><button data-lc="ve" data-v="280" class="'+on(LEC.pref.ve===280)+'">Rápido</button></div>';
   }
   p.innerHTML=h;p.className='lc-panel on';
 }
@@ -1585,29 +1738,48 @@ function lecCaja(){
   b=document.createElement('div');b.id='lcBox';b.hidden=true;
   b.innerHTML='<div class="lc-top"><button data-lc="atras" aria-label="Volver">‹</button><div class="lc-tit"><b id="lcTit"></b><small id="lcSub"></small></div><button data-lc="ind" aria-label="Índice">☰</button><button data-lc="aa" aria-label="Letra y fondo">Aa</button></div>'+
    '<div class="lc-cuerpo" id="lcCuerpo"><div class="lc-txt" id="lcTxt"></div></div>'+
-   '<div class="lc-pie"><div class="lc-barra"><i id="lcBr"></i></div><div class="lc-nav"><button id="lcPrev" data-lc="ant">‹ Anterior</button><span id="lcInfo"></span><button id="lcSig" data-lc="sig">Siguiente ›</button></div></div>'+
-   '<div class="lc-panel" id="lcPanel"></div><div class="lc-est" id="lcEst"></div>';
+   '<div class="lc-libro" id="lcLibro" hidden><div class="lc-hojas" id="lcHojas"></div></div>'+
+   '<div class="lc-pie"><div class="lc-barra"><i id="lcBr"></i></div><input type="range" class="lc-reg" id="lcReg" min="1" max="1" value="1" aria-label="Ir a la página"><div class="lc-nav"><button id="lcPrev" data-lc="ant">‹ Anterior</button><span id="lcInfo"></span><button id="lcSig" data-lc="sig">Siguiente ›</button></div></div>'+
+   '<div class="lc-bur" id="lcBur"></div><div class="lc-panel" id="lcPanel"></div><div class="lc-est" id="lcEst"></div>';
   document.body.appendChild(b);
   b.onclick=function(e){
     var a=e.target.closest?e.target.closest('a[data-lh]'):null;
     if(a){e.preventDefault();var ci=lecIdx(lecRuta(LEC.cap[LEC.i].h,a.getAttribute('data-lh')));if(ci>=0)lecIr(ci,0);return;}
     var t=e.target.closest?e.target.closest('[data-lc]'):null;
     if(!t){if(LEC.panel&&e.target.closest&&e.target.closest('#lcCuerpo'))lecPanel(LEC.panel);return;}
-    var m=t.getAttribute('data-lc');
+    var m=t.getAttribute('data-lc'),re=function(){var q=LEC.panel;LEC.panel='';lecPanel(q);};
     if(m==='atras'){lecSale();return;}
     if(m==='ind'||m==='aa'){lecPanel(m);return;}
-    if(m==='ant'){lecIr(LEC.i-1,0);return;}
-    if(m==='sig'){lecIr(LEC.i+1,0);return;}
+    if(m==='ant'){if(LEC.pref.v==='libro')lecVolteo(-1);else lecIr(LEC.i-1,0);return;}
+    if(m==='sig'){if(LEC.pref.v==='libro')lecVolteo(1);else lecIr(LEC.i+1,0);return;}
     if(m==='ir'){lecIr(Number(t.getAttribute('data-c')),0);return;}
     if(m==='reint'){if(LEC.x)bibLee(BIB.lista.indexOf(LEC.x));return;}
-    if(m==='t-'||m==='t+'){LEC.pref.s=Math.max(0,Math.min(LEC_S.length-1,LEC.pref.s+(m==='t+'?1:-1)));var f=lecFrac();lecPrefGuarda();lecAplica();var q=LEC.panel;LEC.panel='';lecPanel(q);var cu=$('lcCuerpo');if(cu){var mm=cu.scrollHeight-cu.clientHeight;cu.scrollTop=mm>0?Math.round(mm*f):0;}return;}
-    if(m==='m'||m==='f'){LEC.pref[m]=t.getAttribute('data-v');lecPrefGuarda();lecAplica();var q2=LEC.panel;LEC.panel='';lecPanel(q2);return;}
+    if(m==='v'){lecModo(t.getAttribute('data-v'));re();return;}
+    if(m==='so'){LEC.pref.so=Number(t.getAttribute('data-v'))?1:0;lecPrefGuarda();if(LEC.pref.so)lecFff(false);re();return;}
+    if(m==='ve'){LEC.pref.ve=Number(t.getAttribute('data-v'))===280?280:620;lecPrefGuarda();re();return;}
+    if(m==='t-'||m==='t+'){LEC.pref.s=Math.max(0,Math.min(LEC_S.length-1,LEC.pref.s+(m==='t+'?1:-1)));var f=lecFrac();lecPrefGuarda();lecAplica();re();if(LEC.pref.v==='libro')lecRearma();else{var cu=$('lcCuerpo');if(cu){var mm=cu.scrollHeight-cu.clientHeight;cu.scrollTop=mm>0?Math.round(mm*f):0;}}return;}
+    if(m==='m'||m==='f'){LEC.pref[m]=t.getAttribute('data-v');lecPrefGuarda();lecAplica();re();return;}
   };
   var cu=$('lcCuerpo'),ras=0;
   cu.onscroll=function(){LEC.mov=true;if(ras)return;ras=requestAnimationFrame(function(){ras=0;lecBarra();lecProgra();});};
+  /* el libro: tocar la orilla, deslizar el dedo, o la barrita de abajo */
+  var st=$('lcLibro'),x0=null,y0=0;
+  st.addEventListener('pointerdown',function(e){x0=e.clientX;y0=e.clientY;});
+  st.addEventListener('pointerup',function(e){
+    if(x0===null)return;var dx=e.clientX-x0,dy=e.clientY-y0,r=$('lcHojas').getBoundingClientRect(),rx=(e.clientX-r.left)/Math.max(1,r.width);x0=null;
+    if(LEC.panel){lecPanel(LEC.panel);return;}
+    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.3){lecVolteo(dx<0?1:-1);return;}
+    if(Math.abs(dx)<12&&Math.abs(dy)<12){var a=e.target.closest?e.target.closest('a[data-lh]'):null;if(a)return;lecVolteo(rx>(LEC.dbl?0.5:0.38)?1:-1);}
+  });
+  var rg=$('lcReg'),bu=$('lcBur');
+  rg.addEventListener('input',function(){var p=lecAPag(Number(rg.value)-1),q=0,k,c=LEC.idx.length?LEC.idx:[];for(k=0;k<LEC.cap.length;k++){if((LEC.secP[k]||0)<=p)q=k;}
+    bu.innerHTML=esc(lecEtPag(p))+'<br><small>'+esc(lecEtCap(q))+'</small>';bu.classList.add('on');$('lcInfo').textContent=lecEtPag(p);if(LEC.F.todas){if(LEC.dbl){lecPonHoja(LEC.F.L,p);lecPonHoja(LEC.F.R,p+1);}else lecPonHoja(LEC.F.B,p);}});
+  rg.addEventListener('change',function(){var p=lecAPag(Number(rg.value)-1);bu.classList.remove('on');if(p!==LEC.p)lecFff(true);LEC.p=p;lecPinta();lecProgra();});
   document.addEventListener('keydown',function(e){
     if(VISTA!=='lec'||$('lcBox').hidden)return;
-    if(e.key==='ArrowRight')lecIr(LEC.i+1,0);else if(e.key==='ArrowLeft')lecIr(LEC.i-1,0);else if(e.key==='Escape'){if(LEC.panel)lecPanel(LEC.panel);else lecSale();}});
+    var l=LEC.pref.v==='libro';
+    if(e.key==='ArrowRight'||(l&&e.key===' '))l?lecVolteo(1):lecIr(LEC.i+1,0);else if(e.key==='ArrowLeft')l?lecVolteo(-1):lecIr(LEC.i-1,0);else if(e.key==='Escape'){if(LEC.panel)lecPanel(LEC.panel);else lecSale();}});
+  window.addEventListener('resize',function(){clearTimeout(LEC.rz);LEC.rz=setTimeout(lecRearma,250);});
   document.addEventListener('visibilitychange',function(){if(document.hidden&&VISTA==='lec'&&LEC.sucio)lecGuarda();});
   window.addEventListener('pagehide',function(){if(VISTA==='lec')lecGuarda();});
   return b;
@@ -1622,7 +1794,8 @@ function lecOculta(){
   var b=$('lcBox');if(!b||b.hidden)return;
   if(LEC.sucio)lecGuarda();
   b.hidden=true;document.body.style.overflow='';LEC.panel='';lecUrls();
-  var t=$('lcTxt');if(t)t.innerHTML='';LEC.i=-1;LEC.tok++;LEC.rt++;
+  LEC.urlsL.forEach(function(u){try{URL.revokeObjectURL(u);}catch(e){}});LEC.urlsL=[];LEC.bh='';LEC.F={};
+  var t=$('lcTxt');if(t)t.innerHTML='';var hh=$('lcHojas');if(hh)hh.innerHTML='';LEC.i=-1;LEC.tok++;LEC.rt++;
   bibCuenta();var e=$('cBiEt');if(e)e.textContent=bibEt();
 }
 function bibLee(i){
@@ -1632,14 +1805,14 @@ function bibLee(i){
   lecPref();
   if(VISTA!=='lec')irA('lec');else pintaLec();
   var b=lecCaja();b.hidden=false;document.body.style.overflow='hidden';
-  $('lcTit').textContent=x.titulo||'';$('lcSub').textContent='';$('lcTxt').innerHTML='';
+  $('lcTit').textContent=x.titulo||'';$('lcSub').textContent='';$('lcTxt').innerHTML='';LEC.bh='';LEC.p=0;LEC.np=1;LEC.secP=[];
   lecAplica();LEC.est='Abriendo el libro…';lecEstado();lecBarra();
   lecGet(key).then(function(u){
     if(u){LEC.est='Abriendo tu copia guardada…';lecEstado();return u;}
     LEC.est='Trayendo el libro…';lecEstado();
     return lecTrae(x).then(function(u8){lecPon(key,u8).then(function(ok){if(ok)lecLimpia(x.id+'|',key);});return u8;});
   }).then(function(u8){if(tok!==LEC.tok)throw 0;return lecAbreZip(u8);})
-  .then(function(){if(tok!==LEC.tok)throw 0;lecAplica();var p=lecInicio();return lecMuestra(p.c,p.f);})
+  .then(function(){if(tok!==LEC.tok)throw 0;lecAplica();var p=lecInicio(),lib=LEC.pref.v==='libro';$('lcCuerpo').hidden=lib;$('lcLibro').hidden=!lib;return lib?lecLibroAbre(p.c,p.f):lecMuestra(p.c,p.f);})
   .catch(function(e){if(e===0||tok!==LEC.tok)return;lecFalla(String(e&&e.message||e));});
 }
 /* CALENDARIO (ladrillo 531): el mes de la sala. Junta lo que la sala ya sabe: dias de la escuela (perm_info), entregas con fecha (ent_mis) y permisos propios. Solo MIRA. */
