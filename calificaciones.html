@@ -590,7 +590,9 @@ function resListo(p){var e=EST[p];return e==='enviado'||e==='blindado'}
 function resAbre(){return resListo('DIAG')||resListo(1)}
 function resGraf(){return resAbre()}
 function resTabla(){return resListo(1)}
-function resRep(){return EST[1]==='blindado'}
+function repMarca(){try{return localStorage.getItem(LS_KEY+'_rep')==='1'}catch(e){return false}}
+function repPon(){try{localStorage.setItem(LS_KEY+'_rep','1')}catch(e){}}
+function resRep(){return repMarca()||EST[1]==='enviado'||EST[1]==='blindado'}
 function resAuto(){if(EST[3]==='blindado')return 'gen';var o=[3,2,1];for(var i=0;i<o.length;i++){if(resListo(o[i]))return o[i]}return resListo('DIAG')?'DIAG':'gen'}
 function vistaResumen(){
   var r=datosResumen();_espCalifData=r;
@@ -1021,7 +1023,7 @@ document.addEventListener('click',function(e){
   if(t.dataset.rp!==undefined){_espPerSel=(t.dataset.rp==='DIAG'||t.dataset.rp==='gen')?t.dataset.rp:parseInt(t.dataset.rp,10);render();return}
   if(t.dataset.rv!==undefined){if((t.dataset.rv==='tabla'&&!resTabla())||(t.dataset.rv==='graf'&&!resGraf())){toast(t.dataset.rv==='tabla'?'🔒 La tabla se habilita cuando envías el Periodo 1.':'🔒 Las gráficas se habilitan cuando envías el Diagnóstico o el Periodo 1.');return}_resVista=t.dataset.rv;render();return}
   if(t.dataset.print!==undefined){imprimir([t.dataset.print]);return}
-  if(t.dataset.printall!==undefined){if(!resRep()){toast('🔒 Los reportes de evaluación se habilitan cuando el director blinda el Periodo 1.');return}imprimir(D.alumnos.map(function(a){return a.id}));return}
+  if(t.dataset.printall!==undefined){if(!resRep()){toast('🔒 Los reportes de evaluación se habilitan cuando envías el Periodo 1.');return}imprimir(D.alumnos.map(function(a){return a.id}));return}
   if(t.dataset.bol){sheet(boleta(t.dataset.bol));var x=$('#shX');if(x)x.onclick=cerrar;return}
   if(t.dataset.d){demo(t.dataset.d);return}
   var me=mesesP(p)[S.mes];
@@ -1087,7 +1089,7 @@ function revisar(p){if(p==='DIAG')return revisarDiag();var f=faltanCal(p),iv=fal
 function pregCero(p,n){sheet('<h2>👑 La corona pregunta</h2><p>Hay <b>'+n+' casillas de inasistencias vacías</b>. Una casilla vacía no es lo mismo que cero faltas, así que antes de enviar necesito que tú lo confirmes.</p><div style="display:flex;flex-direction:column;gap:8px"><button class="btn verde" id="z1">Sí, llenar con 0 y enviar</button><button class="btn gris" id="z2">No, voy a revisarlas</button></div>');
   $('#z1').onclick=function(){activos().forEach(function(a){mesesP(p).forEach(function(me){if(getFal(p,a.id,me.n)===null)setFal(p,a.id,me.n,0)})});confirmaEnviar(p)};
   $('#z2').onclick=function(){cerrar();S.sub='ina';render()};}
-function enviar(p){EST[p]='enviado';guardado();render();if(envWeb())envNuevo(p);recibo(p);}
+function enviar(p){EST[p]='enviado';if(String(p)==='1')repPon();guardado();render();if(envWeb())envNuevo(p);recibo(p);}
 function faltanDiag(cid){var n=0;activos().forEach(function(a){colsDiag().forEach(function(c){if((cid===undefined||c.id===cid)&&getDiag(a.id,c.id)===null)n++})});return n}
 function revisarDiag(){var f=faltanDiag(),h='<h2>Revisa antes de enviar · Diagnóstico</h2><p>El botón de enviar se enciende cuando no falte ninguna calificación.</p>';
   colsDiag().forEach(function(c){var fm=faltanDiag(c.id);h+=fm===0?'<div class="rv ok"><span>'+esc(c.nombre)+'</span><span class="r">✓ completa</span></div>':'<button class="rv mal" data-godg="'+c.id+'"><span>'+esc(c.nombre)+'</span><span class="r">faltan '+fm+' ›</span></button>'});
@@ -1201,6 +1203,7 @@ function aplicarActualizacion(c){var P=planActualizacion(c),nuevos={};
   Object.keys(c.datos||{}).forEach(function(k){var d=c.datos[k];
     if(k==='DIAG'){if(!CAP.DIAG)CAP.DIAG={};Object.keys(d.diag||{}).forEach(function(a){CAP.DIAG[a]=JSON.parse(JSON.stringify(d.diag[a]))})}
     else{var q=pcap(k);Object.keys(d.cal||{}).forEach(function(a){q.cal[a]=JSON.parse(JSON.stringify(d.cal[a]))});Object.keys(d.fal||{}).forEach(function(a){q.fal[a]=JSON.parse(JSON.stringify(d.fal[a]))});Object.keys(d.obs||{}).forEach(function(a){q.obs[a]=d.obs[a]});}});
+  if(EST[1]==='enviado'||EST[1]==='blindado')repPon();
   ['DIAG',1,2,3].forEach(function(k){EST[k]=P['f'+k]});
   ordenaAlumnos();D.actualizacion=c.actualizacion;
   var ab=periodoAbierto();if(S.hoja!=='RES'&&S.hoja!=='DIAG'&&EST[S.hoja]==='apagado')S.hoja=ab?String(ab):'RES';
@@ -1376,6 +1379,7 @@ function webActualiza(q){
   if(P.difs)h+='<li>✏️ El director corrigió <b>'+P.difs+'</b> dato(s) en lo cerrado: se queda lo del SIGEA.</li>';
   if(!P.altas.length&&!P.bajas.length&&!P.estados.length&&!P.difs)h+='<li>Solo se anotó el número de actualización.</li>';
   h+='</ul>'+(P.intactas?'<p style="color:#1e6b3a"><b>Lo que capturaste en periodos que siguen abiertos o enviados ('+P.intactas+' datos) no se tocó.</b></p>':'')+'<button class="btn" id="shX" style="width:100%">Entendido</button>';
+  if(!(P.altas.length||P.bajas.length||P.estados.length||P.difs))return true;
   sheet(h);$('#shX').onclick=cerrar;
   return true;}
 function webRevisa(){
