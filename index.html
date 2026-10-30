@@ -151,6 +151,9 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .num{background:#1c141d;border:1px solid #3a2c2a;border-radius:16px;padding:14px 4px 11px}
 .num b{display:block;font-size:1.9rem;color:#f4e3a8;line-height:1}.num small{display:block;margin-top:6px;color:#b9a7c9;letter-spacing:.1em;font-size:.62rem}
 .num.v{border-color:#4f9b83;background:linear-gradient(180deg,#1b2420,#171219)}.num.v b{color:#a9f0cf}
+.dos{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.num.np{border-color:#ff6a50;background:linear-gradient(180deg,#ff2400,#b81a0a);box-shadow:0 0 14px rgba(255,36,0,.45)}.num.np b{color:#fff}.num.np small{color:#ffe1db}
+.num.pr{border-color:#6bb8ff;background:linear-gradient(180deg,#0a84ff,#0050b8);box-shadow:0 0 14px rgba(0,127,255,.5)}.num.pr b{color:#fff}.num.pr small{color:#dcedff}
 .atn{display:flex;align-items:center;gap:12px;width:100%;margin-top:16px;border:1px solid #b99635;border-radius:18px;padding:16px;font:inherit;color:#fff7de;font-weight:800;font-size:1.05rem;text-align:left;cursor:pointer;background:linear-gradient(100deg,#c4a03e,#a07c2a 55%,#7f6120);box-shadow:0 8px 22px rgba(0,0,0,.35)}
 .atn .p{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,#e0b83a 60%,#a47d1b);flex:0 0 22px}
 .atn .n{margin-left:auto;background:rgba(255,255,255,.22);border-radius:99px;padding:3px 13px;font-size:.95rem}
@@ -2750,7 +2753,7 @@ function pinta(q,aviso){
     $('atras').onclick=function(){sube('bv');};
   }else{
     var hrn=new Date().getHours(),ico=hrn<12?'🌅':hrn<19?'☀️':'🌙';
-    var tot=q.tot,al=q.altas||0,ba=q.bajas||0,has=(typeof tot==='number');
+    var tot=q.tot,al=q.altas||0,ba=q.bajas||0,has=(typeof tot==='number');var np=q.np||0;
     var ini=has?tot-al:'–',act=has?tot-ba:'–';
     sala.innerHTML=
      '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
@@ -2758,6 +2761,7 @@ function pinta(q,aviso){
      (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
      '<div class="cic" id="cic" style="display:none"><div class="cic-t" id="cicT"></div><div class="cic-b"><i id="cicF"></i></div></div>'+
      (PER?'':'<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>')+
+     (PER||!q.p3||!has?'':'<div class="dos"><div class="num np"><b>'+np+'</b><small>NO PROMOVIDOS</small></div><div class="num pr"><b>'+Math.max(0,act-np)+'</b><small>PROMOVIDOS</small></div></div>')+
      '<button class="atn" id="atn"></button>'+
      '<div class="accesos"><button class="acc" data-o="piz"><span class="i">📌</span><small>Pizarrón</small></button>'+(PER?'':'<a class="acc" id="aCal" href="calificaciones.html'+HR+'"><span class="i">📘</span><small>Calificaciones</small></a>')+
      '<button class="acc" data-o="permisos"><span class="i">🗓️</span><small>Permisos</small></button></div>'+
@@ -2781,7 +2785,7 @@ function busca(){
       if(!r.paquete){if(!c)estado('📭','Tu grupo todavía no está listo','El director aún no lo ha publicado. Intenta más tarde.',true);return;}
       var p=r.paquete,al=p.alumnos||[],es=p.estados||{},ab='';
       ['DIAG','1','2','3'].forEach(function(k){if(!ab&&es[k]==='abierto')ab=k;});
-      var q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,ciclo:p.ciclo,tot:al.length,altas:al.filter(function(x){return x.es_alta}).length,bajas:al.filter(function(x){return x.es_baja}).length,abierto:ab,perfil:p.perfil||''};
+      var q={docente:p.docente,rotulo:p.rotulo,grupo:p.grupo,ciclo:p.ciclo,tot:al.length,altas:al.filter(function(x){return x.es_alta}).length,bajas:al.filter(function(x){return x.es_baja}).length,np:al.filter(function(x){return x.es_np&&!x.es_baja}).length,p3:(es['3']==='blindado'),abierto:ab,perfil:p.perfil||''};
       guardaCache(q);pinta(q);traeAvisos();return;}
     if(r&&r.error==='llave no valida'){borraCache();try{localStorage.removeItem(LL);}catch(e){}estado('🔒','Esta llave ya no está activa','Pídele al director tu enlace nuevo.');return;}
     if(!c)estado('⚠️','No se pudo abrir',esc(String((r&&r.error)||'respuesta rara')),true);})
