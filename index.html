@@ -532,6 +532,8 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .pm-d.pe{background:rgba(226,187,98,.22);color:#f1deaa;border:1px solid rgba(226,187,98,.55);cursor:not-allowed}
 .pm-d.sel{background:linear-gradient(145deg,#f3d388,var(--oro) 50%,var(--oro2));color:#2b1c00;border-color:#fff2c4;box-shadow:0 4px 12px rgba(226,187,98,.45)}
 .pm-d.hoy{box-shadow:0 0 0 2px rgba(31,122,224,.9)}
+.pm-d.ha::before{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#f3ecf7;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.pm-aus{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:.92rem;line-height:1.5;color:#f3ecf7}
 .pm-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.74rem;color:var(--suave)}
 .pm-leyenda i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:5px;vertical-align:-1px}
 .pm-n{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
@@ -927,6 +929,15 @@ function pmHist(lista){
   var h='<div class="pm-sec">Mis solicitudes</div>';
   if(!lista.length)return h+'<div class="pm-card"><p class="pm-vacio">Todavía no has solicitado nada.</p></div>';
   return h+lista.map(pmPedido).join('');}
+/* Ladrillo598: cuantas ausencias hay esos dias. Solo el NUMERO (sin tipos, sin nombres): ninguno se entera de quien anda con licencia o incapacidad. */
+function pmAusMsg(fl,D){
+  var au=(D&&D.i&&D.i.aus)||{},DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],ls=[];
+  fl=fl||[];
+  fl.forEach(function(f){var n=Number(au[f])||0;if(n>0)ls.push({f:f,n:n});});
+  if(!ls.length)return '';
+  var tx=function(n){return n+(n===1?' ausencia':' ausencias');};
+  if(fl.length===1){var d=pmD(ls[0].f);return '<div class="pm-aus">El '+d.getDate()+' de '+PM_MES[d.getMonth()]+' hay '+tx(ls[0].n)+'.</div>';}
+  return '<div class="pm-aus">'+ls.map(function(x){var d=pmD(x.f),t=DN[d.getDay()];return t.charAt(0).toUpperCase()+t.slice(1)+' '+d.getDate()+': '+tx(x.n);}).join(' · ')+'</div>';}
 function pmMesVista(D){
   var m=PM.mes,y=m.getFullYear(),mo=m.getMonth(),prim=new Date(y,mo,1),dias=new Date(y,mo+1,0).getDate(),ini=PM.ini;
   var rango=ini&&pmNOk(ini,PM.n,D)?pmRango(ini,PM.n,D):(ini?pmRango(ini,1,D):[]);
@@ -941,6 +952,7 @@ function pmMesVista(D){
     else if(D.esp[f])cl+=' esp';
     if(set[f])cl+=' sel';
     if(+dt===+D.hoy)cl+=' hoy';
+    if(((D.i||{}).aus||{})[f]>0)cl+=' ha';
     h+='<button class="'+cl+'" '+(dis?'disabled':'data-f="'+f+'"')+'>'+d+'</button>';}
   return h+'</div>';}
 function pmNuevo(tp){PM.atras=false;PM.tipo=tp;PM.paso=1;PM.ini=null;PM.n=1;PM.mes=null;PM.motivo='';PM.nota='';pintaPerm();try{window.scrollTo(0,0);}catch(e2){}}
@@ -962,7 +974,7 @@ function pmPedirVista(){
    '<div class="pm-nav"><button id="pmPrev"'+(dPrev?' disabled':'')+' aria-label="Mes anterior">‹</button><b>'+PM_MES[pm.getMonth()]+' '+pm.getFullYear()+'</b><button id="pmSig"'+(dSig?' disabled':'')+' aria-label="Mes siguiente">›</button></div>'+
    pmMesVista(D)+
    '<div class="pm-leyenda"><span><i style="background:rgba(255,255,255,.13)"></i>Disponible</span><span><i style="background:rgba(0,0,0,.5)"></i>No se puede</span>'+
-   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span></div>'+
+   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span><span><i style="background:#f3ecf7;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
    (PM.atras?'<div class="pm-aviso" style="margin-top:12px">Estás solicitando días que <b>ya pasaron</b>. El director lo verá marcado como extemporáneo y decidirá.</div><button class="pm-b" data-pm="atras" style="margin-top:10px">Volver a solo días que faltan</button>'
             :'<button class="pm-b" data-pm="atras" style="margin-top:12px;width:100%">Mi solicitud es de días que ya pasaron</button>');
   if(PM.ini){
@@ -971,6 +983,7 @@ function pmPedirVista(){
     for(var n=1;n<=max;n++)h+='<button data-n="'+n+'"'+(n===PM.n?' class="on"':'')+(pmNOk(PM.ini,n,D)?'':' disabled')+'>'+n+'</button>';
     h+='</div>';
     var r=ok?pmRango(PM.ini,PM.n,D):null;
+    h+=pmAusMsg(r||pmRango(PM.ini,1,D),D);
     if(r)h+='<div class="pm-resu">'+esc(pmTxt(r))+'<small>'+r.length+(r.length===1?' día':' días')+(es?' · te quedarán '+Math.max(0,D.rest-r.length)+' de tus permisos':'')+'</small></div>';
     else h+='<div class="pm-aviso">Con ese primer día no alcanzan los días libres. Prueba con otro día.</div>';
     if(!es)h+='<div class="pm-aviso" style="margin:12px 0 0">📄 Recuerda: entrega a la Dirección una copia del comprobante de tu trámite en la Secretaría de Educación o en sus dependencias.</div>';
@@ -2613,7 +2626,7 @@ function bibLee(i){
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var CAL_DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ef8a1d',cie:'#a98aff'};
+var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ef8a1d',cie:'#a98aff',ag:'#19d3e6',al:'#8b5cf6',ai:'#e0338a'};
 function calNom(r){var u=String(r||'').toUpperCase().trim();
   if(u==='REGISTRO CALIF')return ['Descarga','Registro de calificaciones · no hay clases'];
   if(u==='CTE INTENSIVO')return ['CTE intensivo','Consejo Técnico Escolar intensivo · no hay clases'];
@@ -2623,6 +2636,7 @@ var CAL_FEST={'DIA DE MUERTOS':'Día de Muertos','ANO NUEVO':'Año Nuevo','REVOL
 function calFest(r){var s=String(r||'').trim();if(!s)return ['Sin clases','Vacaciones, receso o día festivo'];return [CAL_FEST[s.toUpperCase()]||s,'No hay clases'];}
 function calEventos(){
   var ev={},i=PM.info||{},desde=i.desde||'',hasta=i.hasta||'',esp={};
+  var _ac=i.aus_col||{};if(_ac.e)CAL_COL.per=_ac.e;if(_ac.g)CAL_COL.ag=_ac.g;if(_ac.l)CAL_COL.al=_ac.l;if(_ac.i)CAL_COL.ai=_ac.i;   /* Ladrillo598: los colores los manda la corona */
   function add(f,o){(ev[f]=ev[f]||[]).push(o);}
   (i.especiales||[]).forEach(function(e){var n=calNom(e.r);esp[e.f]=1;add(e.f,{k:'esc',t:n[0],s:n[1]});});
   (i.inhabiles||[]).forEach(function(f){
@@ -2637,9 +2651,12 @@ function calEventos(){
     else{t='Cierre del '+String(p.n||c).toLowerCase();s='Fecha de cierre de calificaciones';}
     add(String(p.f).slice(0,10),{k:'cie',t:t,s:s});});
   (i.tomados||[]).forEach(function(f){add(f,{k:'per',t:'Tu permiso económico',s:'Día aprobado'});});
+  var _mi=i.mias||{};Object.keys(_mi).forEach(function(f){var k=_mi[f];   /* Ladrillo598: sus propias ausencias, con su color */
+    if(k==='l')add(f,{k:'al',t:'Tu licencia',s:'Día registrado por la Dirección'});
+    else if(k==='i')add(f,{k:'ai',t:'Tu incapacidad',s:'Día registrado por la Dirección'});});
   (PM.mis||[]).forEach(function(s){if(s.tipo==='constancia')return;
     if(s.estado==='pendiente')(s.fechas||[]).forEach(function(f){add(f,{k:'per',t:(s.tipo==='gestoria'?'Gestoría':'Permiso')+' en revisión',s:'Espera la respuesta del director'});});
-    else if(s.estado==='aprobado'&&s.tipo==='gestoria')(s.fechas||[]).forEach(function(f){add(f,{k:'per',t:'Gestoría aprobada',s:'Día aprobado'});});});
+    else if(s.estado==='aprobado'&&s.tipo==='gestoria')(s.fechas||[]).forEach(function(f){add(f,{k:'ag',t:'Gestoría aprobada',s:'Día aprobado'});});});
   return ev;}
 function calMesIni(){
   var i=PM.info||{},hoy=new Date(),m=new Date(hoy.getFullYear(),hoy.getMonth(),1);
@@ -2663,7 +2680,7 @@ function pintaCal(){
   else if(CAL.err&&!i)h+='<div class="pm-aviso">'+esc(CAL.err)+'</div><div class="en-act"><button class="pm-b" id="caRei">↻ Intentar otra vez</button></div>';
   else{
     if(!CAL.mes)CAL.mes=calMesIni();
-    var ev=calEventos(),M=CAL.mes,y=M.getFullYear(),m=M.getMonth(),n=new Date(y,m+1,0).getDate(),lead=(new Date(y,m,1).getDay()+6)%7;
+    var mk={},ev=calEventos(),M=CAL.mes,y=M.getFullYear(),m=M.getMonth(),n=new Date(y,m+1,0).getDate(),lead=(new Date(y,m,1).getDay()+6)%7;
     var a=i&&i.desde?pmD(i.desde):null,b=i&&i.hasta?pmD(i.hasta):null,hoy=new Date(),hi=pmIso(hoy);
     var antes=a&&new Date(y,m,0)<new Date(a.getFullYear(),a.getMonth(),1),despues=b&&new Date(y,m+1,1)>b;
     var dis1=(a&&new Date(y,m-1,1)<new Date(a.getFullYear(),a.getMonth(),1))?' disabled':'',dis2=(b&&new Date(y,m+1,1)>new Date(b.getFullYear(),b.getMonth(),1))?' disabled':'';
@@ -2675,10 +2692,10 @@ function pintaCal(){
     for(var d=1;d<=n;d++){
       var f=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2),dw=new Date(y,m,d).getDay(),L=ev[f]||[],cl='cd',ks={};
       if(dw===0||dw===6)cl+=' fin';if(f===hi)cl+=' hoy';
-      L.forEach(function(e){ks[e.k]=1;});if(ks.esc)cl+=' susp';
-      var pts=['esc','ent','cie','per'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+'"></i>';}).join('');
+      L.forEach(function(e){ks[e.k]=1;mk[e.k]=1;});if(ks.esc)cl+=' susp';
+      var pts=['esc','ent','cie','per','ag','al','ai'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+'"></i>';}).join('');
       h+='<button class="'+cl+'" data-d="'+f+'">'+d+(pts?'<span class="p">'+pts+'</span>':'')+'</button>';}
-    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span></div>';
+    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span>'+(mk.ag?'<span><i style="background:'+CAL_COL.ag+'"></i>Gestoría</span>':'')+(mk.al?'<span><i style="background:'+CAL_COL.al+'"></i>Licencia</span>':'')+(mk.ai?'<span><i style="background:'+CAL_COL.ai+'"></i>Incapacidad</span>':'')+'</div>';
     var prox=[];Object.keys(ev).sort().forEach(function(f){if(f<hi)return;ev[f].forEach(function(e){if(!e.n)prox.push({f:f,e:e});});});
     prox=prox.slice(0,4);
     h+='<div class="pm-sec">Lo que sigue</div>';
