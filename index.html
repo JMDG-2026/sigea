@@ -530,6 +530,7 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .pm-d.esp{border:1px dashed var(--oro)}
 .pm-d.oc{background:rgba(31,166,115,.28);color:#a9f0cf;border:1px solid rgba(31,166,115,.6);cursor:not-allowed}
 .pm-d.pe{background:rgba(226,187,98,.22);color:#f1deaa;border:1px solid rgba(226,187,98,.55);cursor:not-allowed}
+.pm-d.al{color:#fff;border:1px solid rgba(255,255,255,.4);cursor:not-allowed}
 .pm-d.sel{background:linear-gradient(145deg,#f3d388,var(--oro) 50%,var(--oro2));color:#2b1c00;border-color:#fff2c4;box-shadow:0 4px 12px rgba(226,187,98,.45)}
 .pm-d.hoy{box-shadow:0 0 0 2px rgba(31,122,224,.9)}
 .pm-d.ha::before{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#b8ff2e;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
@@ -838,8 +839,10 @@ function pmDatos(){
       else if(s.estado==='aprobado'&&s.tipo===PM.tipo&&s.tipo==='gestoria')oc[f]=1;});
     if(s.estado==='pendiente'&&s.tipo==='permiso')pendDias+=Number(s.dias)||0;});
   if(PM.tipo==='permiso')Object.keys(tom).forEach(function(f){oc[f]=1;});
+  var mi=i.mias||{},al={},pro={};Object.keys(mi).forEach(function(f){pro[f]=1;if(mi[f]==='l'||mi[f]==='i')al[f]=mi[f];});   /* Ladrillo600 */
+  Object.keys(tom).forEach(function(f){pro[f]=1;});
   var rest=Math.max(0,(Number(i.restante)||0)-pendDias);
-  return {i:i,inh:inh,esp:esp,oc:oc,pe:pe,hoy:hoy,rest:rest,pendDias:pendDias,
+  return {i:i,inh:inh,esp:esp,oc:oc,pe:pe,al:al,pro:pro,hoy:hoy,rest:rest,pendDias:pendDias,
     desde:i.desde?pmD(i.desde):null,hasta:i.hasta?pmD(i.hasta):null};}
 function pmHabil(d,D){var f=pmIso(d);if(d.getDay()===0||d.getDay()===6)return false;if(D.inh[f])return false;
   if(D.desde&&d<D.desde)return false;if(D.hasta&&d>D.hasta)return false;return true;}
@@ -848,7 +851,7 @@ function pmRango(ini,n,D){var r=[],d=pmD(ini),v=0;
   return r.length===n?r:null;}
 function pmMaxN(D){return PM.tipo==='permiso'?Math.min(3,D.rest):3;}
 function pmNOk(ini,n,D){var r=pmRango(ini,n,D);if(!r)return false;
-  return r.every(function(f){return !D.oc[f]&&!D.pe[f];});}
+  return r.every(function(f){return !D.oc[f]&&!D.pe[f]&&!D.al[f];});}
 function pmCarga(){
   if(!B||!K)return;PM.cargando=true;PM.err='';if(VISTA==='perm')pintaPerm();
   Promise.all([llama('perm_info'),llama('perm_mis')]).then(function(rs){PM.cargando=false;
@@ -932,10 +935,18 @@ function pmHist(lista){
   if(!lista.length)return h+'<div class="pm-card"><p class="pm-vacio">Todavía no has solicitado nada.</p></div>';
   return h+lista.map(pmPedido).join('');}
 /* Ladrillo598: cuantas ausencias hay esos dias. Solo el NUMERO (sin tipos, sin nombres): ninguno se entera de quien anda con licencia o incapacidad. */
+/* Ladrillo600: sus dias propios (licencia/incapacidad) con su color, y el conteo de ausencias SIN contarse a si mismo. */
+var PM_COL_AL={l:'#8b5cf6',i:'#e0338a'};
+function pmColAl(D,k){var c=((D&&D.i&&D.i.aus_col)||{})[k];return c||PM_COL_AL[k];}
+function pmAusN(f,D){var n=Number((((D&&D.i)||{}).aus||{})[f])||0;if(n>0&&D&&((D.pro&&D.pro[f])||(D.oc&&D.oc[f])))n-=1;return n>0?n:0;}
+function pmLeyAl(D){var s={},h='';Object.keys(D.al||{}).forEach(function(f){s[D.al[f]]=1;});
+  if(s.l)h+='<span><i style="background:'+pmColAl(D,'l')+'"></i>Tu licencia</span>';
+  if(s.i)h+='<span><i style="background:'+pmColAl(D,'i')+'"></i>Tu incapacidad</span>';
+  return h;}
 function pmAusMsg(fl,D){
   var au=(D&&D.i&&D.i.aus)||{},DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],ls=[];
   fl=fl||[];
-  fl.forEach(function(f){var n=Number(au[f])||0;if(n>0)ls.push({f:f,n:n});});
+  fl.forEach(function(f){var n=pmAusN(f,D);if(n>0)ls.push({f:f,n:n});});
   if(!ls.length)return '';
   var tx=function(n){return n+(n===1?' ausencia':' ausencias');};
   if(fl.length===1){var d=pmD(ls[0].f);return '<div class="pm-aus"><span class="pm-pt"></span><span>El <b>'+d.getDate()+' de '+PM_MES[d.getMonth()]+'</b> hay <b>'+tx(ls[0].n)+'</b>.</span></div>';}
@@ -946,16 +957,17 @@ function pmMesVista(D){
   var set={};(rango||[]).forEach(function(f){set[f]=1;});
   var h='<div class="pm-sem">'+['do','lu','ma','mi','ju','vi','sá'].map(function(x){return '<span>'+x+'</span>';}).join('')+'</div><div class="pm-dias">';
   for(var k=0;k<prim.getDay();k++)h+='<span class="pm-d v"></span>';
-  for(var d=1;d<=dias;d++){var dt=new Date(y,mo,d),f=pmIso(dt),cl='pm-d',dis=false;
+  for(var d=1;d<=dias;d++){var dt=new Date(y,mo,d),f=pmIso(dt),cl='pm-d',dis=false,stl='';
     var hab=pmHabil(dt,D),pas=(dt<D.hoy&&!PM.atras);
     if(!hab||pas){cl+=' no';dis=true;}
     else if(D.oc[f]){cl+=' oc';dis=true;}
     else if(D.pe[f]){cl+=' pe';dis=true;}
+    else if(D.al[f]){cl+=' al';dis=true;stl=' style="background:'+pmColAl(D,D.al[f])+'"';}
     else if(D.esp[f])cl+=' esp';
     if(set[f])cl+=' sel';
     if(+dt===+D.hoy)cl+=' hoy';
-    if(((D.i||{}).aus||{})[f]>0)cl+=' ha';
-    h+='<button class="'+cl+'" '+(dis?'disabled':'data-f="'+f+'"')+'>'+d+'</button>';}
+    if(pmAusN(f,D)>0)cl+=' ha';
+    h+='<button class="'+cl+'"'+stl+' '+(dis?'disabled':'data-f="'+f+'"')+'>'+d+'</button>';}
   return h+'</div>';}
 function pmNuevo(tp){PM.atras=false;PM.tipo=tp;PM.paso=1;PM.ini=null;PM.n=1;PM.mes=null;PM.motivo='';PM.nota='';pintaPerm();try{window.scrollTo(0,0);}catch(e2){}}
 function pmAvisoGestoria(){
@@ -976,7 +988,7 @@ function pmPedirVista(){
    '<div class="pm-nav"><button id="pmPrev"'+(dPrev?' disabled':'')+' aria-label="Mes anterior">‹</button><b>'+PM_MES[pm.getMonth()]+' '+pm.getFullYear()+'</b><button id="pmSig"'+(dSig?' disabled':'')+' aria-label="Mes siguiente">›</button></div>'+
    pmMesVista(D)+
    '<div class="pm-leyenda"><span><i style="background:rgba(255,255,255,.13)"></i>Disponible</span><span><i style="background:rgba(0,0,0,.5)"></i>No se puede</span>'+
-   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span><span><i style="background:#b8ff2e;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
+   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span>'+pmLeyAl(D)+'<span><i style="background:#b8ff2e;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
    (PM.atras?'<div class="pm-aviso" style="margin-top:12px">Estás solicitando días que <b>ya pasaron</b>. El director lo verá marcado como extemporáneo y decidirá.</div><button class="pm-b" data-pm="atras" style="margin-top:10px">Volver a solo días que faltan</button>'
             :'<button class="pm-b" data-pm="atras" style="margin-top:12px;width:100%">Mi solicitud es de días que ya pasaron</button>');
   if(PM.ini){
