@@ -936,7 +936,9 @@ function pmHist(lista){
   return h+lista.map(pmPedido).join('');}
 /* Ladrillo598: cuantas ausencias hay esos dias. Solo el NUMERO (sin tipos, sin nombres): ninguno se entera de quien anda con licencia o incapacidad. */
 /* Ladrillo600: sus dias propios (licencia/incapacidad) con su color, y el conteo de ausencias SIN contarse a si mismo. */
-var PM_COL_AL={l:'#8b5cf6',i:'#e0338a'};
+var PM_COL_AL={e:'#ff8a1f',g:'#19d3e6',l:'#8b5cf6',i:'#e0338a'};   /* Ladrillo601: los mismos de la corona */
+function pmKT(){return PM.tipo==='gestoria'?'g':'e';}
+function pmTenue(c){var m=/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(c||''));if(!m)return c;return 'rgba('+parseInt(m[1],16)+','+parseInt(m[2],16)+','+parseInt(m[3],16)+',.38)';}
 function pmColAl(D,k){var c=((D&&D.i&&D.i.aus_col)||{})[k];return c||PM_COL_AL[k];}
 function pmAusN(f,D){var n=Number((((D&&D.i)||{}).aus||{})[f])||0;if(n>0&&D&&((D.pro&&D.pro[f])||(D.oc&&D.oc[f])))n-=1;return n>0?n:0;}
 function pmLeyAl(D){var s={},h='';Object.keys(D.al||{}).forEach(function(f){s[D.al[f]]=1;});
@@ -960,8 +962,8 @@ function pmMesVista(D){
   for(var d=1;d<=dias;d++){var dt=new Date(y,mo,d),f=pmIso(dt),cl='pm-d',dis=false,stl='';
     var hab=pmHabil(dt,D),pas=(dt<D.hoy&&!PM.atras);
     if(!hab||pas){cl+=' no';dis=true;}
-    else if(D.oc[f]){cl+=' oc';dis=true;}
-    else if(D.pe[f]){cl+=' pe';dis=true;}
+    else if(D.oc[f]){cl+=' oc';dis=true;stl=' style="background:'+pmColAl(D,pmKT())+';border-color:rgba(255,255,255,.4);color:#fff"';}
+    else if(D.pe[f]){cl+=' pe';dis=true;stl=' style="background:'+pmTenue(pmColAl(D,pmKT()))+';border:1px dashed '+pmColAl(D,pmKT())+';color:#fff"';}
     else if(D.al[f]){cl+=' al';dis=true;stl=' style="background:'+pmColAl(D,D.al[f])+'"';}
     else if(D.esp[f])cl+=' esp';
     if(set[f])cl+=' sel';
@@ -988,7 +990,7 @@ function pmPedirVista(){
    '<div class="pm-nav"><button id="pmPrev"'+(dPrev?' disabled':'')+' aria-label="Mes anterior">‹</button><b>'+PM_MES[pm.getMonth()]+' '+pm.getFullYear()+'</b><button id="pmSig"'+(dSig?' disabled':'')+' aria-label="Mes siguiente">›</button></div>'+
    pmMesVista(D)+
    '<div class="pm-leyenda"><span><i style="background:rgba(255,255,255,.13)"></i>Disponible</span><span><i style="background:rgba(0,0,0,.5)"></i>No se puede</span>'+
-   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span>'+pmLeyAl(D)+'<span><i style="background:#b8ff2e;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
+   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:'+pmTenue(pmColAl(D,pmKT()))+';border:1px dashed '+pmColAl(D,pmKT())+'"></i>En revisión</span><span><i style="background:'+pmColAl(D,pmKT())+'"></i>Ya tomado</span>'+pmLeyAl(D)+'<span><i style="background:#b8ff2e;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
    (PM.atras?'<div class="pm-aviso" style="margin-top:12px">Estás solicitando días que <b>ya pasaron</b>. El director lo verá marcado como extemporáneo y decidirá.</div><button class="pm-b" data-pm="atras" style="margin-top:10px">Volver a solo días que faltan</button>'
             :'<button class="pm-b" data-pm="atras" style="margin-top:12px;width:100%">Mi solicitud es de días que ya pasaron</button>');
   if(PM.ini){
@@ -2640,7 +2642,7 @@ function bibLee(i){
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var CAL_DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ef8a1d',cie:'#a98aff',ag:'#19d3e6',al:'#8b5cf6',ai:'#e0338a'};
+var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ff8a1f',cie:'#a98aff',ag:'#19d3e6',al:'#8b5cf6',ai:'#e0338a'};
 function calNom(r){var u=String(r||'').toUpperCase().trim();
   if(u==='REGISTRO CALIF')return ['Descarga','Registro de calificaciones · no hay clases'];
   if(u==='CTE INTENSIVO')return ['CTE intensivo','Consejo Técnico Escolar intensivo · no hay clases'];
@@ -2651,6 +2653,7 @@ function calFest(r){var s=String(r||'').trim();if(!s)return ['Sin clases','Vacac
 function calEventos(){
   var ev={},i=PM.info||{},desde=i.desde||'',hasta=i.hasta||'',esp={};
   var _ac=i.aus_col||{};if(_ac.e)CAL_COL.per=_ac.e;if(_ac.g)CAL_COL.ag=_ac.g;if(_ac.l)CAL_COL.al=_ac.l;if(_ac.i)CAL_COL.ai=_ac.i;   /* Ladrillo598: los colores los manda la corona */
+  CAL_COL.pp=pmTenue(CAL_COL.per);CAL_COL.pg=pmTenue(CAL_COL.ag);   /* Ladrillo601: en revision = su color mas tenue */
   function add(f,o){(ev[f]=ev[f]||[]).push(o);}
   (i.especiales||[]).forEach(function(e){var n=calNom(e.r);esp[e.f]=1;add(e.f,{k:'esc',t:n[0],s:n[1]});});
   (i.inhabiles||[]).forEach(function(f){
@@ -2669,7 +2672,7 @@ function calEventos(){
     if(k==='l')add(f,{k:'al',t:'Tu licencia',s:'Día registrado por la Dirección'});
     else if(k==='i')add(f,{k:'ai',t:'Tu incapacidad',s:'Día registrado por la Dirección'});});
   (PM.mis||[]).forEach(function(s){if(s.tipo==='constancia')return;
-    if(s.estado==='pendiente')(s.fechas||[]).forEach(function(f){add(f,{k:'per',t:(s.tipo==='gestoria'?'Gestoría':'Permiso')+' en revisión',s:'Espera la respuesta del director'});});
+    if(s.estado==='pendiente')(s.fechas||[]).forEach(function(f){add(f,{k:(s.tipo==='gestoria'?'pg':'pp'),t:(s.tipo==='gestoria'?'Gestoría':'Permiso')+' en revisión',s:'Espera la respuesta del director'});});
     else if(s.estado==='aprobado'&&s.tipo==='gestoria')(s.fechas||[]).forEach(function(f){add(f,{k:'ag',t:'Gestoría aprobada',s:'Día aprobado'});});});
   return ev;}
 function calMesIni(){
@@ -2707,9 +2710,9 @@ function pintaCal(){
       var f=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2),dw=new Date(y,m,d).getDay(),L=ev[f]||[],cl='cd',ks={};
       if(dw===0||dw===6)cl+=' fin';if(f===hi)cl+=' hoy';
       L.forEach(function(e){ks[e.k]=1;mk[e.k]=1;});if(ks.esc)cl+=' susp';
-      var pts=['esc','ent','cie','per','ag','al','ai'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+'"></i>';}).join('');
+      var pts=['esc','ent','cie','per','ag','al','ai','pp','pg'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+(c==='pp'?';box-shadow:0 0 0 1px '+CAL_COL.per:c==='pg'?';box-shadow:0 0 0 1px '+CAL_COL.ag:'')+'"></i>';}).join('');
       h+='<button class="'+cl+'" data-d="'+f+'">'+d+(pts?'<span class="p">'+pts+'</span>':'')+'</button>';}
-    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span>'+(mk.ag?'<span><i style="background:'+CAL_COL.ag+'"></i>Gestoría</span>':'')+(mk.al?'<span><i style="background:'+CAL_COL.al+'"></i>Licencia</span>':'')+(mk.ai?'<span><i style="background:'+CAL_COL.ai+'"></i>Incapacidad</span>':'')+'</div>';
+    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span>'+((mk.ag||mk.pg)?'<span><i style="background:'+CAL_COL.ag+'"></i>Gestoría</span>':'')+(mk.al?'<span><i style="background:'+CAL_COL.al+'"></i>Licencia</span>':'')+(mk.ai?'<span><i style="background:'+CAL_COL.ai+'"></i>Incapacidad</span>':'')+((mk.pp||mk.pg)?'<span><i style="background:'+(mk.pp?CAL_COL.pp:CAL_COL.pg)+'"></i>En revisión</span>':'')+'</div>';
     var prox=[];Object.keys(ev).sort().forEach(function(f){if(f<hi)return;ev[f].forEach(function(e){if(!e.n)prox.push({f:f,e:e});});});
     prox=prox.slice(0,4);
     h+='<div class="pm-sec">Lo que sigue</div>';
