@@ -538,6 +538,8 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .pm-aus b{color:#d9ff8a;font-size:1.05em}
 .pm-pt{flex:none;width:12px;height:12px;border-radius:50%;background:#b8ff2e;box-shadow:0 0 0 2px rgba(20,28,4,.9),0 0 9px 2px rgba(184,255,46,.75)}
 .pm-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.74rem;color:var(--suave)}
+.evch{display:flex;gap:10px;align-items:center;margin:10px 0 0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid var(--evc,#999);font-size:.92rem;color:#fff}
+.evch .t{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--evc,#999);min-width:58px}
 .pm-leyenda i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:5px;vertical-align:-1px}
 .pm-n{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
 .pm-n button{min-width:54px;height:44px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:800;font-size:1rem;cursor:pointer}
@@ -2642,7 +2644,7 @@ function bibLee(i){
 var CAL={mes:null,cargando:false,err:''};
 var CAL_MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var CAL_DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ff8a1f',cie:'#a98aff',ag:'#19d3e6',al:'#8b5cf6',ai:'#e0338a'};
+var CAL_COL={esc:'#e2bb62',ent:'#1fa673',per:'#ff8a1f',cie:'#a98aff',ag:'#19d3e6',al:'#8b5cf6',ai:'#e0338a',ev:'#999'};
 function calNom(r){var u=String(r||'').toUpperCase().trim();
   if(u==='REGISTRO CALIF')return ['Descarga','Registro de calificaciones · no hay clases'];
   if(u==='CTE INTENSIVO')return ['CTE intensivo','Consejo Técnico Escolar intensivo · no hay clases'];
@@ -2653,7 +2655,7 @@ function calFest(r){var s=String(r||'').trim();if(!s)return ['Sin clases','Vacac
 function calEventos(){
   var ev={},i=PM.info||{},desde=i.desde||'',hasta=i.hasta||'',esp={};
   var _ac=i.aus_col||{};if(_ac.e)CAL_COL.per=_ac.e;if(_ac.g)CAL_COL.ag=_ac.g;if(_ac.l)CAL_COL.al=_ac.l;if(_ac.i)CAL_COL.ai=_ac.i;   /* Ladrillo598: los colores los manda la corona */
-  CAL_COL.pp=pmTenue(CAL_COL.per);CAL_COL.pg=pmTenue(CAL_COL.ag);   /* Ladrillo601: en revision = su color mas tenue */
+  CAL_COL.pp=pmTenue(CAL_COL.per);CAL_COL.pg=pmTenue(CAL_COL.ag);if(i.evc_col)CAL_COL.ev=i.evc_col;   /* Ladrillo604: el color de los eventos lo manda la corona */   /* Ladrillo601: en revision = su color mas tenue */
   function add(f,o){(ev[f]=ev[f]||[]).push(o);}
   (i.especiales||[]).forEach(function(e){var n=calNom(e.r);esp[e.f]=1;add(e.f,{k:'esc',t:n[0],s:n[1]});});
   (i.inhabiles||[]).forEach(function(f){
@@ -2668,6 +2670,8 @@ function calEventos(){
     else{t='Cierre del '+String(p.n||c).toLowerCase();s='Fecha de cierre de calificaciones';}
     add(String(p.f).slice(0,10),{k:'cie',t:t,s:s});});
   (i.tomados||[]).forEach(function(f){add(f,{k:'per',t:'Tu permiso económico',s:'Día aprobado'});});
+  (i.evs||[]).forEach(function(v){var a=String(v.f||'').slice(0,10),z=String(v.g||a).slice(0,10);if(!a)return;   /* Ladrillo604: eventos del Pizarron */
+    var d=pmD(a),fin=pmD(z),k=0;while(d<=fin&&k<62){add(pmIso(d),{k:'ev',t:v.t||'Evento',s:'Aviso de la Dirección'+(v.h?' · '+v.h:'')});d=pmSuma(d,1);k++;}});
   var _mi=i.mias||{};Object.keys(_mi).forEach(function(f){var k=_mi[f];   /* Ladrillo598: sus propias ausencias, con su color */
     if(k==='l')add(f,{k:'al',t:'Tu licencia',s:'Día registrado por la Dirección'});
     else if(k==='i')add(f,{k:'ai',t:'Tu incapacidad',s:'Día registrado por la Dirección'});});
@@ -2710,9 +2714,9 @@ function pintaCal(){
       var f=y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2),dw=new Date(y,m,d).getDay(),L=ev[f]||[],cl='cd',ks={};
       if(dw===0||dw===6)cl+=' fin';if(f===hi)cl+=' hoy';
       L.forEach(function(e){ks[e.k]=1;mk[e.k]=1;});if(ks.esc)cl+=' susp';
-      var pts=['esc','ent','cie','per','ag','al','ai','pp','pg'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+(c==='pp'?';box-shadow:0 0 0 1px '+CAL_COL.per:c==='pg'?';box-shadow:0 0 0 1px '+CAL_COL.ag:'')+'"></i>';}).join('');
+      var pts=['esc','ent','cie','per','ag','al','ai','pp','pg','ev'].filter(function(c){return ks[c];}).map(function(c){return '<i style="background:'+CAL_COL[c]+(c==='pp'?';box-shadow:0 0 0 1px '+CAL_COL.per:c==='pg'?';box-shadow:0 0 0 1px '+CAL_COL.ag:'')+'"></i>';}).join('');
       h+='<button class="'+cl+'" data-d="'+f+'">'+d+(pts?'<span class="p">'+pts+'</span>':'')+'</button>';}
-    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span>'+((mk.ag||mk.pg)?'<span><i style="background:'+CAL_COL.ag+'"></i>Gestoría</span>':'')+(mk.al?'<span><i style="background:'+CAL_COL.al+'"></i>Licencia</span>':'')+(mk.ai?'<span><i style="background:'+CAL_COL.ai+'"></i>Incapacidad</span>':'')+((mk.pp||mk.pg)?'<span><i style="background:'+(mk.pp?CAL_COL.pp:CAL_COL.pg)+'"></i>En revisión</span>':'')+'</div>';
+    h+='</div><div class="ca-ley"><span><i style="background:'+CAL_COL.esc+'"></i>Escuela</span><span><i style="background:'+CAL_COL.ent+'"></i>Entregas</span><span><i style="background:'+CAL_COL.cie+'"></i>Cierres</span><span><i style="background:'+CAL_COL.per+'"></i>Tus permisos</span>'+((mk.ag||mk.pg)?'<span><i style="background:'+CAL_COL.ag+'"></i>Gestoría</span>':'')+(mk.al?'<span><i style="background:'+CAL_COL.al+'"></i>Licencia</span>':'')+(mk.ai?'<span><i style="background:'+CAL_COL.ai+'"></i>Incapacidad</span>':'')+((mk.pp||mk.pg)?'<span><i style="background:'+(mk.pp?CAL_COL.pp:CAL_COL.pg)+'"></i>En revisión</span>':'')+(mk.ev?'<span><i style="background:'+CAL_COL.ev+'"></i>Eventos</span>':'')+'</div>';
     var prox=[];Object.keys(ev).sort().forEach(function(f){if(f<hi)return;ev[f].forEach(function(e){if(!e.n)prox.push({f:f,e:e});});});
     prox=prox.slice(0,4);
     h+='<div class="pm-sec">Lo que sigue</div>';
@@ -2748,7 +2752,16 @@ function cicloCalc(){var i=PM.info;if(!i||!i.desde||!i.hasta)return null;var D=p
   var tot=0,el=0,d=new Date(D.desde.getFullYear(),D.desde.getMonth(),D.desde.getDate()),v=0;
   while(d<=D.hasta&&v<500){var f=pmIso(d);if(d.getDay()!==0&&d.getDay()!==6&&!D.inh[f]&&!D.esp[f]){tot++;if(d<=D.hoy)el++;}d=pmSuma(d,1);v++;}
   if(!tot)return null;var fin=D.hoy>D.hasta;return {el:fin?tot:el,tot:tot,pct:fin?100:Math.round(el*100/tot),fin:fin};}
-function cicloPinta(){var e=$('cic');if(!e)return;var c=cicloCalc();if(!c){e.style.display='none';return;}
+/* Ladrillo604: «HOY» y «MAÑANA» en la bienvenida, con los eventos del Pizarron que caen esos dias (maximo 3). Sin eventos, no sale nada. */
+function evHoyPinta(){var e=$('evHoy');if(!e)return;var i=PM.info;
+  if(!i||!i.evs||!i.evs.length){e.innerHTML='';return;}
+  var h0=new Date(),hoy=pmIso(h0),man=pmIso(pmSuma(h0,1)),L=[];
+  i.evs.forEach(function(v){var f=String(v.f||'').slice(0,10),g=String(v.g||f).slice(0,10);
+    if(f<=hoy&&hoy<=g)L.push({c:'Hoy',v:v,g:g});else if(f<=man&&man<=g)L.push({c:'Mañana',v:v,g:g});});
+  var col=i.evc_col||'#999';
+  e.innerHTML=L.slice(0,3).map(function(x){var fin=(x.g&&x.v.f&&x.g!==String(x.v.f).slice(0,10))?' · hasta el '+pmD(x.g).getDate():'';
+    return '<div class="evch" style="--evc:'+col+'"><span class="t">'+x.c+'</span><span>'+esc(x.v.t||'Evento')+(x.v.h?' · '+esc(x.v.h):'')+esc(fin)+'</span></div>';}).join('');}
+function cicloPinta(){try{evHoyPinta();}catch(x){}var e=$('cic');if(!e)return;var c=cicloCalc();if(!c){e.style.display='none';return;}
   $('cicT').textContent=c.fin?'✅ Ciclo concluido · 100%':('día '+c.el+' de '+c.tot+' · '+c.pct+'%');e.style.display='';
   setTimeout(function(){var f=$('cicF');if(f)f.style.width=c.pct+'%';},120);}
 function cicloVe(){cicloPinta();if(PM.info||CIC.cargando||CIC.probado||!B||!K)return;CIC.cargando=true;
@@ -2793,7 +2806,7 @@ function pinta(q,aviso){
      '<div class="bv"><h1><span>'+ico+'</span>'+esc(saludoHora()+', '+w.saludo)+'</h1>'+
      '<p class="fecha">'+esc(fechaHoy())+'</p><p class="ciclo">'+esc((q.ciclo?'Ciclo '+q.ciclo.replace('-',' — ')+(gtxt?' · ':''):'')+gtxt)+'</p>'+
      (w.completo?'<p class="nom">'+esc(w.completo)+'</p>':'')+'</div>'+
-     '<div class="cic" id="cic" style="display:none"><div class="cic-t" id="cicT"></div><div class="cic-b"><i id="cicF"></i></div></div>'+
+     '<div class="cic" id="cic" style="display:none"><div class="cic-t" id="cicT"></div><div class="cic-b"><i id="cicF"></i></div></div>'+'<div id="evHoy"></div>'+
      (PER?'':'<div class="cuatro"><div class="num"><b>'+ini+'</b><small>INICIAL</small></div><div class="num"><b>'+(has?al:'–')+'</b><small>ALTAS</small></div><div class="num"><b>'+(has?ba:'–')+'</b><small>BAJAS</small></div><div class="num v"><b>'+act+'</b><small>ACTIVOS</small></div></div>')+
      (PER||!q.p3||!has?'':'<div class="dos"><div class="num np"><b>'+np+'</b><small>NO PROMOVIDOS</small></div><div class="num pr"><b>'+Math.max(0,act-np)+'</b><small>PROMOVIDOS</small></div></div>')+
      '<button class="atn" id="atn"></button>'+
