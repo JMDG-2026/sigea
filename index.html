@@ -11,12 +11,12 @@
 <meta property="og:title" content="TELESECUNDARIA 171 &quot;24 DE FEBRERO&quot;">
 <meta property="og:description" content="Sala del personal.">
 <meta property="og:url" content="https://jmdg-2026.github.io/sigea/">
-<meta property="og:image" content="https://jmdg-2026.github.io/sigea/corona.png">
+<meta property="og:image" content="https://jmdg-2026.github.io/sigea/sigea-og.png">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#091428">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="sigea-icon-192.png">
+<link rel="apple-touch-icon" href="sigea-maskable-192.png">
 <style>
 :root{
   --noche:#091428; --navy:#12234a; --vino:#6d2440; --oro:#e2bb62; --oro2:#a9832f;
@@ -2801,9 +2801,12 @@ function evHoyPinta(){var e=$('evHoy');if(!e)return;var i=PM.info;
   var col=i.evc_col||'#999';
   e.innerHTML=L.slice(0,3).map(function(x){var fin=(x.g&&x.v.f&&x.g!==String(x.v.f).slice(0,10))?' · hasta el '+pmD(x.g).getDate():'';
     return '<div class="evch" style="--evc:'+col+'"><span class="t">'+x.c+'</span><span>'+esc(x.v.t||'Evento')+(x.v.h?' · '+esc(x.v.h):'')+esc(fin)+'</span></div>';}).join('');}
+var CIC_PCT=-1;
 function cicloPinta(){try{evHoyPinta();}catch(x){}try{fraseDiaPinta();}catch(x){}var e=$('cic');if(!e)return;var c=cicloCalc();if(!c){e.style.display='none';return;}
   $('cicT').textContent=c.fin?'✅ Ciclo concluido · 100%':('día '+c.el+' de '+c.tot+' · '+c.pct+'%');e.style.display='';
-  setTimeout(function(){var f=$('cicF');if(f)f.style.width=c.pct+'%';},120);}
+  var f=$('cicF');if(f){var ant=CIC_PCT<0?0:CIC_PCT;CIC_PCT=c.pct;   /* Ladrillo609: la barra recuerda hasta donde estaba y solo recorre la diferencia */
+    f.style.transition='none';f.style.width=ant+'%';void f.offsetWidth;f.style.transition='';
+    setTimeout(function(){var g=$('cicF');if(g)g.style.width=c.pct+'%';},ant===c.pct?0:120);}}
 function cicloVe(){cicloPinta();if(PM.info||CIC.cargando||CIC.probado||!B||!K)return;CIC.cargando=true;
   llama('perm_info').then(function(r){CIC.cargando=false;CIC.probado=true;if(r&&r.ok&&r.info&&!PM.info)PM.info=r.info;cicloPinta();}).catch(function(){CIC.cargando=false;});}
 function pinta(q,aviso){
