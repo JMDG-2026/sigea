@@ -1984,8 +1984,35 @@ function lecVozTexto(){
   }
   return t;
 }
+/* Ladrillo612: LA VOZ LEE LOS ROMANOS COMO NUMEROS. Solo cambia lo que se le da a la voz; la hoja en pantalla no cambia. */
+var LEC_ROM_P=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidós','veintitrés','veinticuatro','veinticinco','veintiséis','veintisiete','veintiocho','veintinueve'];
+var LEC_ROM_D=['','','','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+function lecRomVal(s){
+  if(!s||!/^(?:M{0,3})(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})$/.test(s))return 0;
+  var v={I:1,V:5,X:10,L:50,C:100,D:500,M:1000},n=0,k,a,b;
+  for(k=0;k<s.length;k++){a=v[s.charAt(k)];b=v[s.charAt(k+1)]||0;n+=a<b?-a:a;}
+  return n;
+}
+function lecRomPal(n){
+  if(n<1||n>99)return '';
+  if(n<30)return LEC_ROM_P[n];
+  var d=Math.floor(n/10),u=n%10;return LEC_ROM_D[d]+(u?' y '+LEC_ROM_P[u]:'');
+}
+function lecVozRomanos(t){
+  var K='(?:[Cc]ap[ií]tulos?|[Aa]rt[ií]culos?|[Ss]ecci[oó]n|[Ss]ecciones|[Tt][ií]tulos?|[Ff]racci[oó]n|[Ff]racciones|[Aa]partados?|[Ss]iglos?|[Tt]omo|[Ll]ibro|[Aa]nexo|[Uu]nidad|[Pp]arte)';
+  t=t.replace(new RegExp('(^|[;:!?…]\\s+|\\.\\s+)([IVXLCDM]{1,8})([.)])(?=\\s+[A-ZÁÉÍÓÚÑ¿¡"“(]|\\s*$)','g'),function(m,pre,r,p,off,str){
+    if(r.length===1&&!/[IVX]/.test(r))return m;
+    var w=lecRomPal(lecRomVal(r));if(!w)return m;
+    if(pre.charAt(0)==='.'&&off>0&&/[A-ZÁÉÍÓÚÑ]/.test(str.charAt(off-1))&&(off<2||/\s/.test(str.charAt(off-2))))return m;   /* «J. V. Lopez»: iniciales */
+    return pre+w+p;});
+  t=t.replace(new RegExp('(?<![A-Za-zÁ-ÿ])('+K+')(\\s+)([IVXLCDM]{1,8})(?![A-Za-zÁ-ÿ0-9])','g'),function(m,k,sp,r){
+    if(r.length===1&&!/[IVX]/.test(r))return m;
+    var w=lecRomPal(lecRomVal(r));return w?k+sp+w:m;});
+  return t;
+}
 function lecVozFrases(t){
   t=String(t||'').replace(/[º°]/g,'').replace(/\s+/g,' ').trim();if(!t)return [];
+  t=lecVozRomanos(t);   /* Ladrillo612 */
   var fr=t.split(/(?<=[.;:!?…])\s+/),out=[];
   fr.forEach(function(f){while(f.length>220){var c=f.lastIndexOf(',',220);if(c<60)c=f.lastIndexOf(' ',220);if(c<60)c=220;out.push(f.slice(0,c+1).trim());f=f.slice(c+1).trim();}if(f)out.push(f);});
   return out;
