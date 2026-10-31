@@ -532,8 +532,10 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .pm-d.pe{background:rgba(226,187,98,.22);color:#f1deaa;border:1px solid rgba(226,187,98,.55);cursor:not-allowed}
 .pm-d.sel{background:linear-gradient(145deg,#f3d388,var(--oro) 50%,var(--oro2));color:#2b1c00;border-color:#fff2c4;box-shadow:0 4px 12px rgba(226,187,98,.45)}
 .pm-d.hoy{box-shadow:0 0 0 2px rgba(31,122,224,.9)}
-.pm-d.ha::before{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#f3ecf7;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
-.pm-aus{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:.92rem;line-height:1.5;color:#f3ecf7}
+.pm-d.ha::before{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#b8ff2e;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.pm-aus{margin-top:12px;padding:11px 13px 11px 14px;border-radius:12px;background:linear-gradient(90deg,rgba(184,255,46,.22),rgba(184,255,46,.08));border:1.5px solid #b8ff2e;border-left-width:6px;box-shadow:0 0 14px rgba(184,255,46,.28);font-size:.95rem;line-height:1.5;color:#fff;display:flex;gap:10px;align-items:center}
+.pm-aus b{color:#d9ff8a;font-size:1.05em}
+.pm-pt{flex:none;width:12px;height:12px;border-radius:50%;background:#b8ff2e;box-shadow:0 0 0 2px rgba(20,28,4,.9),0 0 9px 2px rgba(184,255,46,.75)}
 .pm-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:.74rem;color:var(--suave)}
 .pm-leyenda i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:5px;vertical-align:-1px}
 .pm-n{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
@@ -936,8 +938,8 @@ function pmAusMsg(fl,D){
   fl.forEach(function(f){var n=Number(au[f])||0;if(n>0)ls.push({f:f,n:n});});
   if(!ls.length)return '';
   var tx=function(n){return n+(n===1?' ausencia':' ausencias');};
-  if(fl.length===1){var d=pmD(ls[0].f);return '<div class="pm-aus">El '+d.getDate()+' de '+PM_MES[d.getMonth()]+' hay '+tx(ls[0].n)+'.</div>';}
-  return '<div class="pm-aus">'+ls.map(function(x){var d=pmD(x.f),t=DN[d.getDay()];return t.charAt(0).toUpperCase()+t.slice(1)+' '+d.getDate()+': '+tx(x.n);}).join(' · ')+'</div>';}
+  if(fl.length===1){var d=pmD(ls[0].f);return '<div class="pm-aus"><span class="pm-pt"></span><span>El <b>'+d.getDate()+' de '+PM_MES[d.getMonth()]+'</b> hay <b>'+tx(ls[0].n)+'</b>.</span></div>';}
+  return '<div class="pm-aus"><span class="pm-pt"></span><span>'+ls.map(function(x){var d=pmD(x.f),t=DN[d.getDay()];return '<b>'+t.charAt(0).toUpperCase()+t.slice(1)+' '+d.getDate()+'</b>: '+tx(x.n);}).join(' · ')+'</span></div>';}
 function pmMesVista(D){
   var m=PM.mes,y=m.getFullYear(),mo=m.getMonth(),prim=new Date(y,mo,1),dias=new Date(y,mo+1,0).getDate(),ini=PM.ini;
   var rango=ini&&pmNOk(ini,PM.n,D)?pmRango(ini,PM.n,D):(ini?pmRango(ini,1,D):[]);
@@ -974,7 +976,7 @@ function pmPedirVista(){
    '<div class="pm-nav"><button id="pmPrev"'+(dPrev?' disabled':'')+' aria-label="Mes anterior">‹</button><b>'+PM_MES[pm.getMonth()]+' '+pm.getFullYear()+'</b><button id="pmSig"'+(dSig?' disabled':'')+' aria-label="Mes siguiente">›</button></div>'+
    pmMesVista(D)+
    '<div class="pm-leyenda"><span><i style="background:rgba(255,255,255,.13)"></i>Disponible</span><span><i style="background:rgba(0,0,0,.5)"></i>No se puede</span>'+
-   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span><span><i style="background:#f3ecf7;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
+   '<span><i style="background:transparent;border:1px dashed #e2bb62"></i>★ CTE o descarga (sí cuenta)</span><span><i style="background:rgba(226,187,98,.5)"></i>En revisión</span><span><i style="background:rgba(31,166,115,.55)"></i>Ya tomado</span><span><i style="background:#b8ff2e;border-radius:50%;width:7px;height:7px"></i>Hay docentes ausentes</span></div>'+
    (PM.atras?'<div class="pm-aviso" style="margin-top:12px">Estás solicitando días que <b>ya pasaron</b>. El director lo verá marcado como extemporáneo y decidirá.</div><button class="pm-b" data-pm="atras" style="margin-top:10px">Volver a solo días que faltan</button>'
             :'<button class="pm-b" data-pm="atras" style="margin-top:12px;width:100%">Mi solicitud es de días que ya pasaron</button>');
   if(PM.ini){
