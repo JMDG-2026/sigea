@@ -251,7 +251,7 @@ table.rep-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.74
     <button data-m="salir" id="salirB" hidden>🚪 Cerrar sesión</button>
   </div>
   <div class="info" id="info"></div>
-  <div class="hojasbar"><div class="hojas" id="hojas"></div><span class="pill-save pill-fija" id="save2"></span><button class="dic" id="lvCfg" style="display:none" title="Voz, velocidad y pausas del lector">⚙</button><button class="dic" id="leerBtn" style="display:none" title="Leer en voz alta las calificaciones capturadas">🔊 Leer</button><button class="dic" id="lvStop" style="display:none" title="Detener la lectura">⏹</button><button class="dic" id="dicBtn" style="display:none" title="Dictar en la observación que tengas abierta (necesita internet)">🎤 Dictar</button><div class="gmsg" id="gmsg"></div><div class="lvpanel" id="lvPanel" style="display:none"><span class="lvl">Velocidad</span><select id="lvVel"><option value="0.75">Lento</option><option value="1" selected>Normal</option><option value="1.4">Rápido</option></select><span class="lvl">Voz</span><select id="lvVoz"><option value="">Automática</option></select><span class="lvl">Pausas</span><select id="lvPau"><option value="0" selected>Continuo</option><option value="5">Cada 5 alumnos</option><option value="10">Cada 10 alumnos</option></select></div></div>
+  <div class="hojasbar"><div class="hojas" id="hojas"></div><span class="pill-save pill-fija" id="save2"></span><button class="dic" id="lvCfg" style="display:none" title="Voz, velocidad y pausas del lector">⚙</button><button class="dic" id="leerBtn" style="display:none" title="Leer en voz alta las calificaciones capturadas">🔊 Leer</button><button class="dic" id="lvStop" style="display:none" title="Detener la lectura">⏹</button><button class="dic" id="dicBtn" style="display:none" title="Dictar en la observación que tengas abierta (necesita internet)">🎤 Dictar</button><div class="gmsg" id="gmsg"></div><div class="lvpanel" id="lvPanel" style="display:none"><span class="lvl">Velocidad</span><select id="lvVel"><option value="0.75">Lento</option><option value="1" selected>Normal</option><option value="1.4">Rápido</option></select><span class="lvl">Voz</span><select id="lvVoz"><option value="">Automática</option></select><span class="lvl">Pausas</span><select id="lvPau"><option value="0" selected>Continuo</option><option value="5">Cada 5 alumnos</option><option value="10">Cada 10 alumnos</option></select><span id="lvNegW" style="display:none"><span class="lvl">Pantalla negra</span><select id="lvNeg"><option value="0">Nunca</option><option value="60" selected>1 min</option><option value="120">2 min</option><option value="300">5 min</option></select></span></div></div>
   <div id="avisoHoja"></div>
   <div class="subtabs" id="subtabs"></div>
   <div id="vista"></div>
@@ -792,7 +792,7 @@ function lvCargarVoces(){
   else{try{var g=JSON.parse(localStorage.getItem('sigea_lector')||'{}');if(g.voz){for(var k=0;k<vs.length;k++){if(vs[k].name===g.voz){s.value=String(k);break}}}}catch(e){}}
   LV.voz=null}
 function lvGuarda(){try{var s=document.getElementById('lvVoz'),vs=window.speechSynthesis.getVoices()||[],v=(s&&s.value!=='')?vs[parseInt(s.value,10)]:null;
-  localStorage.setItem('sigea_lector',JSON.stringify({vel:document.getElementById('lvVel').value,pau:document.getElementById('lvPau').value,voz:v?v.name:''}))}catch(e){}}
+  localStorage.setItem('sigea_lector',JSON.stringify({vel:document.getElementById('lvVel').value,pau:document.getElementById('lvPau').value,neg:document.getElementById('lvNeg').value,voz:v?v.name:''}))}catch(e){}}
 function lvDec(n){var s=String(n);if(typeof n==='number')s=n.toFixed(1);if(/\.0$/.test(s))s=s.slice(0,-2);return s.replace('.',' punto ')}
 function gmPinta(){var m=document.getElementById('gmsg');if(!m)return;var c='gmsg',t,db=document.getElementById('dicBtn'),hayDic=!!(db&&db.style.display!=='none');
   if(LV.on){c+=' lee';t=LV.pausa?('⏸ Pausa: se leyeron <b>'+LV.leidos+'</b> de <b>'+LV.total+'</b>. Toca ▶ Continuar para seguir o ⏹ para detener.'):('🔊 Leyendo · alumno <b>'+Math.max(LV.idx,1)+'</b> de <b>'+LV.total+'</b>'+(LV.nom?' · '+esc(LV.nom):''))}
@@ -880,9 +880,10 @@ function lvWlPide(){
   return true}
 function lvWlSuelta(){var l=LVP.wl;LVP.wl=null;try{if(l)l.release()}catch(e){}}
 function lvNegroQuita(){var o=document.getElementById('lvNegro');if(o)o.style.display='none';LVP.negro=false}
+function lvNegSeg(){var e=document.getElementById('lvNeg'),v=e?parseInt(e.value,10):60;return isNaN(v)?60:v}   /* Ladrillo613: segundos de la pantalla negra (0 = nunca) */
 function lvNegroPon(){LVP.idle=0;if(!(LV.on&&!LV.pausa)||!lvWlOk()||!lvTactil())return;var o=document.getElementById('lvNegro');if(!o)return;o.style.display='block';LVP.negro=true}
 function lvIdleArma(reinicia){if(LVP.idle&&!reinicia)return;clearTimeout(LVP.idle);LVP.idle=0;
-  if(LV.on&&!LV.pausa&&lvWlOk()&&lvTactil())LVP.idle=setTimeout(lvNegroPon,10000)}
+  if(LV.on&&!LV.pausa&&lvWlOk()&&lvTactil()&&lvNegSeg()>0)LVP.idle=setTimeout(lvNegroPon,lvNegSeg()*1000)}
 function lvMantiene(){
   if(LV.on&&!LV.pausa){
     if(!lvWlPide()&&!LVP.avisado){LVP.avisado=true;lvAviso('Este celular no deja mantener la pantalla prendida: si se apaga, la lectura puede cortarse.')}
@@ -954,13 +955,13 @@ function lvDetener(avisar){var estaba=LV.on;LV.on=false;LV.pausa=false;LV.cur=nu
   if(avisar&&estaba&&lvOk()){try{var u=new SpeechSynthesisUtterance('Lectura detenida.');u.lang='es-MX';var v=lvVozEs();if(v)u.voice=v;u.rate=lvVel();window.speechSynthesis.speak(u)}catch(e){}}}
 function lvSiCambio(){var c=lvCtx();if(LV.on&&(!c.leer||String(S.hoja)!==LV.p||S.sub!==LV.sub||(LV.p==='RES'&&LV.k!==String(_espPerSel)+_resVista)))lvDetener(false);if(DIC.on&&!c.dic)dicFin();gmPinta()}
 function lvInit(){var b=document.getElementById('leerBtn');if(!b)return;
-  if(lvOk()){b.style.display='';document.getElementById('lvCfg').style.display='';
-    try{var g=JSON.parse(localStorage.getItem('sigea_lector')||'{}');if(g.vel)document.getElementById('lvVel').value=g.vel;if(g.pau)document.getElementById('lvPau').value=g.pau}catch(e){}
+  if(lvOk()){b.style.display='';document.getElementById('lvCfg').style.display='';try{if(lvTactil())document.getElementById('lvNegW').style.display='contents'}catch(x){}
+    try{var g=JSON.parse(localStorage.getItem('sigea_lector')||'{}');if(g.vel)document.getElementById('lvVel').value=g.vel;if(g.pau)document.getElementById('lvPau').value=g.pau;if(/^(0|60|120|300)$/.test(String(g.neg)))document.getElementById('lvNeg').value=String(g.neg)}catch(e){}
     window.speechSynthesis.onvoiceschanged=lvCargarVoces;setTimeout(lvCargarVoces,400);setTimeout(lvCargarVoces,1500);lvCargarVoces()}
   b.addEventListener('click',lvToggle);
   document.getElementById('lvStop').addEventListener('click',function(){lvDetener(true)});
   document.getElementById('lvCfg').addEventListener('click',function(){var p=document.getElementById('lvPanel');p.style.display=(p.style.display==='none')?'':'none';if(typeof fijaEnc==='function')fijaEnc()});
-  ['lvVel','lvVoz','lvPau'].forEach(function(i){var e=document.getElementById(i);if(e)e.addEventListener('change',function(){if(i==='lvVoz')LV.voz=null;lvGuarda()})});lvToqueInit()}
+  ['lvVel','lvVoz','lvPau','lvNeg'].forEach(function(i){var e=document.getElementById(i);if(e)e.addEventListener('change',function(){if(i==='lvVoz')LV.voz=null;lvGuarda();if(i==='lvNeg'&&LV.on&&!LV.pausa&&!LVP.negro)lvIdleArma(true)})});lvToqueInit()}
 function dicInit(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition,b=dicBtn();if(!SR||!b||/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent||''))return;b.style.display='';
   document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.tagName==='TEXTAREA'&&t.classList&&t.classList.contains('ob')){if(DIC.on&&!DIC.cal&&DIC.rec&&DIC.ta&&t!==DIC.ta){DIC.nuevo=t}else{DIC.ta=t;if(DIC.on&&DIC.cal)dicFin()}}else if(t&&t.tagName==='INPUT'&&t.classList&&t.classList.contains('gi')&&(t.dataset.k==='cal'||t.dataset.k==='diag')&&!t.disabled){DIC.ta=t;if(DIC.on&&DIC.cal){DIC.cur=t;dicPinta();if(!DIC.prog&&t.dataset.a!==DIC.alum)dicAnuncia(t,false)}}});
   b.addEventListener('pointerdown',function(e){e.preventDefault()});
