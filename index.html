@@ -504,7 +504,8 @@ body.vd-bloq{overflow:hidden}
 .vuelo{position:fixed;z-index:90;pointer-events:none;transform-origin:50% 50%}.vd-art.vuelo{position:fixed}
 .tv-nada .tv-play{margin-top:10px;border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:800;background:#8a3a56;color:#fff;cursor:pointer}
 .tv-pant.vivo:before{background:radial-gradient(ellipse at center,transparent 82%,rgba(0,0,0,.22) 100%)}
-@media (max-width:600px){.tv-pant{aspect-ratio:3/4}}
+@media (max-width:600px){.tv-pant{aspect-ratio:3/4}.tvw{max-width:calc((100vh - 500px)*.75);min-width:220px;margin-left:auto;margin-right:auto}.tv-ant{height:32px}.tv-ant i{height:30px}.tv-caja{padding:12px}.vcr-der{width:128px;flex-basis:128px}.vcr-led{font-size:.7rem}.vcr-lab{white-space:nowrap;font-size:6px;letter-spacing:.06em}}
+@supports (height:100dvh){@media (max-width:600px){.tvw{max-width:calc((100dvh - 500px)*.75)}}}
 .tv-bajo button,.tv-bajo a{font-size:.78rem;padding:11px 4px;white-space:nowrap}
 .bb-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .bb-tools input{flex:1;min-width:150px;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit}
