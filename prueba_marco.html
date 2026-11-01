@@ -1,0 +1,31 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Prueba del marco</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#160d12;color:#f1e6d4;font-family:system-ui,Segoe UI,Arial,sans-serif;padding:14px;max-width:420px;margin:0 auto}
+h1{font-size:1.05rem;color:#e8cd7a;margin:0 0 6px}p{font-size:.85rem;color:#b9a98f;line-height:1.4;margin:4px 0 10px}
+.fila{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+button{flex:1 0 28%;border:0;border-radius:8px;padding:12px 4px;font:inherit;font-weight:800;background:#2a1f2e;color:#f2dc9a;cursor:pointer}button.on{background:#8a3a56;color:#fff}
+#sitio{margin-top:10px}
+.pant{position:relative;width:100%;aspect-ratio:3/4;background:#000}
+.pant iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.redonda{border-radius:16px/20px;overflow:hidden}
+.capa:before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse at center,transparent 82%,rgba(0,0,0,.22) 100%)}
+#d{font:12px/1.4 monospace;color:#cfe8ff;margin-top:10px}
+</style></head><body>
+<h1>🖼️ Prueba del marco</h1>
+<p>Es el mismo video de siempre. Toca <b>1</b>, dale ▶ al video del reproductor y espera 5 segundos <b>sin tocar</b>. Anota si los botones de Drive se esconden. Haz lo mismo con 2, 3, 4 y 5 y mándame la lista (por ejemplo: «1 sí, 2 sí, 3 no, 4 no, 5 no»).</p>
+<div class="fila" id="bs"></div>
+<div id="sitio"></div><div id="d"></div>
+<script>
+var ID='1bo6jzoiK-zIHnDL1Ta7Fz8CbuZyIMjB2',U='https://drive.google.com/file/d/'+ID+'/preview';
+var V=[
+ {n:'1',t:'Solo el reproductor, sin nada',clase:'',allow:'autoplay; fullscreen'},
+ {n:'2',t:'Con los permisos de la tele',clase:'',allow:'autoplay; fullscreen; picture-in-picture; encrypted-media'},
+ {n:'3',t:'Con el marco redondeado',clase:'redonda',allow:'autoplay; fullscreen; picture-in-picture; encrypted-media'},
+ {n:'4',t:'Marco redondeado + capa encima',clase:'redonda capa',allow:'autoplay; fullscreen; picture-in-picture; encrypted-media'},
+ {n:'5',t:'Capa encima, sin marco redondeado',clase:'capa',allow:'autoplay; fullscreen; picture-in-picture; encrypted-media'}];
+var bs=document.getElementById('bs');
+V.forEach(function(v,i){var b=document.createElement('button');b.textContent=v.n;b.onclick=function(){
+ Array.prototype.forEach.call(bs.children,function(x){x.classList.remove('on')});b.classList.add('on');
+ document.getElementById('sitio').innerHTML='<div class="pant '+v.clase+'"><iframe src="'+U+'" allow="'+v.allow+'" allowfullscreen></iframe></div>';
+ document.getElementById('d').textContent=v.n+' · '+v.t;};bs.appendChild(b);});
+</script></body></html>
