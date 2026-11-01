@@ -414,14 +414,36 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .lc-av.on{opacity:1}
 /* BIBLIOTECA (ladrillo 574): el librero en 3D. Todo lleva el prefijo bb- para no mezclarse con el resto de la sala. */
 /* Ladrillo616: LA VIDEOTECA (cintas) y EL TELEVISOR RETRO */
-.vd-sh{overflow-x:auto}
-.vd-cinta{position:relative;flex:0 0 auto;width:36px;height:var(--h);margin-top:auto;border-radius:3px;cursor:pointer;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.16) 14%,rgba(0,0,0,0) 40%,rgba(0,0,0,.25)),var(--c);box-shadow:2px 0 5px #0008;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0 12px;border:1px solid rgba(0,0,0,.35);transition:transform .25s;-webkit-tap-highlight-color:transparent}
-.vd-cinta:before{content:"";position:absolute;left:0;right:0;top:5px;height:5px;border-top:1.5px solid #f2d37a;border-bottom:1.5px solid #f2d37a;opacity:.85}
-.vd-cinta i{font-style:normal;font-size:.8rem;margin-top:12px;color:#fff;text-shadow:0 1px 2px #000}
-.vd-cinta b{writing-mode:vertical-rl;font:700 10.5px Georgia,serif;color:#fff7e6;text-shadow:0 1px 2px #0009;max-height:78px;overflow:hidden;text-align:center}
-.vd-cinta.sel{transform:translateY(-16px)}
-.vd-nu{position:absolute;top:-1px;right:3px;width:8px;height:22px;background:#ffd34d;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:0 0 6px #ffd34d}
-.vd-vi{position:absolute;left:3px;right:3px;bottom:4px;height:4px;border-radius:5px;background:#7bd88f}
+.vd-sh{overflow:visible;flex-wrap:wrap;row-gap:16px}
+.vd-cinta{perspective:800px;position:relative;flex:0 0 auto;width:42px;height:var(--h);cursor:pointer;transform-style:preserve-3d;margin-top:auto;-webkit-tap-highlight-color:transparent}
+.vd-cinta.sel{z-index:30}
+.vd-cu{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-origin:50% 100%}
+@media (hover:hover){.vd-cinta:hover .vd-cu{transform:translateZ(26px) rotateY(-22deg)}}
+.vd-cinta.sel .vd-cu,.vd-cinta.sel:hover .vd-cu{transform:translateX(var(--dx,0px)) translateZ(150px) translateY(-26px) rotateY(-90deg) scale(1.15)}
+.vd-f{position:absolute;backface-visibility:hidden}
+.vd-lomo{inset:0;transform:translateZ(var(--d));border-radius:2px 3px 3px 2px;background:linear-gradient(90deg,#000 0,#2b2b30 12%,#1a1a1e 45%,#0d0d10 100%);box-shadow:inset 0 0 0 1px #3a3a42;display:flex;flex-direction:column;align-items:center;padding:7px 0 0}
+.vd-lomo:before{content:"";position:absolute;left:5px;right:5px;top:5px;height:6px;background:repeating-linear-gradient(90deg,#4a4a52 0 2px,transparent 2px 4px);opacity:.8}
+.vd-et{position:relative;margin-top:16px;width:30px;flex:1;margin-bottom:26px;background:linear-gradient(90deg,#f6efe0,#fffaf0 40%,#efe5d0);border-radius:2px;border-top:5px solid var(--c);border-bottom:5px solid var(--c);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px #0008;overflow:hidden}
+.vd-et b{writing-mode:vertical-rl;font:800 11px Georgia,serif;color:#2a1c12;max-height:100%;padding:4px 0;overflow:hidden;text-align:center}
+.vd-pl{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:20px;height:16px;border-radius:2px;background:#1d1d22;border:1px solid #484850;color:#e9e0c8;font-size:9px;display:flex;align-items:center;justify-content:center}
+.vd-nu{position:absolute;top:-1px;right:3px;width:9px;height:24px;background:#ffd34d;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:0 0 6px #ffd34d;z-index:2}
+.vd-vi{position:absolute;left:4px;right:4px;bottom:3px;height:3px;border-radius:5px;background:#7bd88f;z-index:2}
+.vd-tapa{width:var(--dd);height:100%;left:calc((42px - var(--dd))/2);transform:rotateY(90deg) translateZ(21px);overflow:visible}
+.vd-art{position:absolute;width:var(--h);height:var(--dd);left:calc((var(--dd) - var(--h))/2);top:calc((var(--h) - var(--dd))/2);transform:rotate(90deg);transition:transform .6s cubic-bezier(.2,.8,.2,1) .15s;border-radius:7px;background:linear-gradient(180deg,#26262a,#18181b 60%,#1f1f23);box-shadow:inset 0 0 0 1px #4a4a52,0 3px 8px #0009;overflow:hidden}
+.vd-cinta.sel .vd-art{transform:rotate(0)}
+.vd-ar-top{position:absolute;left:0;right:0;top:0;height:13%;background:#111114}
+.vd-ar-top:after{content:"";position:absolute;left:50%;top:30%;width:5px;height:5px;margin-left:-2.5px;background:#2e2e34;transform:rotate(45deg)}
+.vd-ar-bot{position:absolute;left:0;right:0;bottom:0;height:19%;background:repeating-linear-gradient(90deg,#0d0d10 0 2px,#202024 2px 4px)}
+.vd-ar-lab{position:absolute;left:30%;width:40%;top:23%;height:47%;background:#fff;border:3px solid var(--c);border-radius:6px;box-shadow:0 0 0 1.5px #0a0a0c;overflow:hidden;background:repeating-linear-gradient(180deg,transparent 0 9px,#b9b9c2 9px 10px),#fff}
+.vd-ar-lab b{display:block;font:800 9px/10px Georgia,serif;color:#2a1c12;text-align:center;padding:1px 3px 0;max-height:30px;overflow:hidden;background:#fff}
+.vd-ar-v{position:absolute;top:24%;width:24%;height:46%;border-radius:6px;background:#0b0b0d;box-shadow:0 0 0 1.5px #55555e;overflow:hidden}
+.vd-ar-v.i{left:5%}.vd-ar-v.d{right:5%}
+.vd-ar-v i{position:absolute;border-radius:50%}
+.vd-ar-v.i i{left:12%;top:8%;width:78%;height:84%;background:radial-gradient(circle,#2b2b30 0 16%,#fff 18% 30%,#d8d8de 32% 70%,#fff 72%)}
+.vd-ar-v.d i{left:12%;top:8%;width:78%;height:84%;background:radial-gradient(circle,#c8c8d0 0 14%,#1d1d22 16% 34%,#3a3a42 36% 70%,#101013 72%)}
+.vd-atras{inset:0;transform:translateZ(calc(var(--d)*-1)) rotateY(180deg);background:#0d0d10}
+.vd-izq{width:var(--dd);height:100%;left:calc((42px - var(--dd))/2);transform:rotateY(-90deg) translateZ(21px);background:linear-gradient(90deg,#0d0d10,#1f1f24)}
+.vd-tope{width:100%;height:var(--dd);top:calc(var(--dd)/-2);transform:rotateX(90deg);background:#17171b;box-shadow:inset 0 0 0 1px #3a3a42}
 .vd-ficha{position:fixed;left:50%;bottom:14px;transform:translate(-50%,160%);visibility:hidden;width:min(520px,calc(100% - 20px));background:linear-gradient(180deg,#fff9ec,#f1e3c6);color:#33200f;border-radius:18px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.6);z-index:60;transition:transform .35s,visibility .35s}
 .vd-ficha.on{transform:translate(-50%,0);visibility:visible}
 .vd-ft{font-weight:800;font-size:1.02rem;color:#7a2a2a}.vd-fm{font-size:.78rem;color:#6a5a48;margin:2px 0 8px}.vd-fn{font-size:.9rem;line-height:1.4;margin:0 0 10px}
@@ -452,6 +474,35 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .tvw.grande .tv-caja{position:fixed;inset:6px;z-index:70;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
 .tvw.grande .tv-marco{flex:1;display:flex}.tvw.grande .tv-pant{flex:1;aspect-ratio:auto}
 body.vd-bloq{overflow:hidden}
+/* Ladrillo620: el televisor con su videocasetera debajo (la cinta entra acostada por la rendija) */
+.tvd{border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent}
+.tvd-plac{width:62px;height:62px;border-radius:14px;background:linear-gradient(145deg,#2a2220,#0f0b0a);box-shadow:inset 0 2px 5px #000,inset 0 -1px 0 #4a3a32,0 1px 0 #c98f60;display:flex;align-items:center;justify-content:center}
+.tvd-per{position:relative;display:block;width:46px;height:46px;border-radius:50%;background:repeating-conic-gradient(#e9e9ee 0 5deg,#6c6c74 5deg 10deg);box-shadow:0 3px 6px #000c,0 0 0 2px #1a1a1e;transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+.tvd-per:before{content:"";position:absolute;inset:5px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff,#c9c9d0 45%,#7d7d86);box-shadow:inset 0 0 0 1px #5a5a62}
+.tvd-per i{position:absolute;left:50%;top:50%;width:6px;height:30px;margin:-15px 0 0 -3px;background:linear-gradient(90deg,#26262a,#55555d 50%,#1c1c20);border-radius:2px;transform:rotate(45deg);box-shadow:inset 0 0 0 1px #000a}
+.tvd.gira .tvd-per{transform:rotate(90deg)}
+.tvd em{font:800 .56rem system-ui;font-style:normal;letter-spacing:.16em;color:#f1d9ae;text-shadow:0 1px 0 #000}
+.tvd.gira em{color:#ffb089}
+.vcr{margin-top:8px}.vcr-top{height:7px;margin:0 6px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#4a4a52,#2a2a2f)}
+.vcr-fr{display:flex;align-items:center;gap:12px;padding:12px;border-radius:5px;background:linear-gradient(180deg,#34343a,#1b1b1f 55%,#141417);box-shadow:inset 0 1px 0 #55555e,0 8px 16px #000a}
+.vcr-izq{flex:1;min-width:0}
+.vcr-slot{position:relative;height:26px;border-radius:5px;background:#020203;box-shadow:inset 0 5px 8px #000,0 0 0 3px #3c3c44,0 0 0 4px #15151a;overflow:hidden}
+.vcr-cas{position:absolute;left:6px;right:6px;top:0;height:30px;transform:translateY(110%);transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.vcr-art{position:absolute;left:0;right:0;top:0;aspect-ratio:150/82;transform:scaleY(.29);transform-origin:top;border-radius:6px;background:linear-gradient(180deg,#26262a,#18181b 60%,#1f1f23);box-shadow:inset 0 0 0 1px #4a4a52;overflow:hidden}
+.vcr-slot.in .vcr-cas{transform:translateY(-82%)}
+.vcr-flap{position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(180deg,#2c2c32,#151518);border-bottom:1px solid #4a4a52;opacity:0;transition:opacity .3s .5s}
+.vcr-slot.in .vcr-flap{opacity:.9}
+.vcr-lab{margin-top:8px;font:700 7.5px system-ui;letter-spacing:.16em;color:#7b7b85}
+.vcr-der{display:flex;flex-direction:column;gap:8px;align-items:stretch;width:150px;flex:0 0 150px}
+.vcr-led{font:800 .82rem monospace;color:#7bff9a;text-shadow:0 0 6px #3f8;background:#06100a;border-radius:4px;padding:4px 7px;box-shadow:inset 0 0 0 1px #1f3a29;overflow:hidden;white-space:nowrap}
+.vcr-led span{display:inline-block}.vcr-led.run span{animation:vcrled 7s linear infinite}
+@keyframes vcrled{0%{transform:translateX(0)}100%{transform:translateX(-60%)}}
+@media (prefers-reduced-motion:reduce){.vcr-led.run span{animation:none}}
+.vcr-bts{display:flex;gap:5px}.vcr-bts button{flex:1;height:30px;border:0;border-radius:4px;background:linear-gradient(180deg,#6a6a74,#34343a);color:#f2dc9a;cursor:pointer;box-shadow:0 2px 0 #000,inset 0 1px 0 #8d8d98;font-size:.82rem}
+.vcr-bts button:active{transform:translateY(1px);box-shadow:0 1px 0 #000}
+.vcr-pies{display:flex;justify-content:space-between;margin:0 22px}.vcr-pies i{width:36px;height:7px;background:#0e0e10;border-radius:0 0 6px 6px}
+.vuelo{position:fixed;z-index:90;pointer-events:none;transform-origin:50% 50%}.vd-art.vuelo{position:fixed}
+.tv-nada .tv-play{margin-top:10px;border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:800;background:#8a3a56;color:#fff;cursor:pointer}
 .bb-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .bb-tools input{flex:1;min-width:150px;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit}
 .bb-tools button{height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 13px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
@@ -1504,10 +1555,12 @@ function vidCuenta(){VID.nuevos=(VID.lista||[]).filter(function(x){return !x.abi
 function vidNom(n){var e=VID.estantes||[],i;for(i=0;i<e.length;i++){if(Number(e[i].numero)===Number(n)&&e[i].nombre)return String(e[i].nombre);}return VD_NOM[Number(n)-1]||'';}
 function vidEst(x){return Math.max(1,Math.min(4,Number(x.estante)||3));}
 function vidFid(x){return /^[A-Za-z0-9_-]{10,100}$/.test(String(x.fid||''))?String(x.fid):'';}
+function vidArt(x){var t=String(x.titulo||'');return '<div class="vd-ar-top"></div><div class="vd-ar-v i"><i></i></div><div class="vd-ar-lab"><b>'+esc(t.length>40?t.slice(0,38)+'…':t)+'</b></div><div class="vd-ar-v d"><i></i></div><div class="vd-ar-bot"></div>';}
 function vidCinta(x,i){
-  var t=String(x.titulo||''),h=118+((i*37)%5)*6;
-  return '<div class="vd-cinta'+(VID.sel===i?' sel':'')+'" data-vi="'+i+'" style="--c:'+VD_COL[vidEst(x)-1]+';--h:'+h+'px"><i>▶</i><b>'+esc(t.length>26?t.slice(0,24)+'…':t)+'</b>'+(x.abierto?'':'<span class="vd-nu"></span>')+(x.visto?'<span class="vd-vi"></span>':'')+'</div>';
+  var t=String(x.titulo||''),h=150+((i*37)%5)*2,dd=Math.round(h*0.545);
+  return '<div class="vd-cinta'+(VID.sel===i?' sel':'')+'" data-vi="'+i+'" style="--c:'+VD_COL[vidEst(x)-1]+';--h:'+h+'px;--dd:'+dd+'px;--d:21px"><div class="vd-cu"><div class="vd-f vd-lomo">'+(x.abierto?'':'<span class="vd-nu"></span>')+(x.visto?'<span class="vd-vi"></span>':'')+'<div class="vd-et"><b>'+esc(t.length>26?t.slice(0,24)+'…':t)+'</b></div><div class="vd-pl">▶</div></div><div class="vd-f vd-tapa"><div class="vd-art">'+vidArt(x)+'</div></div><div class="vd-f vd-atras"></div><div class="vd-f vd-izq"></div><div class="vd-f vd-tope"></div></div></div>';
 }
+function vidCentra(i){var c=document.querySelector('.vd-cinta[data-vi="'+i+'"]');if(!c)return;try{var r=c.getBoundingClientRect();c.style.setProperty('--dx',Math.round((window.innerWidth/2-(r.left+r.width/2))*0.8)+'px');}catch(e){}}
 function vidMueble(){
   var h='<div class="bb-mueble"><div class="bb-cornisa"><div class="bb-mayor">VIDEOTECA · TELESECUNDARIA 171</div></div><div class="bb-poste l" style="grid-row:2"></div><div class="bb-cuerpo">',n;
   for(n=1;n<=4;n++){
@@ -1526,9 +1579,17 @@ function vidAbreFicha(i){
   var cs=document.querySelectorAll('.vd-cinta'),k;for(k=0;k<cs.length;k++)cs[k].classList.toggle('sel',Number(cs[k].getAttribute('data-vi'))===i);
 }
 function vidCierra(){VID.sel=-1;var cs=document.querySelectorAll('.vd-cinta'),k;for(k=0;k<cs.length;k++)cs[k].classList.remove('sel');var f=$('viFicha');if(f)f.classList.remove('on');}
-function vidToca(i){if(!(VID.lista||[])[i])return;if(VID.sel===i){vidVer(i);return;}VID.sel=i;vidAbreFicha(i);}
+function vidToca(i){if(!(VID.lista||[])[i])return;if(VID.sel===i){vidVer(i);return;}VID.sel=i;vidCentra(i);vidAbreFicha(i);}
 function vidMarcaAbierto(x){if(x&&!x.abierto){x.abierto=true;vidCuenta();var e=$('cViEt');if(e)e.textContent=vidEt();llama('vid_abrir',{id:x.id}).catch(function(){});}}
-function vidVer(i){var x=(VID.lista||[])[i];if(!x)return;VID.tv=i;VID.enc=true;VID.sel=-1;vidMarcaAbierto(x);irA('tv');}
+function vidVer(i){var x=(VID.lista||[])[i];if(!x)return;
+  VID.fl=null;
+  try{var a=document.querySelector('.vd-cinta[data-vi="'+i+'"] .vd-art');
+    if(a&&!tvMovil()){var q=a.getBoundingClientRect();
+      if(q.width>20&&q.height>20){var f=document.createElement('div');f.className='vd-art vuelo';
+        f.style.cssText='left:'+q.left+'px;top:'+q.top+'px;width:'+q.width+'px;height:'+q.height+'px;--c:'+VD_COL[vidEst(x)-1]+';transform:none;transition:none';
+        f.innerHTML=a.innerHTML;document.body.appendChild(f);VID.fl={el:f,l:q.left,t:q.top,w:q.width,h:q.height};
+        setTimeout(function(){try{if(f.parentNode)f.parentNode.removeChild(f);}catch(e){}},4000);}}}catch(e){VID.fl=null;}
+  VID.tv=i;VID.enc=true;VID.sel=-1;vidMarcaAbierto(x);irA('tv');}
 function pintaVid(){
   sala.onclick=null;VID.grande=false;try{document.body.classList.remove('vd-bloq');}catch(e){}
   var h='<div class="pz-top"><button class="volv" id="viSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">🎬 Videoteca</h1></div>';
@@ -1554,36 +1615,83 @@ function pintaVid(){
 }
 function vidCola(est){var r=[];(VID.lista||[]).forEach(function(x,i){if(vidEst(x)===est)r.push(i);});return r;}
 function tvEstatica(ms){var e=$('tvEst');if(!e)return;e.style.display='block';setTimeout(function(){var q=$('tvEst');if(q)q.style.display='none';},ms);}
+function tvMovil(){try{return !!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches);}catch(e){return false;}}
+function tvLed(modo){var l=$('tvLed');if(!l)return;var x=(VID.lista||[])[VID.tv];
+  var t='-- --';if(x&&modo==='on')t='CH 0'+(vidCola(vidEst(x)).indexOf(VID.tv)+1)+' · '+x.titulo;else if(modo==='paro')t='■ PARO';
+  l.firstChild.textContent=t;l.className='vcr-led'+(modo==='on'?' run':'');}
+function tvPantalla(modo){
+  var p=$('tvPant'),x=(VID.lista||[])[VID.tv];if(!p||!x)return;
+  var q=p.querySelectorAll('iframe,.tv-nada'),k;for(k=0;k<q.length;k++)q[k].parentNode.removeChild(q[k]);
+  var fid=vidFid(x),h='';
+  if(modo==='video')h=fid?'<iframe src="https://drive.google.com/file/d/'+fid+'/preview" allow="autoplay; fullscreen" allowfullscreen title="'+esc(x.titulo)+'"></iframe>':'<div class="tv-nada">Este video no se puede abrir aquí. Usa «↗ Abrir en Drive».</div>';
+  else if(modo==='paro')h='<div class="tv-nada"><div><div style="font-size:2rem">■</div><b>Detenido</b><br><span>El video volvió al principio.</span><br><button class="tv-play" data-tv="play">▶ Ver otra vez</button></div></div>';
+  p.insertAdjacentHTML('afterbegin',h);
+  var c=$('tvCan');if(c){c.textContent='CH 0'+(vidCola(vidEst(x)).indexOf(VID.tv)+1);c.style.display=modo==='apagada'?'none':'block';}
+}
+function tvCasete(){
+  var x=(VID.lista||[])[VID.tv],v=$('tvCas');if(!x||!v)return;
+  v.innerHTML='<div class="vcr-art">'+vidArt(x)+'</div>';v.style.setProperty('--c',VD_COL[vidEst(x)-1]);
+  var n=vidCola(vidEst(x)).indexOf(VID.tv)+1,t=$('tvTit');if(t)t.textContent='Canal '+n+' · '+x.titulo;
+  var o=$('tvNota');if(o){o.textContent=x.nota||'';o.style.display=x.nota?'':'none';}
+  var b=$('tvVisto');if(b)b.textContent=x.visto?'✓ Ya lo viste':'✓ Ya lo vi';
+  var a=$('tvDrive');if(a){var u=/^https:\/\//i.test(String(x.url||''))?String(x.url):'';a.style.display=u?'':'none';if(u)a.href=u;}
+}
+function tvEncender(){if(!$('tvPant'))return;tvPantalla('video');tvLed('on');tvEstatica(700);}
 function tvCanal(d){
-  var x=(VID.lista||[])[VID.tv];if(!x)return;var c=vidCola(vidEst(x));
+  var x=(VID.lista||[])[VID.tv];if(!x||VID.busy)return;var c=vidCola(vidEst(x));
   if(c.length<2){bibToast('Este estante tiene un solo video.');return;}
-  VID.tv=c[(c.indexOf(VID.tv)+d+c.length)%c.length];vidMarcaAbierto(VID.lista[VID.tv]);
-  pintaTv();if(VID.enc)tvEstatica(450);
+  VID.busy=true;tvPantalla('apagada');tvLed('off');var s=$('tvSlot');if(s)s.classList.remove('in');
+  setTimeout(function(){
+    if(!$('tvSlot')){VID.busy=false;return;}
+    VID.tv=c[(c.indexOf(VID.tv)+d+c.length)%c.length];vidMarcaAbierto(VID.lista[VID.tv]);tvCasete();$('tvSlot').classList.add('in');
+    setTimeout(function(){tvEncender();VID.busy=false;},400);},520);
+}
+function tvExpulsa(){
+  if(VID.busy)return;VID.busy=true;tvPantalla('apagada');tvLed('off');var s=$('tvSlot');if(s)s.classList.remove('in');
+  setTimeout(function(){VID.busy=false;if($('tvSlot'))sube('vid');},520);
+}
+function tvParo(){
+  if(VID.busy||!$('tvPant')||$('tvPant').querySelector('.tv-play'))return;
+  tvEstatica(500);setTimeout(function(){if(!$('tvPant'))return;tvPantalla('paro');tvLed('paro');},350);
 }
 function pintaTv(){
   sala.onclick=null;
   var x=(VID.lista||[])[VID.tv];
   if(!x){irA0('vid');return;}
-  var est=vidEst(x),c=vidCola(est),n=c.indexOf(VID.tv)+1,fid=vidFid(x),pant;
-  if(VID.enc&&fid)pant='<iframe src="https://drive.google.com/file/d/'+fid+'/preview" allow="autoplay; fullscreen" allowfullscreen title="'+esc(x.titulo)+'"></iframe>';
-  else if(VID.enc)pant='<div class="tv-nada">Este video no se puede abrir aquí. Usa «↗ Abrir en Drive».</div>';
-  else pant='';
+  var est=vidEst(x);VID.busy=false;
   var h='<div class="pz-top"><button class="volv" id="tvVol">‹ Videoteca</button></div><div class="bv"><h1 style="font-size:1.15rem">'+VD_ICO[est-1]+' '+esc(vidNom(est))+'</h1></div>'+
-   '<div class="tvw'+(VID.grande?' grande':'')+'" id="tvW"><div class="tv-ant"><i></i><i></i></div><div class="tv-caja"><div class="tv-marco"><div class="tv-pant" id="tvPant">'+pant+'<div class="tv-est" id="tvEst"></div>'+(VID.enc?'<div class="tv-can">CH 0'+n+'</div>':'')+'</div></div>'+
-   '<div class="tv-panel"><button class="tv-per rojo" data-tv="pow"><span>⏻</span>'+(VID.enc?'Apagar':'Encender')+'</button><button class="tv-per" data-tv="up"><span>▲</span>Canal</button><div class="tv-rej"></div><button class="tv-per" data-tv="dn"><span>▼</span>Canal</button><button class="tv-per verde" data-tv="fs"><span>⛶</span>Grande</button></div></div>'+
-   '<div class="tv-pies"><i></i><i></i></div></div>'+
-   '<div class="tv-tit">Canal '+n+' · '+esc(x.titulo)+'</div>'+(x.nota?'<div class="tv-nota">'+esc(x.nota)+'</div>':'')+
-   '<div class="tv-bajo"><button data-tv="visto" id="tvVisto">'+(x.visto?'✓ Ya lo viste':'✓ Ya lo vi')+'</button>'+(/^https:\/\//i.test(String(x.url||''))?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">↗ Abrir en Drive</a>':'')+'</div>'+
+   '<div class="tvw'+(VID.grande?' grande':'')+'" id="tvW"><div class="tv-ant"><i></i><i></i></div><div class="tv-caja"><div class="tv-marco"><div class="tv-pant" id="tvPant"><div class="tv-est" id="tvEst"></div><div class="tv-can" id="tvCan"></div></div></div>'+
+   '<div class="tv-panel"><div class="tv-rej"></div><button class="tvd'+(VID.grande?' gira':'')+'" data-tv="fs" title="Pantalla grande"><span class="tvd-plac"><span class="tvd-per"><i></i></span></span><em>GRANDE</em></button></div></div>'+
+   '<div class="tv-pies"><i></i><i></i></div>'+
+   '<div class="vcr"><div class="vcr-top"></div><div class="vcr-fr"><div class="vcr-izq"><div class="vcr-slot" id="tvSlot"><div class="vcr-cas" id="tvCas"></div><div class="vcr-flap"></div></div><div class="vcr-lab">VIDEOTECA · VHS</div></div>'+
+   '<div class="vcr-der"><div class="vcr-led" id="tvLed"><span>-- --</span></div><div class="vcr-bts"><button data-tv="ant" title="Canal anterior" aria-label="Canal anterior">⏮</button><button data-tv="ej" title="Expulsar la cinta" aria-label="Expulsar la cinta">⏏</button><button data-tv="paro" title="Paro" aria-label="Paro">■</button><button data-tv="sig" title="Canal siguiente" aria-label="Canal siguiente">⏭</button></div></div></div><div class="vcr-pies"><i></i><i></i></div></div></div>'+
+   '<div class="tv-tit" id="tvTit"></div><div class="tv-nota" id="tvNota"></div>'+
+   '<div class="tv-bajo"><button data-tv="visto" id="tvVisto">✓ Ya lo vi</button><a id="tvDrive" href="#" target="_blank" rel="noopener noreferrer">↗ Abrir en Drive</a></div>'+
    '<div class="bb-toast" id="biToast"></div>';
   sala.innerHTML=h;
   var a=$('tvVol');if(a)a.onclick=function(){sube('vid');};
   sala.onclick=function(e){
     var t=e.target.closest?e.target.closest('[data-tv]'):null;if(!t)return;var m=t.getAttribute('data-tv');
-    if(m==='pow'){VID.enc=!VID.enc;pintaTv();if(VID.enc)tvEstatica(700);return;}
-    if(m==='up'||m==='dn'){tvCanal(m==='up'?1:-1);return;}
-    if(m==='fs'){VID.grande=!VID.grande;var w=$('tvW');if(w)w.classList.toggle('grande',VID.grande);try{document.body.classList.toggle('vd-bloq',VID.grande);}catch(e2){}return;}
+    if(m==='sig'||m==='ant'){tvCanal(m==='sig'?1:-1);return;}
+    if(m==='ej'){tvExpulsa();return;}
+    if(m==='paro'){tvParo();return;}
+    if(m==='play'){tvPantalla('video');tvLed('on');tvEstatica(500);return;}
+    if(m==='fs'){VID.grande=!VID.grande;var w=$('tvW');if(w)w.classList.toggle('grande',VID.grande);t.classList.toggle('gira',VID.grande);try{document.body.classList.toggle('vd-bloq',VID.grande);}catch(e2){}return;}
     if(m==='visto'){var y=(VID.lista||[])[VID.tv];if(!y)return;y.visto=true;y.abierto=true;vidCuenta();var b=$('tvVisto');if(b)b.textContent='✓ Ya lo viste';llama('vid_visto',{id:y.id}).catch(function(){});bibToast('Marcado como visto ✓');}};
-  if(VID.enc&&!VID.llego){VID.llego=true;tvEstatica(700);}
+  tvCasete();tvLed('off');tvPantalla('apagada');
+  var fl=VID.fl,sl=$('tvSlot');VID.fl=null;
+  if(fl&&fl.el&&fl.el.parentNode&&sl&&!tvMovil()){
+    VID.busy=true;
+    try{var r0=sl.getBoundingClientRect();if(r0.bottom>window.innerHeight||r0.top<0)sl.scrollIntoView({block:'center'});}catch(e3){}
+    var s=sl.getBoundingClientRect(),k=(s.width-12)/fl.w,hh=fl.h*k*.29,tx=s.left+s.width/2-(fl.l+fl.w/2),ty=(s.bottom+hh/2+2)-(fl.t+fl.h/2);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      fl.el.style.transition='transform .7s cubic-bezier(.5,0,.3,1)';fl.el.style.transform='translate('+tx+'px,'+ty+'px) scale('+k+','+(k*.29)+')';
+      setTimeout(function(){try{fl.el.parentNode.removeChild(fl.el);}catch(e4){}var q=$('tvSlot');if(!q){VID.busy=false;return;}q.classList.add('in');
+        setTimeout(function(){VID.busy=false;tvEncender();},350);},760);});});
+  }else{
+    if(fl&&fl.el&&fl.el.parentNode){try{fl.el.parentNode.removeChild(fl.el);}catch(e5){}}
+    if(sl)sl.classList.add('in');tvEncender();
+  }
 }
 function vidCarga(){
   if(!B||!K)return;VID.cargando=true;VID.err='';if(VISTA==='vid')pintaVid();
