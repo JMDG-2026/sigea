@@ -413,6 +413,45 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .lc-av{position:absolute;left:50%;top:72px;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;border-radius:10px;padding:8px 14px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .3s;z-index:6;max-width:90%;text-align:center}
 .lc-av.on{opacity:1}
 /* BIBLIOTECA (ladrillo 574): el librero en 3D. Todo lleva el prefijo bb- para no mezclarse con el resto de la sala. */
+/* Ladrillo616: LA VIDEOTECA (cintas) y EL TELEVISOR RETRO */
+.vd-sh{overflow-x:auto}
+.vd-cinta{position:relative;flex:0 0 auto;width:36px;height:var(--h);margin-top:auto;border-radius:3px;cursor:pointer;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,255,255,.16) 14%,rgba(0,0,0,0) 40%,rgba(0,0,0,.25)),var(--c);box-shadow:2px 0 5px #0008;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0 12px;border:1px solid rgba(0,0,0,.35);transition:transform .25s;-webkit-tap-highlight-color:transparent}
+.vd-cinta:before{content:"";position:absolute;left:0;right:0;top:5px;height:5px;border-top:1.5px solid #f2d37a;border-bottom:1.5px solid #f2d37a;opacity:.85}
+.vd-cinta i{font-style:normal;font-size:.8rem;margin-top:12px;color:#fff;text-shadow:0 1px 2px #000}
+.vd-cinta b{writing-mode:vertical-rl;font:700 10.5px Georgia,serif;color:#fff7e6;text-shadow:0 1px 2px #0009;max-height:78px;overflow:hidden;text-align:center}
+.vd-cinta.sel{transform:translateY(-16px)}
+.vd-nu{position:absolute;top:-1px;right:3px;width:8px;height:22px;background:#ffd34d;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:0 0 6px #ffd34d}
+.vd-vi{position:absolute;left:3px;right:3px;bottom:4px;height:4px;border-radius:5px;background:#7bd88f}
+.vd-ficha{position:fixed;left:50%;bottom:14px;transform:translate(-50%,160%);visibility:hidden;width:min(520px,calc(100% - 20px));background:linear-gradient(180deg,#fff9ec,#f1e3c6);color:#33200f;border-radius:18px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.6);z-index:60;transition:transform .35s,visibility .35s}
+.vd-ficha.on{transform:translate(-50%,0);visibility:visible}
+.vd-ft{font-weight:800;font-size:1.02rem;color:#7a2a2a}.vd-fm{font-size:.78rem;color:#6a5a48;margin:2px 0 8px}.vd-fn{font-size:.9rem;line-height:1.4;margin:0 0 10px}
+.vd-fa{display:flex;gap:8px}.vd-fa button{flex:1;border:0;border-radius:12px;padding:11px;font:inherit;font-weight:800;cursor:pointer}
+.vd-fa .vd-ver{background:#8a3a56;color:#fff}.vd-fa .vd-cer{background:#ddd0b6;color:#3a2a1a}
+.tvw{max-width:560px;margin:0 auto}
+.tv-ant{position:relative;height:46px;margin:0 auto -4px;width:140px}
+.tv-ant i{position:absolute;bottom:0;width:3px;height:44px;background:linear-gradient(#cfcfcf,#7a7a7a);border-radius:3px;transform-origin:bottom center}
+.tv-ant i:nth-child(1){left:50%;transform:rotate(-32deg)}.tv-ant i:nth-child(2){left:50%;transform:rotate(30deg)}
+.tv-ant:after{content:"";position:absolute;left:50%;bottom:-3px;width:36px;height:12px;margin-left:-18px;border-radius:50% 50% 0 0;background:#2a1a10}
+.tv-caja{position:relative;border-radius:26px;background:linear-gradient(180deg,#a8633a,#7b3f20 18%,#5a2a14 60%,#3b1a0c);padding:14px;box-shadow:inset 0 2px 0 #d49a68,inset 0 -6px 0 #2b1208,0 18px 30px rgba(0,0,0,.6)}
+.tv-marco{border-radius:18px;background:#14100e;padding:10px;box-shadow:inset 0 0 0 3px #2a2018,inset 0 4px 12px #000}
+.tv-pant{position:relative;aspect-ratio:16/10;border-radius:16px/20px;overflow:hidden;background:#05070a;box-shadow:inset 0 0 30px #000,0 0 0 2px #000}
+.tv-pant iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.tv-pant:before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.1) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 62%,rgba(0,0,0,.45) 100%)}
+.tv-nada{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;color:#8fa3b5;font-size:.85rem}
+.tv-est{position:absolute;inset:0;z-index:2;display:none;background:repeating-radial-gradient(circle at 30% 40%,#fff 0 1px,#222 1px 2px,#999 2px 3px);opacity:.75;animation:tvruido .12s steps(2) infinite}
+@keyframes tvruido{0%{background-position:0 0}50%{background-position:7px 3px}100%{background-position:-5px 6px}}
+@media (prefers-reduced-motion:reduce){.tv-est{animation:none}}
+.tv-can{position:absolute;right:10px;top:8px;z-index:5;font:800 .8rem monospace;color:#7bff9a;text-shadow:0 0 6px #3f8;pointer-events:none}
+.tv-panel{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:0 4px}
+.tv-per{width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;color:#3a2306;font:800 .62rem system-ui;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1.05;background:radial-gradient(circle at 35% 30%,#fff2c4,#d9a93c 45%,#7b5410);box-shadow:0 4px 8px #0009,inset 0 -3px 5px #0005}
+.tv-per span{font-size:1.1rem}.tv-per.rojo{background:radial-gradient(circle at 35% 30%,#ffd0cc,#d4483f 45%,#6e1c16);color:#fff}.tv-per.verde{background:radial-gradient(circle at 35% 30%,#d6ffd9,#47b05a 45%,#1d5a2a);color:#fff}
+.tv-rej{flex:1;height:44px;border-radius:8px;background:repeating-linear-gradient(90deg,#1b0e07 0 4px,#3b1f10 4px 7px);box-shadow:inset 0 2px 6px #000}
+.tv-pies{display:flex;justify-content:space-around;margin-top:-2px}.tv-pies i{width:34px;height:12px;background:#24100a;border-radius:0 0 8px 8px}
+.tv-tit{margin:12px 2px 0;font-size:1rem;font-weight:800;color:#f3d9a8}.tv-nota{margin:2px 2px 0;font-size:.84rem;color:var(--suave,#cdb99f)}
+.tv-bajo{display:flex;gap:8px;margin-top:12px}.tv-bajo button,.tv-bajo a{flex:1;text-align:center;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:12px;padding:11px 6px;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer;text-decoration:none}
+.tvw.grande .tv-caja{position:fixed;inset:6px;z-index:70;display:flex;flex-direction:column;justify-content:center;border-radius:16px}
+.tvw.grande .tv-marco{flex:1;display:flex}.tvw.grande .tv-pant{flex:1;aspect-ratio:auto}
+body.vd-bloq{overflow:hidden}
 .bb-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .bb-tools input{flex:1;min-width:150px;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit}
 .bb-tools button{height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 13px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
@@ -631,7 +670,8 @@ var OBRA={
  descargas:['⬇️','Descargas','Aquí bajarás las circulares y los oficios que te mande el director.'],
  biblioteca:['📚','Biblioteca','Aquí abrirás los materiales del personal.'],
  enlaces:['🔗','Enlaces','Aquí encontrarás enlaces a sitios de interés.'],
- tutoriales:['🎬','Tutoriales','Aquí aprenderás paso a paso a usar la plataforma.']};
+ tutoriales:['🎬','Tutoriales','Aquí aprenderás paso a paso a usar la plataforma.'],
+ videoteca:['🎬','Videoteca','Muy pronto: aquí verás tutoriales en video, paso a paso.']};
 function enObra(id){var o=OBRA[id];if(!o)return;
   abrirC('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
@@ -659,7 +699,7 @@ function traeComp(){
   llama('perm_mis').then(function(r){if(r&&r.ok){COMP=compCuenta(r.solicitudes);pintaAtn();}}).catch(function(){});}
 function traeAvisos(){
   if(!B||!K)return;
-  traeComp();traeEnt();traeDes();traeEnl();traeBib();
+  traeComp();traeEnt();traeDes();traeEnl();traeBib();traeVid();
   llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
 function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
   return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
@@ -1453,6 +1493,111 @@ function enlCarga(){
 function traeEnl(){
   if(!B||!K||Date.now()-ENL.T<60000)return;ENL.T=Date.now();
   llama('enl_mis').then(function(r){if(r&&r.ok){ENL.lista=r.enlaces||[];enlCuenta();var e=$('cElEt');if(e)e.textContent=enlEt();}}).catch(function(){});}
+/* Ladrillo616: LA VIDEOTECA. El director comparte videos de Drive en 4 estantes; el maestro los ve aqui en un televisor retro. Nada se baja ni se borra. */
+var VID={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,sel:-1,tv:-1,enc:true,grande:false,apagada:false};
+var VD_NOM=['Gemas de Gemini','NotebookLM','Otras herramientas de IA','Cómo usar SIGEA'];
+var VD_ICO=['✨','📓','🧰','🖥️'];
+var VD_COL=['#7a3f86','#2f6a5a','#86563f','#3f6a86'];
+function vidEt(){if(VID.apagada)return 'Muy pronto';if(!VID.lista)return 'Tutoriales en video';if(!VID.lista.length)return 'Nada por ahora';return VID.nuevos?(VID.nuevos===1?'1 nuevo':VID.nuevos+' nuevos'):'Al día';}
+function vidApaga(si){VID.apagada=!!si;var bs=document.querySelectorAll('[data-o="videoteca"]'),k;for(k=0;k<bs.length;k++)bs[k].classList.toggle('apagado',!!si);var e=$('cViEt');if(e)e.textContent=vidEt();}
+function vidCuenta(){VID.nuevos=(VID.lista||[]).filter(function(x){return !x.abierto;}).length;}
+function vidNom(n){var e=VID.estantes||[],i;for(i=0;i<e.length;i++){if(Number(e[i].numero)===Number(n)&&e[i].nombre)return String(e[i].nombre);}return VD_NOM[Number(n)-1]||'';}
+function vidEst(x){return Math.max(1,Math.min(4,Number(x.estante)||3));}
+function vidFid(x){return /^[A-Za-z0-9_-]{10,100}$/.test(String(x.fid||''))?String(x.fid):'';}
+function vidCinta(x,i){
+  var t=String(x.titulo||''),h=118+((i*37)%5)*6;
+  return '<div class="vd-cinta'+(VID.sel===i?' sel':'')+'" data-vi="'+i+'" style="--c:'+VD_COL[vidEst(x)-1]+';--h:'+h+'px"><i>▶</i><b>'+esc(t.length>26?t.slice(0,24)+'…':t)+'</b>'+(x.abierto?'':'<span class="vd-nu"></span>')+(x.visto?'<span class="vd-vi"></span>':'')+'</div>';
+}
+function vidMueble(){
+  var h='<div class="bb-mueble"><div class="bb-cornisa"><div class="bb-mayor">VIDEOTECA · TELESECUNDARIA 171</div></div><div class="bb-poste l" style="grid-row:2"></div><div class="bb-cuerpo">',n;
+  for(n=1;n<=4;n++){
+    var ls=(VID.lista||[]).map(function(x,i){return vidEst(x)===n?vidCinta(x,i):'';}).join('');
+    h+='<div class="bb-estante"><div class="bb-libros vd-sh'+(ls?'':' bb-vac')+'">'+(ls||'<div class="bb-vacio">Todavía no hay videos en este estante</div>')+'</div><div class="bb-tabla"><div class="bb-placa"><i style="background:'+BB_COL[n-1][0]+'"></i>'+VD_ICO[n-1]+' '+esc(vidNom(n))+'</div></div></div>';
+  }
+  return h+'</div><div class="bb-poste r" style="grid-row:2"></div><div class="bb-zocalo"></div></div>';
+}
+function vidFichaHtml(i){
+  var x=(VID.lista||[])[i];if(!x)return '';
+  return '<div class="vd-ft">🎬 '+esc(x.titulo)+'</div><div class="vd-fm">'+VD_ICO[vidEst(x)-1]+' '+esc(vidNom(vidEst(x)))+(x.abierto?'':' · ★ nuevo')+(x.visto?' · ✓ ya lo viste':'')+'</div>'+(x.nota?'<p class="vd-fn">'+esc(x.nota)+'</p>':'')+
+    '<div class="vd-fa"><button class="vd-ver" data-vd="ver" data-vi="'+i+'">▶ Ver video</button><button class="vd-cer" data-vd="cerrar">Cerrar</button></div>';
+}
+function vidAbreFicha(i){
+  var f=$('viFicha');if(f){f.innerHTML=vidFichaHtml(i);f.classList.add('on');}
+  var cs=document.querySelectorAll('.vd-cinta'),k;for(k=0;k<cs.length;k++)cs[k].classList.toggle('sel',Number(cs[k].getAttribute('data-vi'))===i);
+}
+function vidCierra(){VID.sel=-1;var cs=document.querySelectorAll('.vd-cinta'),k;for(k=0;k<cs.length;k++)cs[k].classList.remove('sel');var f=$('viFicha');if(f)f.classList.remove('on');}
+function vidToca(i){if(!(VID.lista||[])[i])return;if(VID.sel===i){vidVer(i);return;}VID.sel=i;vidAbreFicha(i);}
+function vidMarcaAbierto(x){if(x&&!x.abierto){x.abierto=true;vidCuenta();var e=$('cViEt');if(e)e.textContent=vidEt();llama('vid_abrir',{id:x.id}).catch(function(){});}}
+function vidVer(i){var x=(VID.lista||[])[i];if(!x)return;VID.tv=i;VID.enc=true;VID.sel=-1;vidMarcaAbierto(x);irA('tv');}
+function pintaVid(){
+  sala.onclick=null;VID.grande=false;try{document.body.classList.remove('vd-bloq');}catch(e){}
+  var h='<div class="pz-top"><button class="volv" id="viSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">🎬 Videoteca</h1></div>';
+  if(VID.cargando&&!VID.lista)h+='<p class="pm-vacio">Buscando tus videos…</p>';
+  else if(VID.err&&!VID.lista)h+='<div class="pm-aviso">'+esc(VID.err)+'</div><div class="en-act"><button class="pm-b" data-vd="rei">↻ Intentar otra vez</button></div>';
+  else{
+    if(VID.err)h+='<div class="pm-aviso">'+esc(VID.err)+' Esto es lo último que pude leer.</div>';
+    if(!(VID.lista||[]).length)h+='<p class="pm-vacio">Todavía no hay videos para ti. Cuando el director suba uno, aparecerá aquí. 📭</p>';
+    else h+=vidMueble()+'<p class="pm-ayuda">Toca una cinta para sacarla del estante; tócala otra vez (o «▶ Ver video») para verla en el televisor. La marca amarilla es «nuevo» y la rayita verde, «ya lo viste».</p>';
+    h+='<div class="en-act"><button class="pm-b" data-vd="rei">'+(VID.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
+  h+='<div class="vd-ficha" id="viFicha"></div>';
+  sala.innerHTML=h;
+  var a=$('viSala');if(a)a.onclick=function(){sube('sala');};
+  if(VID.sel>=0&&(VID.lista||[])[VID.sel])vidAbreFicha(VID.sel);
+  sala.onclick=function(e){
+    var t=e.target.closest?e.target.closest('[data-vd]'):null;
+    if(t){var m=t.getAttribute('data-vd');
+      if(m==='cerrar'){vidCierra();return;}
+      if(m==='ver'){vidVer(Number(t.getAttribute('data-vi')));return;}
+      if(m==='rei'){vidCarga();return;}}
+    var c=e.target.closest?e.target.closest('.vd-cinta'):null;
+    if(c)vidToca(Number(c.getAttribute('data-vi')));};
+}
+function vidCola(est){var r=[];(VID.lista||[]).forEach(function(x,i){if(vidEst(x)===est)r.push(i);});return r;}
+function tvEstatica(ms){var e=$('tvEst');if(!e)return;e.style.display='block';setTimeout(function(){var q=$('tvEst');if(q)q.style.display='none';},ms);}
+function tvCanal(d){
+  var x=(VID.lista||[])[VID.tv];if(!x)return;var c=vidCola(vidEst(x));
+  if(c.length<2){bibToast('Este estante tiene un solo video.');return;}
+  VID.tv=c[(c.indexOf(VID.tv)+d+c.length)%c.length];vidMarcaAbierto(VID.lista[VID.tv]);
+  pintaTv();if(VID.enc)tvEstatica(450);
+}
+function pintaTv(){
+  sala.onclick=null;
+  var x=(VID.lista||[])[VID.tv];
+  if(!x){irA0('vid');return;}
+  var est=vidEst(x),c=vidCola(est),n=c.indexOf(VID.tv)+1,fid=vidFid(x),pant;
+  if(VID.enc&&fid)pant='<iframe src="https://drive.google.com/file/d/'+fid+'/preview" allow="autoplay; fullscreen" allowfullscreen title="'+esc(x.titulo)+'"></iframe>';
+  else if(VID.enc)pant='<div class="tv-nada">Este video no se puede abrir aquí. Usa «↗ Abrir en Drive».</div>';
+  else pant='';
+  var h='<div class="pz-top"><button class="volv" id="tvVol">‹ Videoteca</button></div><div class="bv"><h1 style="font-size:1.15rem">'+VD_ICO[est-1]+' '+esc(vidNom(est))+'</h1></div>'+
+   '<div class="tvw'+(VID.grande?' grande':'')+'" id="tvW"><div class="tv-ant"><i></i><i></i></div><div class="tv-caja"><div class="tv-marco"><div class="tv-pant" id="tvPant">'+pant+'<div class="tv-est" id="tvEst"></div>'+(VID.enc?'<div class="tv-can">CH 0'+n+'</div>':'')+'</div></div>'+
+   '<div class="tv-panel"><button class="tv-per rojo" data-tv="pow"><span>⏻</span>'+(VID.enc?'Apagar':'Encender')+'</button><button class="tv-per" data-tv="up"><span>▲</span>Canal</button><div class="tv-rej"></div><button class="tv-per" data-tv="dn"><span>▼</span>Canal</button><button class="tv-per verde" data-tv="fs"><span>⛶</span>Grande</button></div></div>'+
+   '<div class="tv-pies"><i></i><i></i></div></div>'+
+   '<div class="tv-tit">Canal '+n+' · '+esc(x.titulo)+'</div>'+(x.nota?'<div class="tv-nota">'+esc(x.nota)+'</div>':'')+
+   '<div class="tv-bajo"><button data-tv="visto" id="tvVisto">'+(x.visto?'✓ Ya lo viste':'✓ Ya lo vi')+'</button>'+(/^https:\/\//i.test(String(x.url||''))?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">↗ Abrir en Drive</a>':'')+'</div>'+
+   '<div class="bb-toast" id="biToast"></div>';
+  sala.innerHTML=h;
+  var a=$('tvVol');if(a)a.onclick=function(){sube('vid');};
+  sala.onclick=function(e){
+    var t=e.target.closest?e.target.closest('[data-tv]'):null;if(!t)return;var m=t.getAttribute('data-tv');
+    if(m==='pow'){VID.enc=!VID.enc;pintaTv();if(VID.enc)tvEstatica(700);return;}
+    if(m==='up'||m==='dn'){tvCanal(m==='up'?1:-1);return;}
+    if(m==='fs'){VID.grande=!VID.grande;var w=$('tvW');if(w)w.classList.toggle('grande',VID.grande);try{document.body.classList.toggle('vd-bloq',VID.grande);}catch(e2){}return;}
+    if(m==='visto'){var y=(VID.lista||[])[VID.tv];if(!y)return;y.visto=true;y.abierto=true;vidCuenta();var b=$('tvVisto');if(b)b.textContent='✓ Ya lo viste';llama('vid_visto',{id:y.id}).catch(function(){});bibToast('Marcado como visto ✓');}};
+  if(VID.enc&&!VID.llego){VID.llego=true;tvEstatica(700);}
+}
+function vidCarga(){
+  if(!B||!K)return;VID.cargando=true;VID.err='';if(VISTA==='vid')pintaVid();
+  llama('vid_mis').then(function(r){VID.cargando=false;VID.T=Date.now();
+    if(r&&r.ok){VID.lista=r.videos||[];VID.estantes=r.estantes||null;VID.err='';VID.sel=-1;vidCuenta();vidApaga(false);}
+    else if(r&&/desconocida/i.test(String(r.error||''))){vidApaga(true);VID.err='La Videoteca todavía no está lista en tu escuela. Muy pronto.';}
+    else VID.err='No pude leer la Videoteca ('+((r&&r.error)||'respuesta rara')+').';
+    if(VISTA==='vid')pintaVid();var e=$('cViEt');if(e)e.textContent=vidEt();})
+  .catch(function(){VID.cargando=false;VID.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='vid')pintaVid();});}
+function traeVid(){
+  if(!B||!K||Date.now()-VID.T<60000)return;VID.T=Date.now();
+  llama('vid_mis').then(function(r){
+    if(r&&r.ok){VID.lista=r.videos||[];VID.estantes=r.estantes||null;vidCuenta();vidApaga(false);var e=$('cViEt');if(e)e.textContent=vidEt();}
+    else if(r&&/desconocida/i.test(String(r.error||'')))vidApaga(true);}).catch(function(){});}
 /* BIBLIOTECA (ladrillo 574): el LIBRERO en 3D. El maestro ve los libros que le tocan, parados por estante; el lector viene en el siguiente paso.
    Nada se baja ni se borra: aqui solo se ve y se escoge. */
 var BIB={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,sel:-1,q:'',vista:'librero'};
@@ -2845,7 +2990,7 @@ function hEst(){try{return history.state;}catch(e){return null;}}
 function irA(v){var de=VISTA;irA0(v);if(de===v)return;try{history.pushState({sv:v,prev:de},'',location.href);}catch(e){}}
 function sube(v){var st=hEst();if(st&&st.sv&&st.prev===v){try{history.back();return;}catch(e){}}try{history.replaceState({sv:v,prev:(st&&st.prev)||null},'',location.href);}catch(e){}irA0(v);}
 window.addEventListener('popstate',function(e){var s=e&&e.state;if(!s||!s.sv||!K||!QQ)return;irA0(s.sv);});
-function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl'||v==='bib'||v==='lec');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='bib'&&B&&K)bibCarga();if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl'||v==='bib'||v==='vid'||v==='tv'||v==='lec');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='bib'&&B&&K)bibCarga();if(v==='vid'&&B&&K)vidCarga();if(v==='tv')VID.llego=false;if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 /* Ladrillo559: «DIA n DE total · pct%» del ciclo, calcado de la corona. Se cuenta con el calendario que ya trae tu pantalla de permisos:
    lunes a viernes entre el inicio y el fin del ciclo, menos los dias que la escuela no labora (inhabiles, CTE y registro de calificaciones). */
 var CIC={cargando:false,probado:false};
@@ -2920,7 +3065,7 @@ function pinta(q,aviso){
    '<button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button>'+
    '<button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button>'+
    '<button class="cofre c-tea'+(BIB.apagada?' apagado':'')+'" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button>'+
-   '<button class="cofre c-oro apagado" data-o="tutoriales"><span class="ico">🎬</span><h3>Tutoriales</h3><span class="et">En construcción</span></button></div>';
+   '<button class="cofre c-oro'+(VID.apagada?' apagado':'')+'" data-o="videoteca"><span class="ico">🎬</span><h3>Videoteca</h3><span class="et" id="cViEt">'+esc(vidEt())+'</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+pizTxt()+'</span></div><span class="pz-glo" id="cPizGlo"'+(PEND?'':' hidden')+'>'+PEND+'</span></button>'+
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
    '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button><button class="cofre c-tea'+(BIB.apagada?' apagado':'')+'" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button></div>';
@@ -2931,6 +3076,8 @@ function pinta(q,aviso){
   if(VISTA==='enl'){pintaEnl();return;}
   if(VISTA==='lec'){pintaLec();return;}
   if(VISTA==='bib'){pintaBib();return;}
+  if(VISTA==='vid'){pintaVid();return;}
+  if(VISTA==='tv'){pintaTv();return;}
   if(VISTA==='cal'){pintaCal();return;}
   if(VISTA==='sala'){
     sala.innerHTML='<div class="bv"><h1 style="font-size:1.4rem">Tu sala</h1><p class="ciclo">'+esc(w.saludo.charAt(0).toUpperCase()+w.saludo.slice(1))+(gtxt?' · '+esc(gtxt):'')+'</p></div>'+cofres+
@@ -2956,7 +3103,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else if(o==='biblioteca'){if(BIB.apagada)enObra(o);else irA('bib');}else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else if(o==='biblioteca'){if(BIB.apagada)enObra(o);else irA('bib');}else if(o==='videoteca'){if(VID.apagada)enObra(o);else irA('vid');}else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
