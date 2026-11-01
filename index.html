@@ -594,13 +594,13 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .c-vin{background:linear-gradient(145deg,#b8324a,#8c2230 45%,#5a111c)}
 /* Ladrillo630: EL INDICE DE LA DISCOTECA (las pistas de cada estante, siempre legibles) */
 #dcIdx{max-width:380px;margin:16px auto 0}
-#dcIdx details{background:linear-gradient(180deg,#2a140b,#1c0d07);border:1px solid #5a2e18;border-radius:12px;margin-bottom:10px;overflow:hidden}
-#dcIdx summary{cursor:pointer;list-style:none;padding:10px 14px;font:800 .8rem Georgia,serif;letter-spacing:.05em;color:#f3d48a;display:flex;align-items:center;gap:8px}
-#dcIdx summary::-webkit-details-marker{display:none}
-#dcIdx summary i{width:10px;height:10px;border-radius:2px;display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
-#dcIdx summary em{font-style:normal;margin-left:auto;font:700 .7rem system-ui;opacity:.7}
-#dcIdx summary:after{content:"▾";opacity:.7}
-#dcIdx details:not([open]) summary:after{content:"▸"}
+#dcIdx .caja{background:linear-gradient(180deg,#2a140b,#1c0d07);border:1px solid #5a2e18;border-radius:12px;overflow:hidden}
+#dcIdx .cab{padding:10px 14px;font:800 .8rem Georgia,serif;letter-spacing:.05em;color:#f3d48a;display:flex;align-items:center;gap:8px}
+#dcIdx .cab i{width:10px;height:10px;border-radius:2px;display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+#dcIdx .cab em{font-style:normal;margin-left:auto;font:700 .7rem system-ui;opacity:.7}
+#dcIdx .hint{text-align:center;padding:12px 14px;font:600 .82rem system-ui;color:#f3d48a;opacity:.7}
+#dcW button.placa{border:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+#dcW button.placa.on{filter:brightness(1.15);box-shadow:0 0 0 2px #ffd34d,0 1px 3px #0009,inset 0 1px 0 #fff8}
 #dcIdx .pis{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ffffff14;color:#f5e9d4;padding:10px 14px;font:inherit;cursor:pointer}
 #dcIdx .pis .n{flex:0 0 22px;font:700 .75rem system-ui;opacity:.55}
 #dcIdx .pis .t{flex:1;min-width:0;font-size:.9rem;line-height:1.25}
@@ -1945,7 +1945,7 @@ function traeVid(){
     else if(r&&/desconocida/i.test(String(r.error||'')))vidApaga(true);}).catch(function(){});}
 /* Ladrillo628: LA DISCOTECA (la bodega v23). El director sube discos de audio a 3 estantes; el maestro los escucha aqui en un tocadiscos de mueble.
    El disco viene de la bodega por trozos (dis_leer), se junta en el telefono y suena con un reproductor propio (pausa, volumen y la aguja avanza con la cancion). Nada se baja ni se guarda fuera de esta pantalla. */
-var DC={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,apagada:false,cur:-1,busy:false,tocando:false,prog:0,tmr:null,vol:1,vi:0,blob:{},A0:0,A1:0,tok:0,unl:false,au:null,orden:[]};
+var DC={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,apagada:false,cur:-1,est:0,busy:false,tocando:false,prog:0,tmr:null,vol:1,vi:0,blob:{},A0:0,A1:0,tok:0,unl:false,au:null,orden:[]};
 var DC_NOM=['Himnos','Honores','Ambiente'],DC_ICO=['🎖️','🎌','🎶'],DC_COL=['#b4506c','#1c6fd6','#d98f1b'];
 var DC_G=['linear-gradient(160deg,#2d6a4f,#f4f1e6 52%,#b02a37)','linear-gradient(160deg,#16508f,#2c7fd1)','linear-gradient(160deg,#8a4b10,#e0a032)'];
 var DC_VOLS=[1,.66,.33,0];
@@ -1975,22 +1975,31 @@ function dcMueble(){
    '<div class="hueco" id="dcHueco">';
   for(n=1;n<=3;n++){
     var ids=g[n-1],paso=ids.length>1?Math.max(6,Math.min(18,Math.floor(46/(ids.length-1)))):18;
-    h+='<div class="comp"><div class="fila">'+ids.map(function(i,k){return dcFunda(DC.lista[i],i,n,k*paso);}).join('')+'</div><div class="placa"><i style="background:'+DC_COL[n-1]+'"></i>'+DC_ICO[n-1]+' '+esc(dcNom(n))+'</div></div>'+(n<3?'<div class="div"></div>':'');
+    h+='<div class="comp"><div class="fila">'+ids.map(function(i,k){return dcFunda(DC.lista[i],i,n,k*paso);}).join('')+'</div><button class="placa'+(DC.est===n?' on':'')+'" data-dc="est" data-n="'+n+'"><i style="background:'+DC_COL[n-1]+'"></i>'+DC_ICO[n-1]+' '+esc(dcNom(n))+'</button></div>'+(n<3?'<div class="div"></div>':'');
   }
   return h+'</div><div class="zoc"></div></div></div>';
 }
 /* Ladrillo630: INDICE DE PISTAS. Con muchos discos las fundas se encima y no se lee el titulo; aqui cada estante lista todas sus pistas. */
 function dcIdxMarca(){var r=document.querySelectorAll('#dcIdx .pis'),k;for(k=0;k<r.length;k++)r[k].classList.toggle('on',DC.cur>=0&&Number(r[k].getAttribute('data-i'))===DC.cur);}
 (function(){var c=DC.cur===undefined?-1:DC.cur;Object.defineProperty(DC,'cur',{configurable:true,enumerable:true,get:function(){return c;},set:function(v){c=v;dcIdxMarca();}});})();
+function dcIdxHtml(){
+  var n=DC.est,ids=[];
+  if(!(DC.lista||[]).length)return '';
+  if(!n)return '<div class="hint">Toca un estante para ver sus canciones.</div>';
+  (DC.lista||[]).forEach(function(x,i){if(dcEst(x)===n)ids.push(i);});
+  if(!ids.length)return '<div class="hint">Este estante todavía no tiene discos.</div>';
+  return '<div class="caja"><div class="cab"><i style="background:'+DC_COL[n-1]+'"></i>'+DC_ICO[n-1]+' '+esc(dcNom(n))+'<em>'+ids.length+(ids.length===1?' disco':' discos')+'</em></div>'+
+    ids.map(function(i,k){var x=DC.lista[i];return '<button class="pis" data-dc="pis" data-i="'+i+'"><span class="n">'+(k+1)+'</span><span class="t">'+esc(String(x.titulo||''))+'</span><span class="e">'+(x.recomendado?'⭐ ':'')+(x.escuchado?'':'★ nuevo')+'</span></button>';}).join('')+'</div>';
+}
 function dcIndice(){
   if(!(DC.lista||[]).length)return '';
-  var n,h='<div id="dcIdx">';
-  for(n=1;n<=3;n++){
-    var ids=[];(DC.lista||[]).forEach(function(x,i){if(dcEst(x)===n)ids.push(i);});
-    if(!ids.length)continue;
-    h+='<details open><summary><i style="background:'+DC_COL[n-1]+'"></i>'+DC_ICO[n-1]+' '+esc(dcNom(n))+'<em>'+ids.length+(ids.length===1?' disco':' discos')+'</em></summary>'+
-      ids.map(function(i,k){var x=DC.lista[i];return '<button class="pis" data-dc="pis" data-i="'+i+'"><span class="n">'+(k+1)+'</span><span class="t">'+esc(String(x.titulo||''))+'</span><span class="e">'+(x.recomendado?'⭐ ':'')+(x.escuchado?'':'★ nuevo')+'</span></button>';}).join('')+'</details>';}
-  return h+'</div>';
+  return '<div id="dcIdx">'+dcIdxHtml()+'</div>';
+}
+function dcEstToca(n){
+  DC.est=(DC.est===n)?0:n;
+  var z=$('dcIdx');if(z)z.innerHTML=dcIdxHtml();
+  var p=document.querySelectorAll('#dcW .placa'),k;for(k=0;k<p.length;k++)p[k].classList.toggle('on',Number(p[k].getAttribute('data-n'))===DC.est);
+  dcIdxMarca();
 }
 function dcFichaHtml(i){
   var x=(DC.lista||[])[i];if(!x)return '';
@@ -2129,14 +2138,14 @@ function dcClick(e){
   var b=e.target.closest?e.target.closest('button,.fun'):null;if(!b)return;
   if(b.classList.contains('fun')){dcToca(Number(b.getAttribute('data-i')));return;}
   var dd=b.getAttribute('data-dc'),id=b.id;
-  if(dd==='pis'){dcToca(Number(b.getAttribute('data-i')));return;}if(dd==='esc'){dcEscucha();return;}if(dd==='cer'){dcCierra();return;}if(dd==='rei'){if(!DC.busy&&!DC.tocando)dcCarga();return;}
+  if(dd==='est'){dcEstToca(Number(b.getAttribute('data-n')));return;}if(dd==='pis'){dcToca(Number(b.getAttribute('data-i')));return;}if(dd==='esc'){dcEscucha();return;}if(dd==='cer'){dcCierra();return;}if(dd==='rei'){if(!DC.busy&&!DC.tocando)dcCarga();return;}
   if(id==='dcSala'){sube('sala');return;}
   if(id==='dcPl')dcPlay();else if(id==='dcPa')dcPausa();else if(id==='dcSt'){var d=$('dcDisco');if(d&&(d.classList.contains('on')||$('dcTapa').classList.contains('abierta')))dcParo();}
   else if(id==='dcSig')dcOtro(1);else if(id==='dcAnt')dcOtro(-1);else if(id==='dcVol')dcVolumen();
 }
 function pintaDis(){
   sala.onclick=null;
-  if($('dcW')&&(DC.busy||DC.tocando)){sala.onclick=dcClick;return;}
+  if($('dcW')&&(DC.busy||DC.tocando)){sala.onclick=dcClick;return;}DC.est=0;
   var h='<div class="pz-top"><button class="volv" id="dcSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">💿 Discoteca</h1></div>';
   if(DC.cargando&&!DC.lista)h+='<p class="pm-vacio">Buscando tus discos…</p>';
   else if(DC.err&&!DC.lista)h+='<div class="pm-aviso">'+esc(DC.err)+'</div><div class="en-act"><button class="pm-b" data-dc="rei">↻ Intentar otra vez</button></div>';
