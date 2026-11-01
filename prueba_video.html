@@ -1,0 +1,39 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Prueba de reproductor</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#160d12;color:#f1e6d4;font-family:system-ui,Segoe UI,Arial,sans-serif;padding:14px;max-width:560px;margin:0 auto}
+h1{font-size:1.1rem;color:#e8cd7a;margin:0 0 6px}p{font-size:.85rem;color:#b9a98f;line-height:1.4;margin:4px 0 10px}
+.caja{background:#000;border-radius:12px;overflow:hidden;position:relative;aspect-ratio:4/3}
+video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
+.fila{display:flex;gap:6px;align-items:center;margin:10px 0}
+button{flex:1;border:0;border-radius:8px;padding:12px 4px;font:inherit;font-weight:800;background:linear-gradient(180deg,#6a6a74,#34343a);color:#f2dc9a;cursor:pointer}
+input[type=range]{flex:1;width:100%}
+.t{font:700 .8rem monospace;color:#7bff9a;min-width:92px;text-align:right}
+#log{white-space:pre-wrap;font:12px/1.4 monospace;background:#0b0710;border:1px solid #3a2a40;border-radius:8px;padding:8px;min-height:80px;color:#cfe8ff}
+.f{background:#2a1f2e}.f.on{background:#8a3a56;color:#fff}
+</style></head><body>
+<h1>📼 Prueba del reproductor propio</h1>
+<p>Es tu video de 10 segundos. Prueba: Fuente 1 y Fuente 2, y en cada una: ▶/⏸ (también tocando el video), ◀10, 10▶, la barra de avance, el volumen y ⛶. Al final copia lo que dice el recuadro de abajo y mándamelo.</p>
+<div class="fila"><button class="f on" id="f1">Fuente 1</button><button class="f" id="f2">Fuente 2</button></div>
+<div class="caja"><video id="v" playsinline preload="metadata"></video></div>
+<div class="fila"><button id="pp">▶</button><button id="b10">◀10</button><button id="f10">10▶</button><button id="fs">⛶</button></div>
+<div class="fila"><input type="range" id="bar" min="0" max="1000" value="0"><span class="t" id="t">0:00 / 0:00</span></div>
+<div class="fila"><span style="font-size:.8rem">🔈</span><input type="range" id="vol" min="0" max="100" value="100"><span style="font-size:.8rem">🔊</span></div>
+<div id="log"></div>
+<script>
+var ID='1bo6jzoiK-zIHnDL1Ta7Fz8CbuZyIMjB2',F={f1:'https://drive.google.com/uc?export=download&id='+ID,f2:'https://drive.usercontent.google.com/download?id='+ID+'&export=download'};
+var v=document.getElementById('v'),L=document.getElementById('log'),$=function(x){return document.getElementById(x)};
+function log(s){L.textContent+=(L.textContent?'\n':'')+s;}
+function m(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
+function pon(k){$('f1').classList.toggle('on',k==='f1');$('f2').classList.toggle('on',k==='f2');L.textContent='';log('Probando '+k+' · '+F[k].slice(0,60)+'…');v.src=F[k];v.load();}
+$('f1').onclick=function(){pon('f1')};$('f2').onclick=function(){pon('f2')};
+['loadedmetadata','canplay','play','pause','ended','seeking','seeked','stalled','waiting'].forEach(function(e){v.addEventListener(e,function(){log(e+(e==='loadedmetadata'?' · dura '+m(v.duration)+' · '+v.videoWidth+'x'+v.videoHeight:'')+(e==='seeked'?' · en '+m(v.currentTime):''));});});
+v.addEventListener('error',function(){var c=v.error?v.error.code:'?';log('ERROR código '+c+' ('+({1:'cancelado',2:'red',3:'no se pudo decodificar',4:'fuente no aceptada'}[c]||'')+')');});
+v.addEventListener('timeupdate',function(){$('t').textContent=m(v.currentTime)+' / '+m(v.duration);if(v.duration)$('bar').value=Math.round(v.currentTime/v.duration*1000);});
+$('pp').onclick=function(){if(v.paused)v.play().catch(function(e){log('play falló: '+e.message)});else v.pause();};
+v.onclick=$('pp').onclick;v.addEventListener('play',function(){$('pp').textContent='⏸'});v.addEventListener('pause',function(){$('pp').textContent='▶'});
+$('b10').onclick=function(){v.currentTime=Math.max(0,v.currentTime-10)};$('f10').onclick=function(){v.currentTime=Math.min(v.duration||0,v.currentTime+10)};
+$('bar').oninput=function(){if(v.duration)v.currentTime=this.value/1000*v.duration;};
+$('vol').oninput=function(){v.volume=this.value/100;log('volumen '+this.value+' (el sistema lo reporta como '+Math.round(v.volume*100)+')');};
+$('fs').onclick=function(){var r=v.requestFullscreen||v.webkitRequestFullscreen||v.webkitEnterFullscreen;if(r)Promise.resolve(r.call(v)).then(function(){log('pantalla completa OK')}).catch(function(e){log('pantalla completa falló: '+e.message)});else log('este navegador no ofrece pantalla completa para el video');};
+log('Navegador: '+navigator.userAgent.slice(0,90));pon('f1');
+</script></body></html>
