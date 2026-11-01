@@ -413,6 +413,102 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 .lc-av{position:absolute;left:50%;top:72px;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;border-radius:10px;padding:8px 14px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .3s;z-index:6;max-width:90%;text-align:center}
 .lc-av.on{opacity:1}
 /* BIBLIOTECA (ladrillo 574): el librero en 3D. Todo lleva el prefijo bb- para no mezclarse con el resto de la sala. */
+/* Ladrillo628: LA DISCOTECA */
+/* ===== CONSOLA ===== */
+#dcW .con{position:relative;padding:0 16px;filter:drop-shadow(0 28px 34px rgba(0,0,0,.65));background:linear-gradient(90deg,#2a1208 0,#8a4a28 3px,#b97848 8px,#7b3f20 12px,#4a2210 16px,transparent 16px calc(100% - 16px),#4a2210 calc(100% - 16px),#7b3f20 calc(100% - 12px),#b97848 calc(100% - 8px),#8a4a28 calc(100% - 3px),#2a1208 100%)}
+#dcW .tope{margin:0 -16px;height:44px;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,#a8633a 0,#7b3f20 18%,#5a2a14 60%,#3b1a0c 100%);box-shadow:inset 0 2px 0 #d49a68,inset 0 -5px 0 #2b1208;position:relative}
+#dcW .tope b{position:absolute;left:50%;top:9px;transform:translateX(-50%);padding:5px 20px;border-radius:7px;background:linear-gradient(180deg,#f7de9a,#d9a93c 55%,#a8761a);color:#3a2306;font:800 .8rem Georgia,serif;letter-spacing:.07em;white-space:nowrap;box-shadow:0 2px 5px #0009,inset 0 1px 0 #fff8}
+/* escena del tocadiscos */
+#dcW .esc{position:relative;height:296px;perspective:760px;perspective-origin:50% 8%;background:linear-gradient(180deg,#1a0d08,#241209);box-shadow:inset 0 0 36px #000}
+#dcW .plano{position:absolute;left:14px;right:14px;top:96px;height:190px;transform-style:preserve-3d;transform:rotateX(58deg);transform-origin:50% 100%}
+#dcW .caja{position:absolute;inset:0;border-radius:8px;background:linear-gradient(180deg,#8a4a28,#5a2a14);box-shadow:inset 0 0 0 4px #3b1a0c,inset 0 0 0 6px #b97848}
+#dcW .fieltro{position:absolute;left:18px;top:20px;width:152px;height:152px;border-radius:50%;background:radial-gradient(circle,#2a2a30 0 55%,#17171a 56% 100%);box-shadow:0 0 0 3px #888891,0 0 0 5px #3d3d44,0 3px 6px #000a}
+#dcW .disco{position:absolute;left:24px;top:26px;width:140px;height:140px;border-radius:50%;opacity:0;background:repeating-radial-gradient(circle,#101012 0 2px,#17171a 2px 4px);box-shadow:0 0 0 1px #000}
+#dcW .disco:before{content:"";position:absolute;inset:34%;border-radius:50%;background:var(--c,#b4506c);box-shadow:inset 0 0 0 2px #0004}
+#dcW .disco .brillo{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 20%,rgba(255,255,255,.14) 25%,transparent 32% 70%,rgba(255,255,255,.1) 76%,transparent 82%)}
+#dcW .disco:after{content:"";position:absolute;left:50%;top:50%;width:13%;height:13%;margin:-6.5% 0 0 -6.5%;border-radius:50%;background:radial-gradient(circle,#030304 0 55%,#2a2a2e 70%,#9a9aa4 100%);box-shadow:0 0 0 1px #000,inset 0 1px 3px #000}
+#dcW .disco.on{opacity:1}
+#dcW .disco.gira{animation:dcgira 2.4s linear infinite}
+#dcW .disco.pau{animation-play-state:paused}
+@keyframes dcgira{to{transform:rotate(360deg)}}
+#dcW .pivote{position:absolute;left:230px;top:16px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9a9aa4 55%,#44444c);box-shadow:0 3px 5px #000a}
+#dcW .brazo{position:absolute;left:241px;top:30px;width:6px;height:162px;transform-origin:50% 0;transform:rotate(var(--ang,18deg));transition:transform 1.4s cubic-bezier(.5,0,.3,1);transform-style:preserve-3d}
+#dcW .brazo i{position:absolute;left:0;top:0;width:6px;height:100%;border-radius:3px;background:linear-gradient(90deg,#bcbcc6,#f2f2f6 40%,#7c7c86);box-shadow:3px 5px 5px #0008}
+#dcW .brazo u{position:absolute;left:-5px;bottom:-12px;width:16px;height:22px;border-radius:3px;background:linear-gradient(180deg,#2c2c32,#0f0f12);box-shadow:0 3px 5px #000a;transform:rotate(-12deg)}
+#dcW .brazo{transition:transform 1.4s cubic-bezier(.5,0,.3,1)}
+#dcW .brazo.sigue{transition:none}
+#dcW .brazo.alto{transition:transform 1.2s cubic-bezier(.5,0,.3,1),filter .6s;filter:drop-shadow(10px 12px 8px #000a);transform:rotate(var(--ang,18deg)) scale(1.05)}
+#dcW .apoyo{position:absolute;left:180px;top:166px;width:26px;height:30px;transform:translateZ(1px)}
+#dcW .apoyo:before{content:'';position:absolute;left:0;right:0;bottom:0;height:12px;border-radius:5px;background:linear-gradient(180deg,#9a9aa4,#3c3c44);box-shadow:0 3px 4px #000a}
+#dcW .apoyo:after{content:'';position:absolute;left:3px;right:3px;top:0;height:20px;border-radius:9px 9px 3px 3px;border:3px solid #c8c8d2;border-bottom:0;background:#1a1a1e;box-shadow:inset 0 2px 3px #000}
+#dcW .huso{position:absolute;left:94px;top:96px;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#d4d4dc 35%,#7a7a84 75%,#44444c);box-shadow:0 0 0 2px #2a2a30,0 0 0 3px #9a9aa4,0 3px 5px #000b;transform:translateZ(3px)}
+#dcW .huso:after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:radial-gradient(circle,#fff,#aaa)}
+#dcW .contrapeso{position:absolute;left:234px;top:2px;width:20px;height:16px;border-radius:4px;background:linear-gradient(180deg,#9a9aa4,#44444c);box-shadow:0 2px 3px #0008}
+/* tapa */
+#dcW .bis{position:absolute;top:-7px;width:38px;height:14px;border-radius:3px;background:linear-gradient(180deg,#f4efe0,#c9a85a 40%,#8a6a28 100%);box-shadow:0 2px 4px #000a,inset 0 0 0 1px #5a431a;transform:translateZ(15px)}
+#dcW .bis:before,#dcW .bis:after{content:"";position:absolute;top:5px;width:4px;height:4px;border-radius:50%;background:#3a2a10}
+#dcW .bis:before{left:5px}
+#dcW .bis:after{right:5px}
+#dcW .bis.l{left:14%}
+#dcW .bis.r{right:14%}
+#dcW .tapa{position:absolute;left:0;right:0;top:0;height:100%;transform-origin:50% 0;transform:translateZ(16px) rotateX(0deg);transition:transform 1.3s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+#dcW .tapa.abierta{transform:translateZ(16px) rotateX(126deg)}
+#dcW .tapa .cara{position:absolute;inset:0;border-radius:8px;backface-visibility:visible;background:linear-gradient(180deg,#a8633a,#7b3f20 40%,#5a2a14);box-shadow:inset 0 0 0 3px #3b1a0c,inset 0 0 0 5px #c08052,0 6px 10px #0007}
+#dcW .tapa .cara:after{content:"";position:absolute;left:12%;right:12%;top:14%;bottom:14%;border-radius:6px;box-shadow:inset 0 0 0 2px #0003;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,0,0,.08) 22px 23px)}
+.dc-vuelo{position:fixed;z-index:90;pointer-events:none;transform-origin:50% 50%;border-radius:50%;background:repeating-radial-gradient(circle,#101012 0 2px,#17171a 2px 4px);box-shadow:0 8px 16px #000a}
+.dc-vuelo:after{content:"";position:absolute;left:50%;top:50%;width:13%;height:13%;margin:-6.5% 0 0 -6.5%;border-radius:50%;background:radial-gradient(circle,#030304 0 55%,#2a2a2e 70%,#9a9aa4 100%);box-shadow:0 0 0 1px #000,inset 0 1px 3px #000}
+.dc-vuelo:before{content:"";position:absolute;inset:34%;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 2px #0004}
+/* frente */
+#dcW .frente{margin:0 -16px;padding-left:30px !important;padding-right:30px !important;position:relative;height:96px;background:linear-gradient(180deg,#6a3419,#4a2210 60%,#3b1a0c);box-shadow:inset 0 2px 0 #b8794a,inset 0 -3px 0 #24100a;display:flex;align-items:center;gap:10px;padding:0 14px}
+#dcW .rej{flex:1;height:68px;border-radius:7px;background:repeating-linear-gradient(90deg,#15110f 0 3px,#2a211c 3px 6px);box-shadow:inset 0 3px 8px #000,0 0 0 2px #b97848}
+#dcW .cen{width:164px;flex:0 0 164px;display:flex;flex-direction:column;gap:7px}
+#dcW .led{font:800 .7rem monospace;color:#7bff9a;text-shadow:0 0 6px #3f8;background:#06100a;border-radius:4px;padding:4px 6px;box-shadow:inset 0 0 0 1px #1f3a29;overflow:hidden;white-space:nowrap;height:22px}
+#dcW .bts{display:flex;gap:5px}
+#dcW .bts button{flex:1;height:30px;border:0;border-radius:4px;background:linear-gradient(180deg,#6a6a74,#34343a);color:#f2dc9a;cursor:pointer;box-shadow:0 2px 0 #000,inset 0 1px 0 #8d8d98;font-size:.8rem}
+#dcW .bts button:active{transform:translateY(1px);box-shadow:0 1px 0 #000}
+#dcW .perilla{width:54px;height:54px;border-radius:50%;flex:0 0 auto;border:0;padding:0;cursor:pointer;background:repeating-conic-gradient(#e9e9ee 0 5deg,#6c6c74 5deg 10deg);box-shadow:0 3px 6px #000c,0 0 0 3px #1a1a1e,0 0 0 4px #c98f60;position:relative;transition:transform .45s cubic-bezier(.3,1.3,.5,1)}
+#dcW .perilla:before{content:"";position:absolute;inset:7px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff,#c9c9d0 45%,#7d7d86);box-shadow:inset 0 0 0 1px #5a5a62}
+#dcW .perilla i{position:absolute;left:50%;top:50%;width:6px;height:30px;margin:-15px 0 0 -3px;background:linear-gradient(90deg,#26262a,#55555d 50%,#1c1c20);border-radius:2px;box-shadow:inset 0 0 0 1px #000a}
+#dcW .perilla em{position:absolute;left:0;right:0;bottom:-18px;text-align:center;font:800 .52rem system-ui;font-style:normal;letter-spacing:.14em;color:#f1d9ae}
+/* hueco con compartimentos */
+#dcW .hueco{display:grid;grid-template-columns:1fr 8px 1fr 8px 1fr;background:linear-gradient(180deg,#120905,#1f0f08);box-shadow:inset 0 0 36px #000;padding:0 8px;position:relative;height:210px;border-radius:0 0 4px 4px}
+#dcW .div{background:linear-gradient(90deg,#3b1a0c,#7b3f20 50%,#3b1a0c);box-shadow:0 0 6px #000}
+#dcW .comp{position:relative;perspective:520px;perspective-origin:50% 30%;height:100%}
+#dcW .fila{position:absolute;left:4px;right:4px;bottom:34px;height:130px;transform-style:preserve-3d}
+#dcW .placa{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);display:flex;align-items:center;gap:5px;padding:2px 8px 2px 5px;height:20px;border-radius:5px;background:linear-gradient(180deg,#f7de9a,#d9a93c 55%,#a8761a);color:#3a2306;font:800 .55rem Georgia,serif;letter-spacing:.04em;white-space:nowrap;box-shadow:0 1px 3px #0009,inset 0 1px 0 #fff8;max-width:98%}
+#dcW .placa i{width:10px;height:10px;border-radius:2px;display:inline-block;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}
+#dcW .zoc{margin:0 -16px;height:22px;border-radius:0 0 10px 10px;background:linear-gradient(180deg,#6a3419,#24100a);box-shadow:inset 0 2px 0 #b8794a}
+/* funda de vinilo 3D */
+#dcW .fun{position:absolute;bottom:0;width:98px;height:98px;transform-style:preserve-3d;cursor:pointer;transition:transform .6s cubic-bezier(.2,.8,.2,1);transform-origin:50% 100%;-webkit-tap-highlight-color:transparent}
+#dcW .fun .f{position:absolute;inset:0;backface-visibility:hidden}
+#dcW .fun .fr{background:var(--g);border-radius:2px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.2),inset 0 0 0 4px rgba(0,0,0,.25)}
+#dcW .fun .fr .t{position:absolute;left:6px;right:6px;top:7px;font:800 10px/11px Georgia,serif;color:#fff7e6;text-shadow:0 1px 2px #000a;text-align:center;max-height:34px;overflow:hidden}
+#dcW .fun .fr .c:after{content:"";position:absolute;left:50%;top:50%;width:12%;height:12%;margin:-6% 0 0 -6%;border-radius:50%;background:#050506;box-shadow:0 0 0 1px #9a9aa4}
+#dcW .fun.vacia .fr .c{visibility:hidden}
+#dcW .fun.vuelve{animation:dcencaja .5s ease-out}
+@keyframes dcencaja{0%{transform:translateX(var(--x)) translateZ(14px) rotateY(-62deg)}100%{transform:translateX(var(--x)) rotateY(-62deg)}}
+#dcW .fun .fr .c{position:absolute;left:50%;bottom:9px;width:46px;height:46px;margin-left:-23px;border-radius:50%;background:radial-gradient(circle,#e8e0cc 0 9%,var(--c) 10% 40%,#101012 41% 100%);box-shadow:0 2px 4px #0008}
+#dcW .fun .tr{transform:rotateY(180deg) translateZ(5px);background:#d9ceb4;border-radius:2px}
+#dcW .fun .fr{transform:translateZ(5px)}
+#dcW .fun .lat{width:10px;left:44px;background:linear-gradient(90deg,#2a2a2e,#555560);transform:rotateY(90deg) translateZ(49px)}
+#dcW .fun .lat2{width:10px;left:44px;background:#222226;transform:rotateY(-90deg) translateZ(49px)}
+#dcW .fun.nu:after{content:"";position:absolute;top:-4px;right:6px;width:9px;height:22px;background:#ffd34d;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:translateZ(7px);box-shadow:0 0 6px #ffd34d}
+#dcW .fun{transform:translateX(var(--x)) rotateY(-62deg)}
+@media (hover:hover){#dcW .fun:hover{transform:translateX(var(--x)) translateZ(12px) rotateY(-44deg) translateY(-6px)}}
+#dcW .fun.sel{transform:translateX(calc(var(--x)*0)) translateZ(80px) translateY(-46px) rotateY(0) scale(1.45);z-index:30}
+.dc-ficha{position:fixed;left:50%;bottom:14px;transform:translate(-50%,160%);visibility:hidden;width:min(360px,calc(100% - 20px));background:linear-gradient(180deg,#fff9ec,#f1e3c6);color:#33200f;border-radius:18px;padding:14px;box-shadow:0 14px 40px #000a;z-index:60;transition:transform .35s,visibility .35s}
+.dc-ficha.on{transform:translate(-50%,0);visibility:visible}
+.dc-ficha h2{margin:0 0 4px;font:800 1rem Georgia,serif}
+.dc-ficha p{margin:0 0 10px;font-size:.85rem;color:#6a5a48}
+.dc-ficha .a{display:flex;gap:8px}
+.dc-ficha button{flex:1;border:0;border-radius:12px;padding:11px;font:inherit;font-weight:800;cursor:pointer}
+.dc-ficha .v{background:#8a3a56;color:#fff}
+.dc-ficha .x{background:#ddd0b6;color:#3a2a1a}
+#dcW{max-width:380px;margin:12px auto 0}
+#dcW .fun .st{position:absolute;left:5px;top:3px;font-size:12px;z-index:2;filter:drop-shadow(0 1px 1px #000)}
+.c-cao{background:linear-gradient(145deg,#e0966a,#b8643a 45%,#7d3a1c)}
+.dc-ficha{font-family:inherit}
+
 /* Ladrillo616: LA VIDEOTECA (cintas) y EL TELEVISOR RETRO */
 .vd-sh{overflow:visible;flex-wrap:wrap;row-gap:16px}
 .vd-cinta{perspective:800px;position:relative;flex:0 0 auto;width:42px;height:var(--h);cursor:pointer;transform-style:preserve-3d;margin-top:auto;-webkit-tap-highlight-color:transparent}
@@ -726,7 +822,8 @@ var OBRA={
  biblioteca:['📚','Biblioteca','Aquí abrirás los materiales del personal.'],
  enlaces:['🔗','Enlaces','Aquí encontrarás enlaces a sitios de interés.'],
  tutoriales:['🎬','Tutoriales','Aquí aprenderás paso a paso a usar la plataforma.'],
- videoteca:['🎬','Videoteca','Muy pronto: aquí verás tutoriales en video, paso a paso.']};
+ videoteca:['🎬','Videoteca','Muy pronto: aquí verás tutoriales en video, paso a paso.'],
+ discoteca:['💿','Discoteca','Muy pronto: aquí escucharás los himnos y la música de tu escuela.']};
 function enObra(id){var o=OBRA[id];if(!o)return;
   abrirC('<div class="obra"><div class="gr">🚧</div><h2>'+o[0]+' '+o[1]+'</h2><p class="sub">En construcción</p><p class="nota">'+o[2]+'</p>'+
   '<svg width="46" height="30" viewBox="0 0 46 30" aria-hidden="true"><ellipse cx="22" cy="17" rx="15" ry="10" fill="#1fa673"/><path d="M12 15l5-5h10l5 5-5 5H17z" fill="none" stroke="#0d6b4a" stroke-width="1.6"/><circle cx="40" cy="14" r="5" fill="#34c48b"/><circle cx="42" cy="13" r="1" fill="#06251b"/><rect x="11" y="23" width="5" height="5" rx="2" fill="#34c48b"/><rect x="26" y="23" width="5" height="5" rx="2" fill="#34c48b"/></svg>'+
@@ -754,7 +851,7 @@ function traeComp(){
   llama('perm_mis').then(function(r){if(r&&r.ok){COMP=compCuenta(r.solicitudes);pintaAtn();}}).catch(function(){});}
 function traeAvisos(){
   if(!B||!K)return;
-  traeComp();traeEnt();traeDes();traeEnl();traeBib();traeVid();
+  traeComp();traeEnt();traeDes();traeEnl();traeBib();traeVid();traeDis();
   llama('aviso_traer').then(function(r){if(r&&r.ok){AVN=Number(r.sin_ver)||0;MSG=r.mensajes||[];try{localStorage.setItem(CK+'_piz',JSON.stringify(MSG));}catch(e){}refrescaPz();}}).catch(function(){});}
 function llama(op,extra){var o={op:op,clave:K};for(var k in (extra||{}))o[k]=extra[k];
   return fetch(B,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(function(r){return r.json();});}
@@ -1715,6 +1812,213 @@ function traeVid(){
   llama('vid_mis').then(function(r){
     if(r&&r.ok){VID.lista=r.videos||[];VID.estantes=r.estantes||null;vidCuenta();vidApaga(false);var e=$('cViEt');if(e)e.textContent=vidEt();}
     else if(r&&/desconocida/i.test(String(r.error||'')))vidApaga(true);}).catch(function(){});}
+/* Ladrillo628: LA DISCOTECA (la bodega v23). El director sube discos de audio a 3 estantes; el maestro los escucha aqui en un tocadiscos de mueble.
+   El disco viene de la bodega por trozos (dis_leer), se junta en el telefono y suena con un reproductor propio (pausa, volumen y la aguja avanza con la cancion). Nada se baja ni se guarda fuera de esta pantalla. */
+var DC={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,apagada:false,cur:-1,busy:false,tocando:false,prog:0,tmr:null,vol:1,vi:0,blob:{},A0:0,A1:0,tok:0,unl:false,au:null,orden:[]};
+var DC_NOM=['Himnos','Honores','Ambiente'],DC_ICO=['🎖️','🎌','🎶'],DC_COL=['#b4506c','#1c6fd6','#d98f1b'];
+var DC_G=['linear-gradient(160deg,#2d6a4f,#f4f1e6 52%,#b02a37)','linear-gradient(160deg,#16508f,#2c7fd1)','linear-gradient(160deg,#8a4b10,#e0a032)'];
+var DC_VOLS=[1,.66,.33,0];
+var DC_SIL='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+function dcEt(){if(DC.apagada)return 'Muy pronto';if(!DC.lista)return 'Música y himnos';if(!DC.lista.length)return 'Nada por ahora';if(DC.nuevos)return DC.nuevos===1?'1 nuevo':DC.nuevos+' nuevos';return DC.lista.length===1?'1 disco':DC.lista.length+' discos';}
+function dcApaga(si){DC.apagada=!!si;var bs=document.querySelectorAll('[data-o="discoteca"]'),k;for(k=0;k<bs.length;k++)bs[k].classList.toggle('apagado',!!si);var e=$('cDcEt');if(e)e.textContent=dcEt();}
+function dcCuenta(){DC.nuevos=(DC.lista||[]).filter(function(x){return !x.escuchado;}).length;}
+function dcNom(n){var e=DC.estantes||[],i;for(i=0;i<e.length;i++){if(Number(e[i].numero)===Number(n)&&e[i].nombre)return String(e[i].nombre);}return DC_NOM[Number(n)-1]||'';}
+function dcEst(x){return Math.max(1,Math.min(3,Number(x.estante)||3));}
+function dcAu(){if(!DC.au){DC.au=new Audio();DC.au.preload='auto';DC.au.onended=function(){if(DC.tocando)dcParo();};}return DC.au;}
+function dcMs(t){t=Math.max(0,Math.floor(t||0));return Math.floor(t/60)+':'+('0'+t%60).slice(-2);}
+function dcLed(t){var e=$('dcLedt');if(e)e.textContent=t;}
+function dcAviso(t){var e=$('dcMsg');if(!e)return;e.textContent=t;e.style.display='block';clearTimeout(dcAviso.t);dcAviso.t=setTimeout(function(){var q=$('dcMsg');if(q)q.style.display='none';},5200);}
+function dcEl(i){return document.querySelector('#dcW .fun[data-i="'+i+'"]');}
+/* El brazo: empieza por afuera del disco y avanza hacia la etiqueta conforme avanza la cancion (el plano es fijo: no depende del ancho de la pantalla). */
+function dcAng(r){var px=244,L=170,a,rad,x,y;for(a=20;a<=88;a+=.25){rad=a*Math.PI/180;x=px-L*Math.sin(rad);y=30+L*Math.cos(rad);if(Math.hypot(x-94,y-96)<=r)return a;}return 88;}
+function dcPos(){var b=$('dcBrazo');if(b)b.style.setProperty('--ang',(DC.A0+(DC.A1-DC.A0)*DC.prog).toFixed(2)+'deg');}
+function dcReposo(){clearInterval(DC.tmr);try{var a=dcAu();a.pause();a.currentTime=0;}catch(e){}DC.prog=0;var b=$('dcBrazo');if(b){b.classList.remove('sigue','alto');b.style.setProperty('--ang','18deg');}}
+function dcFunda(x,i,e,pos){
+  return '<div class="fun'+(x.escuchado?'':' nu')+'" data-i="'+i+'" style="--x:'+(4+pos)+'px;left:0;--c:'+DC_COL[e-1]+';--g:'+DC_G[e-1]+'"><div class="f fr">'+(x.recomendado?'<span class="st">⭐</span>':'')+'<div class="t">'+esc(String(x.titulo||''))+'</div><div class="c"></div></div><div class="f tr"></div><div class="f lat"></div><div class="f lat2"></div></div>';
+}
+function dcMueble(){
+  var n,g=[[],[],[]];(DC.lista||[]).forEach(function(x,i){g[dcEst(x)-1].push(i);});DC.orden=g[0].concat(g[1],g[2]);
+  var h='<div id="dcW"><div class="con"><div class="tope"><b>DISCOTECA · TELESECUNDARIA 171</b></div>'+
+   '<div class="esc"><div class="plano" id="dcPlano"><div class="caja"></div><div class="fieltro"></div><div class="disco" id="dcDisco"><span class="brillo"></span></div><i class="huso"></i><div class="apoyo"></div><div class="contrapeso"></div><div class="pivote"></div><div class="brazo" id="dcBrazo"><i></i><u></u></div><div class="tapa" id="dcTapa"><div class="cara"></div></div><i class="bis l"></i><i class="bis r"></i></div></div>'+
+   '<div class="frente"><div class="rej"></div><div class="cen"><div class="led"><span id="dcLedt">-- --</span></div><div class="bts"><button id="dcAnt" title="Anterior">⏮</button><button id="dcPl" title="Tocar">▶</button><button id="dcPa" title="Pausa">⏸</button><button id="dcSt" title="Paro">■</button><button id="dcSig" title="Siguiente">⏭</button></div></div><button class="perilla" id="dcVol" title="Volumen"><i></i><em>VOLUMEN</em></button></div>'+
+   '<div class="hueco" id="dcHueco">';
+  for(n=1;n<=3;n++){
+    var ids=g[n-1],paso=ids.length>1?Math.max(6,Math.min(18,Math.floor(46/(ids.length-1)))):18;
+    h+='<div class="comp"><div class="fila">'+ids.map(function(i,k){return dcFunda(DC.lista[i],i,n,k*paso);}).join('')+'</div><div class="placa"><i style="background:'+DC_COL[n-1]+'"></i>'+DC_ICO[n-1]+' '+esc(dcNom(n))+'</div></div>'+(n<3?'<div class="div"></div>':'');
+  }
+  return h+'</div><div class="zoc"></div></div></div>';
+}
+function dcFichaHtml(i){
+  var x=(DC.lista||[])[i];if(!x)return '';
+  return '<h2>💿 '+esc(x.titulo)+'</h2><p>'+DC_ICO[dcEst(x)-1]+' '+esc(dcNom(dcEst(x)))+(x.escuchado?'':' · ★ nuevo')+(x.nota?' · '+esc(x.nota):'')+'</p><div class="a"><button class="v" data-dc="esc">▶ Escuchar</button><button class="x" data-dc="cer">Cerrar</button></div>';
+}
+function dcToca(i){
+  if(DC.busy||DC.tocando||!(DC.lista||[])[i])return;
+  if(DC.cur===i){var f0=$('dcFicha');if(f0&&f0.classList.contains('on')){dcEscucha();return;}}
+  var cs=document.querySelectorAll('#dcW .fun.sel'),k;for(k=0;k<cs.length;k++)cs[k].classList.remove('sel');
+  DC.cur=i;var el=dcEl(i);if(el)el.classList.add('sel');
+  var f=$('dcFicha');if(f){f.innerHTML=dcFichaHtml(i);f.classList.add('on');}
+}
+function dcCierra(){
+  if(DC.busy||DC.tocando)return;
+  var cs=document.querySelectorAll('#dcW .fun.sel'),k;for(k=0;k<cs.length;k++)cs[k].classList.remove('sel');
+  var f=$('dcFicha');if(f)f.classList.remove('on');DC.cur=-1;
+}
+/* Trae el disco de la bodega por trozos y lo junta (una sola vez por disco; queda en memoria mientras la sala esta abierta). */
+function dcTrae(x){
+  if(DC.blob[x.id])return Promise.resolve(DC.blob[x.id]);
+  var p=[];
+  function una(k){return llama('dis_leer',{id:x.id,parte:k}).then(function(r){
+    if(!r||!r.ok)throw new Error((r&&r.error)||'respuesta rara');
+    p[k]=r.base64||'';var n=Number(r.partes)||1;
+    if(k===0&&!x.escuchado){x.escuchado=true;dcCuenta();var e=$('cDcEt');if(e)e.textContent=dcEt();var el=dcEl(DC.lista.indexOf(x));if(el)el.classList.remove('nu');}
+    if(DC.busy&&!DC.tocando)dcLed('Trayendo… '+(k+1)+' de '+n);
+    return (k+1<n)?una(k+1):0;});}
+  return una(0).then(function(){
+    var b=atob(p.join('')),u=new Uint8Array(b.length),i;for(i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
+    var url=URL.createObjectURL(new Blob([u],{type:x.mime||'audio/mpeg'}));DC.blob[x.id]=url;return url;});
+}
+function dcDesbloquea(){
+  if(DC.unl)return;var a=dcAu();
+  try{a.muted=true;a.src=DC_SIL;var q=a.play();
+    if(q&&q.then)q.then(function(){a.pause();a.muted=false;DC.unl=true;}).catch(function(){a.muted=false;});
+    else{a.pause();a.muted=false;DC.unl=true;}}catch(e){try{a.muted=false;}catch(e2){}}
+}
+function dcMira(){
+  try{var p=$('dcPlano'),s=document.querySelector('#dcW .fun.sel')||dcEl(DC.cur),t=document.querySelector('#dcW .tope');if(!p||!t)return;
+    var a=p.getBoundingClientRect(),b=s?s.getBoundingClientRect():a;
+    if(a.top<0||b.bottom>window.innerHeight)window.scrollTo(0,Math.max(0,t.getBoundingClientRect().top+(window.pageYOffset||0)-8));}catch(e){}
+}
+function dcRectF(i){var r=dcEl(i).querySelector('.fr').getBoundingClientRect();return {r:r,d:Math.min(r.width,r.height)};}
+function dcMkVuelo(i,r,d){var f=document.createElement('div');f.className='dc-vuelo';f.style.cssText='--c:'+DC_COL[dcEst(DC.lista[i])-1]+';left:'+(r.left+r.width/2-d*0.5)+'px;top:'+(r.top+r.height/2-d*0.5)+'px;width:'+d+'px;height:'+d+'px;transition:none';document.body.appendChild(f);return f;}
+function dcPon(i){var d=$('dcDisco');if(d)d.style.setProperty('--c',DC_COL[dcEst(DC.lista[i])-1]);}
+function dcSale(i,tok,cb){
+  var el=dcEl(i);if(!el)return;var o=dcRectF(i),r=o.r,d=o.d,f=dcMkVuelo(i,r,d);el.classList.add('vacia');
+  setTimeout(function(){
+    if(tok!==DC.tok){try{f.remove();}catch(e){}return;}
+    var q=$('dcDisco').getBoundingClientRect(),k=q.width/d,tx=q.left+q.width/2-(r.left+r.width/2),ty=q.top+q.height/2-(r.top+r.height/2);
+    f.style.transition='transform .9s cubic-bezier(.5,0,.3,1)';f.style.transform='translate('+tx+'px,'+ty+'px) scale('+k+','+(k*.53)+')';
+    setTimeout(function(){try{f.remove();}catch(e){}if(tok!==DC.tok)return;dcPon(i);var dd=$('dcDisco');dd.classList.add('on','gira');dd.classList.remove('pau');cb&&cb();},980);},60);
+}
+function dcVuelve(i,tok,cb){
+  var el=dcEl(i),dd=$('dcDisco');if(!el||!dd){cb&&cb();return;}
+  var o=dcRectF(i),r=o.r,d=o.d,q=dd.getBoundingClientRect(),k=q.width/d,tx=q.left+q.width/2-(r.left+r.width/2),ty=q.top+q.height/2-(r.top+r.height/2);
+  var f=dcMkVuelo(i,r,d);f.style.transform='translate('+tx+'px,'+ty+'px) scale('+k+','+(k*.53)+')';f.getBoundingClientRect();
+  dd.classList.remove('on','gira','pau');
+  setTimeout(function(){f.style.transition='transform .9s cubic-bezier(.5,0,.3,1)';f.style.transform='none';
+    setTimeout(function(){try{f.remove();}catch(e){}if(tok!==DC.tok)return;el.classList.remove('vacia');el.classList.add('vuelve');setTimeout(function(){el.classList.remove('vuelve');},520);cb&&cb();},960);},40);
+}
+function dcPosa(url){
+  DC.A0=dcAng(64);DC.A1=dcAng(31);clearInterval(DC.tmr);DC.prog=0;
+  var b=$('dcBrazo');if(b)b.classList.remove('sigue','alto');dcPos();
+  var tok=DC.tok;
+  setTimeout(function(){
+    if(tok!==DC.tok)return;var a=dcAu(),bz=$('dcBrazo');if(bz)bz.classList.add('sigue');
+    a.muted=false;a.src=url;a.volume=DC.vol;if(DC.tocando){var q=a.play();if(q&&q.catch)q.catch(function(){dcAviso('Toca ▶ para que suene el disco.');});}
+    DC.tmr=setInterval(function(){
+      if(!DC.tocando)return;var d=a.duration||1;DC.prog=Math.min(1,a.currentTime/d);dcPos();
+      dcLed('▶ '+dcMs(a.currentTime)+' / '+dcMs(d)+' · '+((DC.lista[DC.cur]||{}).titulo||''));},200);
+  },1450);
+}
+function dcEscucha(){
+  if(DC.busy||DC.cur<0||DC.tocando)return;
+  var i=DC.cur,x=(DC.lista||[])[i];if(!x)return;
+  dcDesbloquea();DC.busy=true;var tok=++DC.tok,el=dcEl(i),pr=dcTrae(x);pr.catch(function(){});
+  var f=$('dcFicha');if(f)f.classList.remove('on');if(el)el.classList.remove('sel');
+  dcMira();
+  $('dcTapa').classList.add('abierta');$('dcPlano').classList.add('abierto');$('dcDisco').classList.remove('on','gira');dcLed('...');
+  setTimeout(function(){
+    if(tok!==DC.tok)return;
+    dcSale(i,tok,function(){
+      if(!DC.blob[x.id])dcLed('Trayendo el disco…');
+      pr.then(function(url){
+        if(tok!==DC.tok)return;
+        DC.tocando=true;DC.busy=false;dcPosa(url);dcLed('▶ '+x.titulo);
+      }).catch(function(ex){
+        if(tok!==DC.tok)return;
+        dcAviso(/Failed to fetch|NetworkError|Load failed/i.test(String(ex))?'Sin señal. Revisa tu conexión e intenta otra vez.':'No pude traer el disco ('+String((ex&&ex.message)||ex)+').');
+        dcVuelve(i,tok,function(){var t=$('dcTapa');if(t)t.classList.remove('abierta');var p=$('dcPlano');if(p)p.classList.remove('abierto');dcLed('-- --');DC.busy=false;DC.cur=-1;});
+      });
+    });
+  },900);
+}
+function dcPlay(){var d=$('dcDisco');if(DC.busy||DC.tocando||DC.cur<0||!d||!d.classList.contains('on'))return;DC.tocando=true;d.classList.remove('pau');var b=$('dcBrazo');if(b)b.classList.remove('alto');var q=dcAu().play();if(q&&q.catch)q.catch(function(){});dcLed('▶ '+DC.lista[DC.cur].titulo);}
+function dcPausa(){var d=$('dcDisco');if(DC.busy||!DC.tocando||!d)return;DC.tocando=false;dcAu().pause();d.classList.add('pau');var b=$('dcBrazo');if(b)b.classList.add('alto');dcLed('⏸ '+DC.lista[DC.cur].titulo);}
+function dcParo(cb){
+  if(DC.busy)return;DC.busy=true;DC.tocando=false;dcReposo();dcLed('■ PARO');var i=DC.cur,tok=DC.tok;
+  setTimeout(function(){
+    if(tok!==DC.tok)return;var b=$('dcBrazo');if(b)b.classList.remove('alto');
+    dcVuelve(i,tok,function(){setTimeout(function(){
+      var t=$('dcTapa');if(t)t.classList.remove('abierta');var p=$('dcPlano');if(p)p.classList.remove('abierto');dcLed('-- --');
+      setTimeout(function(){DC.busy=false;DC.cur=-1;cb&&cb();},900);},250);});
+  },1500);
+}
+function dcOtro(d){
+  var dd=$('dcDisco');if(DC.busy||DC.cur<0||!dd||!dd.classList.contains('on')||DC.orden.length<2)return;
+  var v=DC.cur,k=DC.orden.indexOf(v),n=DC.orden[(k+d+DC.orden.length)%DC.orden.length],x=DC.lista[n];
+  dcDesbloquea();DC.busy=true;DC.tocando=false;dcReposo();dcLed('...');var tok=++DC.tok,pr=dcTrae(x);pr.catch(function(){});
+  setTimeout(function(){
+    if(tok!==DC.tok)return;var b=$('dcBrazo');if(b)b.classList.remove('alto');
+    dcVuelve(v,tok,function(){
+      DC.cur=n;
+      dcSale(n,tok,function(){
+        if(!DC.blob[x.id])dcLed('Trayendo el disco…');
+        pr.then(function(url){if(tok!==DC.tok)return;DC.tocando=true;DC.busy=false;dcPosa(url);dcLed('▶ '+x.titulo);})
+        .catch(function(ex){if(tok!==DC.tok)return;dcAviso('No pude traer el disco ('+String((ex&&ex.message)||ex)+').');
+          dcVuelve(n,tok,function(){var t=$('dcTapa');if(t)t.classList.remove('abierta');var p=$('dcPlano');if(p)p.classList.remove('abierto');dcLed('-- --');DC.busy=false;DC.cur=-1;});});
+      });
+    });
+  },1500);
+}
+function dcVolumen(){
+  var b=$('dcVol');DC.vi=(DC.vi+1)%4;DC.vol=DC_VOLS[DC.vi];try{dcAu().volume=DC.vol;}catch(e){}
+  if(b)b.style.transform='rotate('+[0,50,100,150][DC.vi]+'deg)';dcLed('VOLUMEN '+Math.round(DC.vol*100)+'%');
+}
+/* Al salir de la Discoteca todo se apaga: la musica, la aguja, los vuelos y los relojes. */
+function dcSuelta(){
+  if(!DC.busy&&!DC.tocando&&DC.cur<0)return;
+  DC.tok++;clearInterval(DC.tmr);try{var a=dcAu();a.pause();a.currentTime=0;}catch(e){}
+  var vs=document.querySelectorAll('.dc-vuelo'),k;for(k=0;k<vs.length;k++){try{vs[k].remove();}catch(e){}}
+  DC.busy=false;DC.tocando=false;DC.cur=-1;DC.prog=0;
+}
+function dcClick(e){
+  var b=e.target.closest?e.target.closest('button,.fun'):null;if(!b)return;
+  if(b.classList.contains('fun')){dcToca(Number(b.getAttribute('data-i')));return;}
+  var dd=b.getAttribute('data-dc'),id=b.id;
+  if(dd==='esc'){dcEscucha();return;}if(dd==='cer'){dcCierra();return;}if(dd==='rei'){if(!DC.busy&&!DC.tocando)dcCarga();return;}
+  if(id==='dcSala'){sube('sala');return;}
+  if(id==='dcPl')dcPlay();else if(id==='dcPa')dcPausa();else if(id==='dcSt'){var d=$('dcDisco');if(d&&(d.classList.contains('on')||$('dcTapa').classList.contains('abierta')))dcParo();}
+  else if(id==='dcSig')dcOtro(1);else if(id==='dcAnt')dcOtro(-1);else if(id==='dcVol')dcVolumen();
+}
+function pintaDis(){
+  sala.onclick=null;
+  if($('dcW')&&(DC.busy||DC.tocando)){sala.onclick=dcClick;return;}
+  var h='<div class="pz-top"><button class="volv" id="dcSala">‹ Sala</button></div><div class="bv"><h1 style="font-size:1.4rem">💿 Discoteca</h1></div>';
+  if(DC.cargando&&!DC.lista)h+='<p class="pm-vacio">Buscando tus discos…</p>';
+  else if(DC.err&&!DC.lista)h+='<div class="pm-aviso">'+esc(DC.err)+'</div><div class="en-act"><button class="pm-b" data-dc="rei">↻ Intentar otra vez</button></div>';
+  else{
+    if(DC.err)h+='<div class="pm-aviso">'+esc(DC.err)+' Esto es lo último que pude leer.</div>';
+    h+='<div class="pm-aviso" id="dcMsg" style="display:none"></div>'+dcMueble();
+    if(!(DC.lista||[]).length)h+='<p class="pm-vacio">Todavía no hay discos para ti. Cuando el director suba uno, aparecerá en uno de estos estantes. 📭</p>';
+    else h+='<p class="pm-ayuda">Toca un disco del estante para sacarlo; «▶ Escuchar» abre la tapa y lo pone a sonar. La marca amarilla es «nuevo». ⏸ pausa, ■ lo guarda, ⏮ ⏭ cambian de disco y la perilla sube o baja el volumen.</p>';
+    h+='<div class="en-act"><button class="pm-b" data-dc="rei">'+(DC.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
+  h+='<div class="dc-ficha" id="dcFicha"></div>';
+  sala.innerHTML=h;sala.onclick=dcClick;DC.cur=-1;
+}
+function dcCarga(){
+  if(!B||!K)return;DC.cargando=true;DC.err='';if(VISTA==='dis')pintaDis();
+  llama('dis_mis').then(function(r){DC.cargando=false;DC.T=Date.now();
+    if(r&&r.ok){DC.lista=r.discos||[];DC.estantes=r.estantes||null;DC.err='';dcCuenta();dcApaga(false);}
+    else if(r&&/desconocida/i.test(String(r.error||''))){dcApaga(true);DC.err='La Discoteca todavía no está lista en tu escuela. Muy pronto.';}
+    else DC.err='No pude leer la Discoteca ('+((r&&r.error)||'respuesta rara')+').';
+    if(VISTA==='dis')pintaDis();var e=$('cDcEt');if(e)e.textContent=dcEt();})
+  .catch(function(){DC.cargando=false;DC.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='dis')pintaDis();});}
+function traeDis(){
+  if(!B||!K||Date.now()-DC.T<60000)return;DC.T=Date.now();
+  llama('dis_mis').then(function(r){
+    if(r&&r.ok){DC.lista=r.discos||[];DC.estantes=r.estantes||null;dcCuenta();dcApaga(false);var e=$('cDcEt');if(e)e.textContent=dcEt();}
+    else if(r&&/desconocida/i.test(String(r.error||'')))dcApaga(true);}).catch(function(){});}
+
 /* BIBLIOTECA (ladrillo 574): el LIBRERO en 3D. El maestro ve los libros que le tocan, parados por estante; el lector viene en el siguiente paso.
    Nada se baja ni se borra: aqui solo se ve y se escoge. */
 var BIB={cargando:false,err:'',lista:null,estantes:null,nuevos:0,T:0,sel:-1,q:'',vista:'librero'};
@@ -3107,7 +3411,7 @@ function hEst(){try{return history.state;}catch(e){return null;}}
 function irA(v){var de=VISTA;irA0(v);if(de===v)return;try{history.pushState({sv:v,prev:de},'',location.href);}catch(e){}}
 function sube(v){var st=hEst();if(st&&st.sv&&st.prev===v){try{history.back();return;}catch(e){}}try{history.replaceState({sv:v,prev:(st&&st.prev)||null},'',location.href);}catch(e){}irA0(v);}
 window.addEventListener('popstate',function(e){var s=e&&e.state;if(!s||!s.sv||!K||!QQ)return;irA0(s.sv);});
-function irA0(v){VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl'||v==='bib'||v==='vid'||v==='tv'||v==='lec');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='bib'&&B&&K)bibCarga();if(v==='vid'&&B&&K)vidCarga();if(v==='tv')VID.llego=false;if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
+function irA0(v){if(v!=='dis')dcSuelta();VISTA=v;CESTOV=false;marca(v==='sala'||v==='piz'||v==='perm'||v==='ent'||v==='cal'||v==='des'||v==='enl'||v==='bib'||v==='vid'||v==='tv'||v==='dis'||v==='lec');pinta(QQ);try{window.scrollTo(0,0);}catch(e){}if(v==='perm'&&B&&K){PM.sol=false;PM.paso=0;PM.ini=null;PM.motivo='';pmCarga();}if(v==='ent'&&B&&K)entCarga();if(v==='des'&&B&&K)desCarga();if(v==='enl'&&B&&K)enlCarga();if(v==='bib'&&B&&K)bibCarga();if(v==='vid'&&B&&K)vidCarga();if(v==='dis'&&B&&K)dcCarga();if(v==='tv')VID.llego=false;if(v==='cal'&&B&&K)calCarga();if(v==='piz'&&B&&K){llama('aviso_visto').catch(function(){});traeAvisos();}}
 /* Ladrillo559: «DIA n DE total · pct%» del ciclo, calcado de la corona. Se cuenta con el calendario que ya trae tu pantalla de permisos:
    lunes a viernes entre el inicio y el fin del ciclo, menos los dias que la escuela no labora (inhabiles, CTE y registro de calificaciones). */
 var CIC={cargando:false,probado:false};
@@ -3182,10 +3486,11 @@ function pinta(q,aviso){
    '<button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button>'+
    '<button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button>'+
    '<button class="cofre c-tea'+(BIB.apagada?' apagado':'')+'" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button>'+
-   '<button class="cofre c-oro'+(VID.apagada?' apagado':'')+'" data-o="videoteca"><span class="ico">🎬</span><h3>Videoteca</h3><span class="et" id="cViEt">'+esc(vidEt())+'</span></button></div>';
+   '<button class="cofre c-oro'+(VID.apagada?' apagado':'')+'" data-o="videoteca"><span class="ico">🎬</span><h3>Videoteca</h3><span class="et" id="cViEt">'+esc(vidEt())+'</span></button>'+
+   '<button class="cofre c-cao'+(DC.apagada?' apagado':'')+'" data-o="discoteca"><span class="ico">💿</span><h3>Discoteca</h3><span class="et" id="cDcEt">'+esc(dcEt())+'</span></button></div>';
   if(PER)cofres='<div class="cofres" id="cofres"><button class="cofre grande c-azur" data-o="piz"><span class="ico">📌</span><div><h3>Pizarrón de avisos</h3><span class="et" id="cPizEt">'+pizTxt()+'</span></div><span class="pz-glo" id="cPizGlo"'+(PEND?'':' hidden')+'>'+PEND+'</span></button>'+
    '<button class="cofre c-nar" data-o="permisos"><span class="ico">🗓️</span><h3>Mis permisos y constancias</h3><span class="et" id="cPmEt">Solicitar y ver</span></button>'+
-   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button><button class="cofre c-tea'+(BIB.apagada?' apagado':'')+'" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button></div>';
+   '<button class="cofre c-ver" data-o="entregas"><span class="ico">📤</span><h3>Entregas</h3><span class="et" id="cEnEt">'+esc(entEt())+'</span></button><button class="cofre c-mor" data-o="calendario"><span class="ico">📅</span><h3>Calendario</h3><span class="et" id="cCaEt">Ver el mes</span></button><button class="cofre c-lim" data-o="descargas"><span class="ico">⬇️</span><h3>Descargas</h3><span class="et" id="cDeEt">'+esc(desEt())+'</span></button><button class="cofre c-fus" data-o="enlaces"><span class="ico">🔗</span><h3>Enlaces</h3><span class="et" id="cElEt">'+esc(enlEt())+'</span></button><button class="cofre c-tea'+(BIB.apagada?' apagado':'')+'" data-o="biblioteca"><span class="ico">📚</span><h3>Biblioteca</h3><span class="et" id="cBiEt">'+esc(bibEt())+'</span></button><button class="cofre c-cao'+(DC.apagada?' apagado':'')+'" data-o="discoteca"><span class="ico">💿</span><h3>Discoteca</h3><span class="et" id="cDcEt">'+esc(dcEt())+'</span></button></div>';
   if(VISTA==='piz'){pintaPiz();return;}
   if(VISTA==='perm'){pintaPerm();return;}
   if(VISTA==='ent'){pintaEnt();return;}
@@ -3194,6 +3499,7 @@ function pinta(q,aviso){
   if(VISTA==='lec'){pintaLec();return;}
   if(VISTA==='bib'){pintaBib();return;}
   if(VISTA==='vid'){pintaVid();return;}
+  if(VISTA==='dis'){pintaDis();return;}
   if(VISTA==='tv'){pintaTv();return;}
   if(VISTA==='cal'){pintaCal();return;}
   if(VISTA==='sala'){
@@ -3220,7 +3526,7 @@ function pinta(q,aviso){
     pintaAtn();
   }
   var sb=$('salir');if(sb)sb.onclick=confirmaSalir;
-  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else if(o==='biblioteca'){if(BIB.apagada)enObra(o);else irA('bib');}else if(o==='videoteca'){if(VID.apagada)enObra(o);else irA('vid');}else enObra(o)}});
+  Array.prototype.forEach.call(sala.querySelectorAll('[data-o]'),function(b){b.onclick=function(){var o=b.getAttribute('data-o');if(o==='piz')irA('piz');else if(o==='permisos')irA('perm');else if(o==='entregas')irA('ent');else if(o==='calendario')irA('cal');else if(o==='descargas')irA('des');else if(o==='enlaces')irA('enl');else if(o==='biblioteca'){if(BIB.apagada)enObra(o);else irA('bib');}else if(o==='videoteca'){if(VID.apagada)enObra(o);else irA('vid');}else if(o==='discoteca'){if(DC.apagada)enObra(o);else irA('dis');}else enObra(o)}});
   if(aviso){var n=document.createElement('p');n.className='nota';n.style.textAlign='center';n.textContent=aviso;sala.appendChild(n);}}
 function busca(){
   var c=leeCache();
