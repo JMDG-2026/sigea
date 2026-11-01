@@ -1536,7 +1536,7 @@ function pintaVid(){
   else if(VID.err&&!VID.lista)h+='<div class="pm-aviso">'+esc(VID.err)+'</div><div class="en-act"><button class="pm-b" data-vd="rei">↻ Intentar otra vez</button></div>';
   else{
     if(VID.err)h+='<div class="pm-aviso">'+esc(VID.err)+' Esto es lo último que pude leer.</div>';
-    if(!(VID.lista||[]).length)h+='<p class="pm-vacio">Todavía no hay videos para ti. Cuando el director suba uno, aparecerá aquí. 📭</p>';
+    if(!(VID.lista||[]).length)h+=vidMueble()+'<p class="pm-vacio">Todavía no hay videos para ti. Cuando el director suba uno, aparecerá en uno de estos estantes. 📭</p>';
     else h+=vidMueble()+'<p class="pm-ayuda">Toca una cinta para sacarla del estante; tócala otra vez (o «▶ Ver video») para verla en el televisor. La marca amarilla es «nuevo» y la rayita verde, «ya lo viste».</p>';
     h+='<div class="en-act"><button class="pm-b" data-vd="rei">'+(VID.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
   h+='<div class="vd-ficha" id="viFicha"></div>';
