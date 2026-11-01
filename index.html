@@ -592,6 +592,21 @@ a.pm-b{display:inline-flex;align-items:center;text-decoration:none}
 @keyframes elbr{0%,100%{box-shadow:0 2px 4px #000a,inset 0 0 0 2px #7a7a84}50%{box-shadow:0 0 14px 4px #ffe066aa,inset 0 0 0 2px #e8c050}}
 @keyframes elent{from{transform:translateY(20px) scale(.9);opacity:0}to{transform:none;opacity:1}}
 .c-vin{background:linear-gradient(145deg,#b8324a,#8c2230 45%,#5a111c)}
+/* Ladrillo630: EL INDICE DE LA DISCOTECA (las pistas de cada estante, siempre legibles) */
+#dcIdx{max-width:380px;margin:16px auto 0}
+#dcIdx details{background:linear-gradient(180deg,#2a140b,#1c0d07);border:1px solid #5a2e18;border-radius:12px;margin-bottom:10px;overflow:hidden}
+#dcIdx summary{cursor:pointer;list-style:none;padding:10px 14px;font:800 .8rem Georgia,serif;letter-spacing:.05em;color:#f3d48a;display:flex;align-items:center;gap:8px}
+#dcIdx summary::-webkit-details-marker{display:none}
+#dcIdx summary i{width:10px;height:10px;border-radius:2px;display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+#dcIdx summary em{font-style:normal;margin-left:auto;font:700 .7rem system-ui;opacity:.7}
+#dcIdx summary:after{content:"▾";opacity:.7}
+#dcIdx details:not([open]) summary:after{content:"▸"}
+#dcIdx .pis{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ffffff14;color:#f5e9d4;padding:10px 14px;font:inherit;cursor:pointer}
+#dcIdx .pis .n{flex:0 0 22px;font:700 .75rem system-ui;opacity:.55}
+#dcIdx .pis .t{flex:1;min-width:0;font-size:.9rem;line-height:1.25}
+#dcIdx .pis .e{flex:0 0 auto;font:700 .68rem system-ui;color:#ffd34d}
+#dcIdx .pis.on{background:#8a4a2833;box-shadow:inset 3px 0 0 #ffd34d}
+#dcIdx .pis.on .t{color:#fff;font-weight:700}
 /* Ladrillo616: LA VIDEOTECA (cintas) y EL TELEVISOR RETRO */
 .vd-sh{overflow:visible;flex-wrap:wrap;row-gap:16px}
 .vd-cinta{perspective:800px;position:relative;flex:0 0 auto;width:42px;height:var(--h);cursor:pointer;transform-style:preserve-3d;margin-top:auto;-webkit-tap-highlight-color:transparent}
@@ -1964,6 +1979,19 @@ function dcMueble(){
   }
   return h+'</div><div class="zoc"></div></div></div>';
 }
+/* Ladrillo630: INDICE DE PISTAS. Con muchos discos las fundas se encima y no se lee el titulo; aqui cada estante lista todas sus pistas. */
+function dcIdxMarca(){var r=document.querySelectorAll('#dcIdx .pis'),k;for(k=0;k<r.length;k++)r[k].classList.toggle('on',DC.cur>=0&&Number(r[k].getAttribute('data-i'))===DC.cur);}
+(function(){var c=DC.cur===undefined?-1:DC.cur;Object.defineProperty(DC,'cur',{configurable:true,enumerable:true,get:function(){return c;},set:function(v){c=v;dcIdxMarca();}});})();
+function dcIndice(){
+  if(!(DC.lista||[]).length)return '';
+  var n,h='<div id="dcIdx">';
+  for(n=1;n<=3;n++){
+    var ids=[];(DC.lista||[]).forEach(function(x,i){if(dcEst(x)===n)ids.push(i);});
+    if(!ids.length)continue;
+    h+='<details open><summary><i style="background:'+DC_COL[n-1]+'"></i>'+DC_ICO[n-1]+' '+esc(dcNom(n))+'<em>'+ids.length+(ids.length===1?' disco':' discos')+'</em></summary>'+
+      ids.map(function(i,k){var x=DC.lista[i];return '<button class="pis" data-dc="pis" data-i="'+i+'"><span class="n">'+(k+1)+'</span><span class="t">'+esc(String(x.titulo||''))+'</span><span class="e">'+(x.recomendado?'⭐ ':'')+(x.escuchado?'':'★ nuevo')+'</span></button>';}).join('')+'</details>';}
+  return h+'</div>';
+}
 function dcFichaHtml(i){
   var x=(DC.lista||[])[i];if(!x)return '';
   return '<h2>💿 '+esc(x.titulo)+'</h2><p>'+DC_ICO[dcEst(x)-1]+' '+esc(dcNom(dcEst(x)))+(x.escuchado?'':' · ★ nuevo')+(x.nota?' · '+esc(x.nota):'')+'</p><div class="a"><button class="v" data-dc="esc">▶ Escuchar</button><button class="x" data-dc="cer">Cerrar</button></div>';
@@ -2101,7 +2129,7 @@ function dcClick(e){
   var b=e.target.closest?e.target.closest('button,.fun'):null;if(!b)return;
   if(b.classList.contains('fun')){dcToca(Number(b.getAttribute('data-i')));return;}
   var dd=b.getAttribute('data-dc'),id=b.id;
-  if(dd==='esc'){dcEscucha();return;}if(dd==='cer'){dcCierra();return;}if(dd==='rei'){if(!DC.busy&&!DC.tocando)dcCarga();return;}
+  if(dd==='pis'){dcToca(Number(b.getAttribute('data-i')));return;}if(dd==='esc'){dcEscucha();return;}if(dd==='cer'){dcCierra();return;}if(dd==='rei'){if(!DC.busy&&!DC.tocando)dcCarga();return;}
   if(id==='dcSala'){sube('sala');return;}
   if(id==='dcPl')dcPlay();else if(id==='dcPa')dcPausa();else if(id==='dcSt'){var d=$('dcDisco');if(d&&(d.classList.contains('on')||$('dcTapa').classList.contains('abierta')))dcParo();}
   else if(id==='dcSig')dcOtro(1);else if(id==='dcAnt')dcOtro(-1);else if(id==='dcVol')dcVolumen();
@@ -2114,7 +2142,7 @@ function pintaDis(){
   else if(DC.err&&!DC.lista)h+='<div class="pm-aviso">'+esc(DC.err)+'</div><div class="en-act"><button class="pm-b" data-dc="rei">↻ Intentar otra vez</button></div>';
   else{
     if(DC.err)h+='<div class="pm-aviso">'+esc(DC.err)+' Esto es lo último que pude leer.</div>';
-    h+='<div class="pm-aviso" id="dcMsg" style="display:none"></div>'+dcMueble();
+    h+='<div class="pm-aviso" id="dcMsg" style="display:none"></div>'+dcMueble()+dcIndice();
     if(!(DC.lista||[]).length)h+='<p class="pm-vacio">Todavía no hay discos para ti. Cuando el director suba uno, aparecerá en uno de estos estantes. 📭</p>';
     else h+='<p class="pm-ayuda">Toca un disco del estante para sacarlo; «▶ Escuchar» abre la tapa y lo pone a sonar. La marca amarilla es «nuevo». ⏸ pausa, ■ lo guarda, ⏮ ⏭ cambian de disco y la perilla sube o baja el volumen.</p>';
     h+='<div class="en-act"><button class="pm-b" data-dc="rei">'+(DC.cargando?'Actualizando…':'↻ Actualizar')+'</button></div>';}
