@@ -503,6 +503,9 @@ body.vd-bloq{overflow:hidden}
 .vcr-pies{display:flex;justify-content:space-between;margin:0 22px}.vcr-pies i{width:36px;height:7px;background:#0e0e10;border-radius:0 0 6px 6px}
 .vuelo{position:fixed;z-index:90;pointer-events:none;transform-origin:50% 50%}.vd-art.vuelo{position:fixed}
 .tv-nada .tv-play{margin-top:10px;border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:800;background:#8a3a56;color:#fff;cursor:pointer}
+.tv-pant.vivo:before{background:radial-gradient(ellipse at center,transparent 82%,rgba(0,0,0,.22) 100%)}
+@media (max-width:600px){.tv-pant{aspect-ratio:4/3}}
+.tv-bajo button,.tv-bajo a{font-size:.78rem;padding:11px 4px;white-space:nowrap}
 .bb-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .bb-tools input{flex:1;min-width:150px;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit}
 .bb-tools button{height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 13px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
@@ -1623,10 +1626,10 @@ function tvPantalla(modo){
   var p=$('tvPant'),x=(VID.lista||[])[VID.tv];if(!p||!x)return;
   var q=p.querySelectorAll('iframe,.tv-nada'),k;for(k=0;k<q.length;k++)q[k].parentNode.removeChild(q[k]);
   var fid=vidFid(x),h='';
-  if(modo==='video')h=fid?'<iframe src="https://drive.google.com/file/d/'+fid+'/preview" allow="autoplay; fullscreen" allowfullscreen title="'+esc(x.titulo)+'"></iframe>':'<div class="tv-nada">Este video no se puede abrir aquí. Usa «↗ Abrir en Drive».</div>';
+  if(modo==='video')h=fid?'<iframe src="https://drive.google.com/file/d/'+fid+'/preview" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="'+esc(x.titulo)+'"></iframe>':'<div class="tv-nada">Este video no se puede abrir aquí. Usa «↗ Abrir en Drive».</div>';
   else if(modo==='paro')h='<div class="tv-nada"><div><div style="font-size:2rem">■</div><b>Detenido</b><br><span>El video volvió al principio.</span><br><button class="tv-play" data-tv="play">▶ Ver otra vez</button></div></div>';
-  p.insertAdjacentHTML('afterbegin',h);
-  var c=$('tvCan');if(c){c.textContent='CH 0'+(vidCola(vidEst(x)).indexOf(VID.tv)+1);c.style.display=modo==='apagada'?'none':'block';}
+  p.insertAdjacentHTML('afterbegin',h);p.classList.toggle('vivo',modo==='video');
+  var c=$('tvCan');if(c){c.textContent='CH 0'+(vidCola(vidEst(x)).indexOf(VID.tv)+1);c.style.display=(modo==='apagada'||modo==='video')?'none':'block';}
 }
 function tvCasete(){
   var x=(VID.lista||[])[VID.tv],v=$('tvCas');if(!x||!v)return;
@@ -1661,12 +1664,12 @@ function pintaTv(){
   var est=vidEst(x);VID.busy=false;
   var h='<div class="pz-top"><button class="volv" id="tvVol">‹ Videoteca</button></div><div class="bv"><h1 style="font-size:1.15rem">'+VD_ICO[est-1]+' '+esc(vidNom(est))+'</h1></div>'+
    '<div class="tvw'+(VID.grande?' grande':'')+'" id="tvW"><div class="tv-ant"><i></i><i></i></div><div class="tv-caja"><div class="tv-marco"><div class="tv-pant" id="tvPant"><div class="tv-est" id="tvEst"></div><div class="tv-can" id="tvCan"></div></div></div>'+
-   '<div class="tv-panel"><div class="tv-rej"></div><button class="tvd'+(VID.grande?' gira':'')+'" data-tv="fs" title="Pantalla grande"><span class="tvd-plac"><span class="tvd-per"><i></i></span></span><em>GRANDE</em></button></div></div>'+
+   '<div class="tv-panel"><div class="tv-rej"></div><button class="tvd'+(VID.grande?' gira':'')+'" data-tv="fs" title="Pantalla grande"><span class="tvd-plac"><span class="tvd-per"><i></i></span></span><em id="tvGr">'+(VID.grande?'PEQUEÑO':'GRANDE')+'</em></button></div></div>'+
    '<div class="tv-pies"><i></i><i></i></div>'+
    '<div class="vcr"><div class="vcr-top"></div><div class="vcr-fr"><div class="vcr-izq"><div class="vcr-slot" id="tvSlot"><div class="vcr-cas" id="tvCas"></div><div class="vcr-flap"></div></div><div class="vcr-lab">VIDEOTECA · VHS</div></div>'+
    '<div class="vcr-der"><div class="vcr-led" id="tvLed"><span>-- --</span></div><div class="vcr-bts"><button data-tv="ant" title="Canal anterior" aria-label="Canal anterior">⏮</button><button data-tv="ej" title="Expulsar la cinta" aria-label="Expulsar la cinta">⏏</button><button data-tv="paro" title="Paro" aria-label="Paro">■</button><button data-tv="sig" title="Canal siguiente" aria-label="Canal siguiente">⏭</button></div></div></div><div class="vcr-pies"><i></i><i></i></div></div></div>'+
    '<div class="tv-tit" id="tvTit"></div><div class="tv-nota" id="tvNota"></div>'+
-   '<div class="tv-bajo"><button data-tv="visto" id="tvVisto">✓ Ya lo vi</button><a id="tvDrive" href="#" target="_blank" rel="noopener noreferrer">↗ Abrir en Drive</a></div>'+
+   '<div class="tv-bajo"><button data-tv="visto" id="tvVisto">✓ Ya lo vi</button><button data-tv="reini" title="Empezar el video desde el principio">↻ Otra vez</button><a id="tvDrive" href="#" target="_blank" rel="noopener noreferrer">↗ Abrir en Drive</a></div>'+
    '<div class="bb-toast" id="biToast"></div>';
   sala.innerHTML=h;
   var a=$('tvVol');if(a)a.onclick=function(){sube('vid');};
@@ -1675,8 +1678,9 @@ function pintaTv(){
     if(m==='sig'||m==='ant'){tvCanal(m==='sig'?1:-1);return;}
     if(m==='ej'){tvExpulsa();return;}
     if(m==='paro'){tvParo();return;}
+    if(m==='reini'){if(VID.busy)return;tvEstatica(400);setTimeout(function(){if($('tvPant')){tvPantalla('video');tvLed('on');}},300);return;}
     if(m==='play'){tvPantalla('video');tvLed('on');tvEstatica(500);return;}
-    if(m==='fs'){VID.grande=!VID.grande;var w=$('tvW');if(w)w.classList.toggle('grande',VID.grande);t.classList.toggle('gira',VID.grande);try{document.body.classList.toggle('vd-bloq',VID.grande);}catch(e2){}return;}
+    if(m==='fs'){VID.grande=!VID.grande;var w=$('tvW');if(w)w.classList.toggle('grande',VID.grande);t.classList.toggle('gira',VID.grande);var gr=$('tvGr');if(gr)gr.textContent=VID.grande?'PEQUEÑO':'GRANDE';try{document.body.classList.toggle('vd-bloq',VID.grande);}catch(e2){}return;}
     if(m==='visto'){var y=(VID.lista||[])[VID.tv];if(!y)return;y.visto=true;y.abierto=true;vidCuenta();var b=$('tvVisto');if(b)b.textContent='✓ Ya lo viste';llama('vid_visto',{id:y.id}).catch(function(){});bibToast('Marcado como visto ✓');}};
   tvCasete();tvLed('off');tvPantalla('apagada');
   var fl=VID.fl,sl=$('tvSlot');VID.fl=null;
