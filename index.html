@@ -196,6 +196,8 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .pz-cab b{color:#6d2440}
 .pz-h{margin:0 0 6px;font-size:1.02rem;line-height:1.25;color:#2b1f07}
 .pz-p{margin:0;font-size:.9rem;line-height:1.5;word-break:break-word}
+.pz-p a.pz-lnk{display:inline-block;margin:3px 2px;padding:3px 11px;border-radius:99px;background:#1f4fd8;color:#fff;font-weight:700;font-size:.82rem;text-decoration:none;word-break:normal}
+.pz-p a.pz-lnk:active{filter:brightness(.9)}
 .pz-leer{margin-top:6px;background:none;border:0;padding:0;font:inherit;font-weight:700;font-size:.8rem;color:#6d2440;text-decoration:underline;cursor:pointer}
 .pz-acc{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 .pz-b{height:36px;padding:0 15px;border-radius:10px;border:0;font:inherit;font-weight:800;font-size:.84rem;cursor:pointer}
@@ -981,13 +983,21 @@ function pintaCofrePz(){var e=$('cPizEt'),g=$('cPizGlo');if(e)e.textContent=pizT
 function refrescaPz(){var L=armaPz();PEND=L.filter(function(x){return !x.ent;}).length;pintaAtn();pintaCofrePz();if(VISTA==='piz')pintaPiz();}
 function pzPal(m){var v=!!(m&&m.visto);return '<span class="pz-pal'+(v?' v':'')+'" title="'+(v?'La Dirección lo vio':'Enviado')+'">'+(v?'✓✓':'✓')+'</span>';}
 function pzHayPal(L){return L.some(function(x){return !!x.ent||x.res.length>0;});}
+/* Ladrillo640: los enlaces http(s) de un aviso se vuelven boton; Google Maps sale como ubicacion. Solo http y https. */
+function pzLink(s){return String(s==null?'':s).split(/(https?:\/\/[^\s<>"']+)/gi).map(function(p,i){if(i%2===0)return esc(p);
+  var u=p,fin='',m=/[.,;:!?)\]]+$/.exec(u);if(m){fin=m[0];u=u.slice(0,m.index);}
+  var mp=/^https?:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|(www\.)?google\.[a-z.]+\/maps|maps\.google\.[a-z.]+)/i.test(u);
+  return '<a class="pz-lnk" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+(mp?'📍 Ver ubicación':'🔗 Abrir enlace')+'</a>'+esc(fin);}).join('');}
+function pzCorta(s){var cut=150,re=/https?:\/\/[^\s<>"']+/gi,m,aj=false;
+  while((m=re.exec(s))){var a=m.index,b=a+m[0].length;if(a<cut&&b>cut){cut=a>0?a:b;aj=true;break;}}
+  var r=s.slice(0,cut);if(!aj)r=r.replace(/\s+\S*$/,'');return r.replace(/\s+$/,'')+'…';}
 function pzNota(x,i,enCesto){
-  var rot=[-1.1,.9,-.6],id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?x.cu.slice(0,150).replace(/\s+\S*$/,'')+'…':x.cu;
+  var rot=[-1.1,.9,-.6],id=esc(x.id),largo=x.cu.length>150,ab=!!OPEN[x.id],cu=(largo&&!ab)?pzCorta(x.cu):x.cu;
   return '<div class="pz-nota '+(x.ent?'ya':'nueva')+'" style="--g:'+rot[i%3]+'deg"><span class="pz-tach"></span>'+
     '<button class="pz-chev" data-pz="menu" data-i="'+id+'" aria-label="Más opciones">⌄</button>'+
     '<div class="pz-cab"><b>Dirección</b><span>'+esc(horaPz(x.creado))+'</span></div>'+
     (x.tit?'<h3 class="pz-h">'+esc(x.tit)+'</h3>':'')+
-    '<p class="pz-p">'+esc(cu).replace(/\n/g,'<br>')+'</p>'+
+    '<p class="pz-p">'+pzLink(cu).replace(/\n/g,'<br>')+'</p>'+
     (largo?'<button class="pz-leer" data-pz="mas" data-i="'+id+'">'+(ab?'Leer menos':'Leer más')+'</button>':'')+
     '<div class="pz-acc">'+(x.ent?'<span class="pz-ok">'+pzPal(x.ent)+'Enterado · '+esc(horaPz(x.ent.creado))+'</span>':'<button class="pz-b ent" data-pz="ent" data-i="'+id+'">Enterado</button>')+'</div>'+
     (enCesto?'':(CAJA[x.id]?'<div class="pz-caja"><textarea data-i="'+id+'" maxlength="1500" placeholder="Escribe tu respuesta…">'+esc(DRAFT[x.id]||'')+'</textarea><button class="pz-b env" data-pz="env" data-i="'+id+'">Enviar respuesta</button></div>':'')+
