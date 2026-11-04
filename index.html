@@ -271,6 +271,8 @@ body{background:radial-gradient(700px 420px at 50% -8%,rgba(201,164,58,.16),tran
 .de-chip.on{border:0;background:linear-gradient(145deg,#c6ee5a,#8cc21f);color:#1c2a00}
 .de-busca{width:100%;height:42px;border-radius:12px;border:1px solid var(--borde);background:rgba(255,255,255,.08);color:#fff;padding:0 12px;font:inherit;margin:0 0 12px}
 .de-nue{background:#e0264d;color:#fff;border-radius:99px;font-size:.7rem;font-weight:800;padding:2px 9px}
+.pq-bar{height:12px;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;margin:12px 0}
+.pq-bar>div{height:100%;width:0;background:linear-gradient(90deg,#3cc9b8,#12857d);transition:width .2s}
 .pm-b.lim{border:0;background:linear-gradient(145deg,#c6ee5a,#8cc21f 50%,#557a0c);color:#1c2a00}
 .el-card{border-left:3px solid #e0309a}
 .el-card .el-sit{font-size:.78rem}
@@ -1643,9 +1645,10 @@ function desCuenta(){DES.nuevos=(DES.lista||[]).filter(function(x){return !x.baj
 function desSin(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
 function desFecha(iso){var d=new Date(iso);if(isNaN(d))return '';var m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return d.getDate()+' '+m[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?' '+d.getFullYear():'');}
 function desMes(iso){var d=new Date(iso);if(isNaN(d))return 'Sin fecha';var m=PZ_MESES[d.getMonth()];return m.charAt(0).toUpperCase()+m.slice(1)+' '+d.getFullYear();}
-function desTipo(x){var n=x.numero?' · '+esc(x.numero):'';return x.tipo==='circular'?'📄 CIRCULAR'+n:(x.tipo==='oficio'?'✉️ OFICIO'+n:'📎 DOCUMENTO'+n);}
+function desTipo(x){var n=x.numero?' · '+esc(x.numero):'';if(x.tipo==='paquete')return '📦 PAQUETE'+n;return x.tipo==='circular'?'📄 CIRCULAR'+n:(x.tipo==='oficio'?'✉️ OFICIO'+n:'📎 DOCUMENTO'+n);}
 function desCaja(x){
   var id=esc(x.id),fem=x.tipo==='circular',cl=x.clase==='pdf'?'PDF':(x.clase==='word'?'Word':'Foto'),puedeVer=(x.clase==='pdf'||x.clase==='foto');
+  if(x.tipo==='paquete')return desCajaPaq(x);
   return '<div class="pm-ped"><div class="cab"><span class="tp">'+desTipo(x)+'</span>'+(x.bajada?'':'<span class="de-nue">nuevo</span>')+'</div>'+
     '<div class="fe">'+esc(x.titulo)+'</div><div class="mo">'+(fem?'Publicada':'Publicado')+' el '+esc(desFecha(x.creado))+' · '+cl+' · '+esc(entKb(x.bytes))+(x.bajada?' · ✓ '+(fem?'ya la bajaste':'ya lo bajaste'):'')+'</div>'+
     '<div class="ac"><button class="pm-b'+(x.bajada?'':' lim')+'" data-de="baja" data-i="'+id+'">⬇ Bajar</button>'+(puedeVer?'<button class="pm-b" data-de="ver" data-i="'+id+'">👁 Ver</button>':'')+'</div></div>';}
@@ -1669,7 +1672,7 @@ function pintaDes(){
   else if(DES.err&&!DES.lista)h+='<div class="pm-aviso">'+esc(DES.err)+'</div><div class="en-act"><button class="pm-b" id="deRei">↻ Intentar otra vez</button></div>';
   else{
     if(DES.err)h+='<div class="pm-aviso">'+esc(DES.err)+' Esto es lo último que pude leer.</div>';
-    h+='<div class="de-chips">'+[['todos','Todo'],['circular','Circulares'],['oficio','Oficios'],['otro','Otros']].map(function(f){return '<button class="de-chip'+(DES.filtro===f[0]?' on':'')+'" data-de="f" data-f="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'+
+    h+='<div class="de-chips">'+[['todos','Todo'],['circular','Circulares'],['oficio','Oficios'],['paquete','Paquetes'],['otro','Otros']].map(function(f){return '<button class="de-chip'+(DES.filtro===f[0]?' on':'')+'" data-de="f" data-f="'+f[0]+'">'+f[1]+'</button>';}).join('')+'</div>'+
        '<input class="de-busca" id="deQ" type="search" placeholder="🔍 Buscar por título o número" value="'+esc(DES.q)+'" autocomplete="off">'+
        '<div id="deLista">'+desLista()+'</div>'+
        '<p class="pm-ayuda">Lo más nuevo va arriba, por mes. «nuevo» se quita cuando bajas o ves el documento.</p>'+
@@ -1680,16 +1683,16 @@ function pintaDes(){
   var q=$('deQ');if(q)q.oninput=function(){DES.q=this.value;var l=$('deLista');if(l)l.innerHTML=desLista();};
   sala.onclick=function(e){var t=e.target.closest?e.target.closest('button'):null;if(!t)return;var ac=t.getAttribute('data-de'),id=t.getAttribute('data-i');
     if(ac==='f'){DES.filtro=t.getAttribute('data-f');pintaDes();}
-    else if(ac==='baja')desBaja(id,t,false);else if(ac==='ver')desBaja(id,t,true);};}
+    else if(ac==='paq')desPaqAviso(id);else if(ac==='baja')desBaja(id,t,false);else if(ac==='ver')desBaja(id,t,true);};}
 function desCarga(){
   if(!B||!K)return;DES.cargando=true;DES.err='';if(VISTA==='des')pintaDes();
-  llama('des_mis').then(function(r){DES.cargando=false;DES.T=Date.now();
+  llama('des_mis',{paq:true}).then(function(r){DES.cargando=false;DES.T=Date.now();
     if(r&&r.ok){DES.lista=r.descargas||[];DES.err='';desCuenta();}else DES.err='No pude leer las descargas ('+((r&&r.error)||'respuesta rara')+').';
     if(VISTA==='des')pintaDes();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();})
   .catch(function(){DES.cargando=false;DES.err='Sin señal. Revisa tu conexión e intenta otra vez.';if(VISTA==='des')pintaDes();});}
 function traeDes(){
   if(!B||!K||Date.now()-DES.T<60000)return;DES.T=Date.now();
-  llama('des_mis').then(function(r){if(r&&r.ok){DES.lista=r.descargas||[];desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();}}).catch(function(){});}
+  llama('des_mis',{paq:true}).then(function(r){if(r&&r.ok){DES.lista=r.descargas||[];desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();}}).catch(function(){});}
 function desBaja(id,btn,ver){
   var P=null;(DES.lista||[]).forEach(function(x){if(x.id===id)P=x;});if(!P)return;
   var txt=btn.textContent;btn.disabled=true;btn.textContent='Abriendo…';
@@ -1705,6 +1708,55 @@ function desBaja(id,btn,ver){
     P.bajada=true;desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();
     if(VISTA==='des'){var q=$('deQ'),pos=window.pageYOffset||0;pintaDes();var q2=$('deQ');if(q2&&q&&q.value)q2.value=q.value;try{window.scrollTo(0,pos);}catch(e2){}}})
   .catch(function(e){fin();DES.err='No pude abrir el documento: '+((e&&e.message)||'intenta otra vez');if(VISTA==='des')pintaDes();});}
+/* Ladrillo656: PAQUETES (ZIP que manda la direccion, hasta 100 MB). La bodega los entrega por pedazos de ~1.5 MB (paq_bajar_parte); aqui se arman en el aparato. Antes de bajar SIEMPRE sale el aviso de la direccion. */
+var PAQ={vivo:false,corta:false};
+function desPaqPorId(id){var P=null;(DES.lista||[]).forEach(function(x){if(String(x.id)===String(id))P=x;});return P;}
+function desCajaPaq(x){
+  var id=esc(x.id);
+  return '<div class="pm-ped"><div class="cab"><span class="tp">'+desTipo(x)+'</span>'+(x.bajada?'':'<span class="de-nue">nuevo</span>')+'</div>'+
+    '<div class="fe">'+esc(x.titulo)+'</div><div class="mo">Enviado por la dirección el '+esc(desFecha(x.creado))+' · ZIP · '+esc(entKb(x.bytes))+(x.bajada?' · ✓ ya lo bajaste':'')+'</div>'+
+    '<div class="ac"><button class="pm-b'+(x.bajada?'':' lim')+'" data-de="paq" data-i="'+id+'">⬇ Bajar paquete</button></div></div>';}
+function desPaqAviso(id){
+  var P=desPaqPorId(id);if(!P||PAQ.vivo)return;
+  abrirC('<div class="obra"><div class="gr">📦</div><h2>'+esc(P.titulo)+'</h2><p class="nota">📦 Paquete enviado por la dirección. Es un archivo comprimido (ZIP). Guárdalo en tu computadora y descomprímelo ahí para abrirlo. Si trae un programa, Windows puede pedirte confirmación al ejecutarlo.</p><p class="nota">Pesa '+esc(entKb(P.bytes))+'.</p></div><button class="btn" id="paqSi">Entendido, bajar el paquete</button><button class="btn sec2" onclick="cerrarSala()">Ahora no</button>');
+  var b=$('paqSi');if(b)b.onclick=function(){desPaqBaja(id);};}
+function pidePaq(id,parte,intento){
+  return llama('paq_bajar_parte',{id:id,parte:parte}).then(function(r){
+    if(!(r&&r.ok&&r.base64))throw new Error((r&&r.error)||'respuesta rara');return r;})
+  .catch(function(e){
+    if(intento<3&&!PAQ.corta)return new Promise(function(ok){setTimeout(ok,1200*(intento+1));}).then(function(){return pidePaq(id,parte,intento+1);});
+    throw e;});}
+function desPaqBaja(id){
+  var P=desPaqPorId(id);if(!P||PAQ.vivo)return;
+  PAQ.vivo=true;PAQ.corta=false;
+  var trozos=[],n=0,tot=0;
+  abrirC('<div class="obra"><div class="gr">📦</div><h2>Bajando el paquete</h2><p class="nota" id="pqTxt">Preparando…</p><div class="pq-bar"><div id="pqFill"></div></div><p class="nota">Puede tardar unos minutos según tu internet. No cierres esta página hasta que termine.</p></div><button class="btn sec2" id="pqCan">Cancelar</button>');
+  var can=$('pqCan');if(can)can.onclick=function(){PAQ.corta=true;can.disabled=true;can.textContent='Cancelando…';};
+  var fin=function(ico,tit,msg){
+    PAQ.vivo=false;
+    abrirC('<div class="obra"><div class="gr">'+ico+'</div><h2>'+tit+'</h2><p class="nota">'+msg+'</p></div><button class="btn" onclick="cerrarSala()">Cerrar</button>');};
+  var avance=function(total){
+    var t=$('pqTxt'),f=$('pqFill'),pct=total?Math.min(100,Math.floor(tot*100/total)):0;
+    if(t)t.textContent='Bajando: '+entKb(tot)+' de '+entKb(total)+' ('+pct+'%)';
+    if(f)f.style.width=pct+'%';};
+  function sig(){
+    if(PAQ.corta){trozos=null;fin('✋','Bajada cancelada','No se guardó nada. Cuando quieras, vuelve a pulsar «Bajar paquete».');return;}
+    pidePaq(id,n,0).then(function(r){
+      var bin=atob(r.base64),u=new Uint8Array(bin.length),k;
+      for(k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);
+      if(n===0&&!(u.length>1&&u[0]===80&&u[1]===75))throw new Error('el paquete llegó raro');
+      trozos.push(u);tot+=u.length;n++;avance(r.bytes);
+      if(!r.ultima){sig();return;}
+      if(tot!==r.bytes)throw new Error('llegó incompleto ('+tot+' de '+r.bytes+' bytes)');
+      var nom=String(r.nombre||P.nombre||'paquete.zip');if(!/\.zip$/i.test(nom))nom+='.zip';
+      var url=URL.createObjectURL(new Blob(trozos,{type:'application/zip'}));trozos=null;
+      var a=document.createElement('a');a.href=url;a.download=nom;document.body.appendChild(a);a.click();document.body.removeChild(a);
+      setTimeout(function(){URL.revokeObjectURL(url);},300000);
+      P.bajada=true;desCuenta();var e=$('cDeEt');if(e)e.textContent=desEt();pintaAtn();
+      fin('✅','Listo: paquete bajado','El archivo «'+esc(nom)+'» quedó en la carpeta de descargas de tu navegador. Descomprímelo en tu computadora para abrirlo.');
+      if(VISTA==='des')pintaDes();})
+    .catch(function(e){trozos=null;fin('⚠️','No pude bajar el paquete','Falló a mitad de camino ('+esc((e&&e.message)||'sin señal')+'). No se guardó nada; intenta otra vez.');});}
+  sig();}
 /* ENLACES (ladrillo 549): paginas web que el director comparte. El maestro las ABRE (pestana nueva); nada se borra. */
 var ENL={cargando:false,err:'',lista:null,nuevos:0,T:0,filtro:'todos',q:'',abierto:false,sel:''};
 var EL_CAT={herramientas:['🧰','Herramientas'],capacitacion:['🎓','Capacitación'],normatividad:['⚖️','Normatividad'],otros:['📎','Otros']};
