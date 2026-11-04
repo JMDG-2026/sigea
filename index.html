@@ -3704,6 +3704,7 @@ function vistaSala(){
   var b=document.createElement('div');b.id='vistaDir';b.textContent='\uD83D\uDC41\uFE0F Vista del director \u00b7 as\u00ed lo ve el maestro \u00b7 no deja huella';
   b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99999;background:#1b2a4a;color:#ffe9a8;font:700 13px system-ui,sans-serif;text-align:center;padding:7px 10px;';
   document.body.appendChild(b);document.body.style.paddingTop='32px';
+  var st=document.createElement('style');st.textContent='.lc{top:32px!important}';document.head.appendChild(st);   /* Ladrillo652: el lector queda DEBAJO de la franja */
   llama('bib_mis').then(function(r){
     if(!(r&&r.ok)){estado('\u23F0','La vista del director ya venci\u00f3','Vuelve a pedirla desde la corona (\u00abVer como el maestro\u00bb).');return;}
     BIB.lista=r.libros||[];BIB.estantes=r.estantes||null;BIB.T=Date.now();bibCuenta();
