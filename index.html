@@ -1459,12 +1459,12 @@ function entChip(x){
   return '<span class="en-chip faltan">'+(d===1?'Falta 1 día':'Faltan '+d+' días')+'</span>';}
 function entCaja(x){
   var fec=(x.tipo==='fecha'&&entDias(x.limite)!==null)?'Entregar a más tardar el '+entFecha(x.limite)+'. ':'';
-  var fm=x.formato==='pdf'?'Solo PDF.':(x.formato==='pdf_word'?'PDF o Word.':'PDF o foto.'),e=x.entrega,id=esc(x.id);
-  var acc=e?'<button class="pm-b" data-en="ver" data-i="'+id+'">👁 Ver</button><button class="pm-b" data-en="rep" data-i="'+id+'">↻ Reemplazar</button>'
+  var fm=entFmCorto(x.formato)+((x.max_archivos||1)>1?' Hasta '+x.max_archivos+' archivos.':''),e=x.entrega,id=esc(x.id),N=x.max_archivos||1,es=x.entregas||[];
+  var acc=N>1?entAccMulti(x,id,es,N):e?'<button class="pm-b" data-en="ver" data-i="'+id+'">👁 Ver</button><button class="pm-b" data-en="rep" data-i="'+id+'">↻ Reemplazar</button>'
            :'<button class="pm-b ok" data-en="sub" data-i="'+id+'">⬆ Subir</button>';
-  return '<div class="pm-ped"><div class="cab"><span class="tp">'+(x.tipo==='fecha'?'📄 CON FECHA LÍMITE':'🗂️ UNA SOLA VEZ · EXPEDIENTE')+'</span>'+(e?'<span class="en-chip ok">✓ Entregado</span>':entChip(x))+'</div>'+
+  return '<div class="pm-ped"><div class="cab"><span class="tp">'+(x.tipo==='fecha'?'📄 CON FECHA LÍMITE':'🗂️ UNA SOLA VEZ · EXPEDIENTE')+'</span>'+(e?'<span class="en-chip ok">✓ Entregado'+(N>1?' ('+es.length+' de '+N+')':'')+'</span>':entChip(x))+'</div>'+
     '<div class="fe">'+esc(x.nombre)+'</div><div class="mo">'+esc(fec+fm)+'</div>'+
-    (e?'<div class="mo">Entregado el '+esc(horaPz(e.creado))+' · '+esc(e.nombre)+' · '+esc(entKb(e.bytes))+'</div>':'')+
+    (e&&N===1?'<div class="mo">Entregado el '+esc(horaPz(e.creado))+' · '+esc(e.nombre)+' · '+esc(entKb(e.bytes))+'</div>':'')+
     '<div class="ac">'+acc+'</div></div>';}
 function pintaEnt(){
   sala.onclick=null;
@@ -1486,7 +1486,7 @@ function pintaEnt(){
   var r=$('enRei');if(r)r.onclick=entCarga;
   var md=$('enMand');if(md)md.onclick=entAbrePropio;
   sala.onclick=function(e){var t=e.target.closest?e.target.closest('button'):null;if(!t)return;var ac=t.getAttribute('data-en'),id=t.getAttribute('data-i');
-    if(ac==='sub')entAbreRec(id);else if(ac==='ver')entVer(id,t);else if(ac==='verp')entVer(id,t,1);else if(ac==='rep')entPreguntaRep(id);};}
+    if(ac==='sub')entAbreRec(id);else if(ac==='ver')entVer(id,t);else if(ac==='verp')entVer(id,t,1);else if(ac==='rep')entPreguntaRep(id);else if(ac==='repm')entPreguntaRep(id,t.getAttribute('data-e'));};}
 function entCarga(){
   if(!B||!K)return;ENT.cargando=true;ENT.err='';ENT.nota='';if(VISTA==='ent')pintaEnt();
   llama('ent_mis').then(function(r){ENT.cargando=false;ENT.T=Date.now();
@@ -1502,14 +1502,14 @@ var ENTR={ped:null,file:null,nombre:'',cargando:false,envio:false,err:'',listo:f
 function entPorId(id){var r=null;(ENT.lista||[]).forEach(function(x){if(x.id===id)r=x;});return r;}
 function entPend(){return (ENT.lista||[]).filter(function(x){return !x.entrega;}).length;}
 function entKb(n){n=Number(n)||0;return n>=1048576?(n/1048576).toFixed(1).replace('.0','')+' MB':Math.max(1,Math.round(n/1024))+' KB';}
-function entFmtTxt(f){return f==='todo'?'PDF, foto o Word (.docx)':f==='pdf'?'Solo PDF':(f==='pdf_word'?'PDF o Word (.docx)':'PDF o foto (JPG o PNG)');}
-function entAcepta(f){return f==='todo'?'.pdf,.jpg,.jpeg,.png,.docx,application/pdf,image/jpeg,image/png,application/vnd.openxmlformats-officedocument.wordprocessingml.document':f==='pdf'?'.pdf,application/pdf':(f==='pdf_word'?'.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png');}
+function entFmtTxt(f){return f==='foto'?'Solo fotos (JPG o PNG)':f==='todo'?'PDF, foto o Word (.docx)':f==='pdf'?'Solo PDF':(f==='pdf_word'?'PDF o Word (.docx)':'PDF o foto (JPG o PNG)');}
+function entAcepta(f){return f==='foto'?'.jpg,.jpeg,.png,image/jpeg,image/png':f==='todo'?'.pdf,.jpg,.jpeg,.png,.docx,application/pdf,image/jpeg,image/png,application/vnd.openxmlformats-officedocument.wordprocessingml.document':f==='pdf'?'.pdf,application/pdf':(f==='pdf_word'?'.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png');}
 function entClase(f){var n=String(f.name||'').toLowerCase(),t=String(f.type||'').toLowerCase();
   if(t==='application/pdf'||/\.pdf$/.test(n))return 'pdf';
   if(/^image\/(jpeg|png)$/.test(t)||/\.(jpe?g|png)$/.test(n))return 'foto';
   if(/\.docx$/.test(n))return 'word';
   return '';}
-function entPermite(fmt,c){if(c==='pdf'||fmt==='todo')return true;if(fmt==='pdf_foto')return c==='foto';if(fmt==='pdf_word')return c==='word';return false;}
+function entPermite(fmt,c){if(fmt==='todo')return true;if(fmt==='foto')return c==='foto';if(c==='pdf')return true;if(fmt==='pdf_foto')return c==='foto';if(fmt==='pdf_word')return c==='word';return false;}
 function entTactil(){try{return !!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);}catch(e){return false;}}
 function entIcono(c){return c==='pdf'?'📄':(c==='word'?'📝':'🖼️');}
 function entEncoge(f){return new Promise(function(ok,mal){
@@ -1542,28 +1542,31 @@ function entRecibe(f){
   ENTR.file=f;ENTR.nombre=String(f.name||('documento.'+(c==='word'?'docx':'pdf')));ENTR.clase=c;pintaRec();}
 function entElige(captura){
   var P=ENTR.ped;if(!P)return;
-  var i=document.createElement('input');i.type='file';i.accept=entAcepta(P.formato);if(captura)i.setAttribute('capture','environment');
+  var i=document.createElement('input');i.type='file';i.accept=entAcepta(P.formato);if(ENTR.multi&&!captura)i.multiple=true;if(captura)i.setAttribute('capture','environment');
   i.style.display='none';document.body.appendChild(i);
-  i.onchange=function(){var f=i.files&&i.files[0];setTimeout(function(){if(i.parentNode)i.parentNode.removeChild(i);},0);if(f)entRecibe(f);};
+  i.onchange=function(){var fs=i.files?Array.prototype.slice.call(i.files):[];setTimeout(function(){if(i.parentNode)i.parentNode.removeChild(i);},0);if(fs.length)entLlegan(fs);};
   i.click();}
 function entPegar(e){
   if(!ENTR.ped||!hoja.classList.contains('on')||ENTR.envio||ENTR.listo)return;
   var cd=e.clipboardData,f=null;if(!cd)return;
   if(cd.files&&cd.files.length)f=cd.files[0];
   else if(cd.items){for(var k=0;k<cd.items.length;k++){if(cd.items[k].kind==='file'){f=cd.items[k].getAsFile();break;}}}
-  if(f){e.preventDefault();entRecibe(f);}}
+  if(f){e.preventDefault();entLlegan([f]);}}
 document.addEventListener('paste',entPegar);
-function entAbreRec(id){
+function entAbreRec(id,eid){
   var P=entPorId(id);if(!P)return;
-  ENTR={ped:P,file:null,nombre:'',cargando:false,envio:false,err:'',listo:false,reempl:!!P.entrega};
+  var vario=(P.max_archivos||1)>1;
+  ENTR={ped:P,file:null,nombre:'',cargando:false,envio:false,err:'',listo:false,reempl:!!P.entrega,multi:vario&&!eid,reemp:eid||'',cola:[],cupo:vario?Math.max(0,P.max_archivos-(P.entregas||[]).length):1};
   pintaRec();}
 function pintaRec(){
   var P=ENTR.ped;if(!P)return;
-  var h=ENTR.propio?'<h2>＋ Mandar un documento</h2><p class="sub">Un documento tuyo para tu expediente<br>PDF, foto o Word · hasta 2 MB</p>':'<h2>⬆ Subir documento</h2><p class="sub">'+esc(P.nombre)+'<br>'+esc(entFmtTxt(P.formato))+' · hasta 2 MB</p>';
+  var h=ENTR.propio?'<h2>＋ Mandar un documento</h2><p class="sub">Un documento tuyo para tu expediente<br>PDF, foto o Word · hasta 2 MB</p>':'<h2>⬆ Subir documento</h2><p class="sub">'+esc(P.nombre)+'<br>'+esc(entFmtTxt(P.formato))+' · hasta 2 MB'+(ENTR.multi?' cada uno · hasta '+P.max_archivos+' archivos':'')+'</p>';
   if(ENTR.propio&&!ENTR.listo)h+=entCampos();
-  var foto=(P.formato==='pdf_foto');
+  var foto=(P.formato==='pdf_foto'||P.formato==='foto');
   if(ENTR.listo){
-    h='<div class="en-ok"><div class="pal">✓</div><h2>¡Entregado!</h2><p class="sub">Tu documento ya está con el director.<br>'+(ENTR.propio?'Lo verás en «Lo que has mandado tú».':'Lo puedes ver o cambiar desde su papelito mientras el pedido siga abierto.')+'</p></div><button class="btn" id="enListo">Listo</button>';
+    h='<div class="en-ok"><div class="pal">✓</div><h2>¡Entregado!</h2><p class="sub">'+(ENTR.multi?'Tus archivos ya están con el director.':'Tu documento ya está con el director.')+'<br>'+(ENTR.propio?'Lo verás en «Lo que has mandado tú».':'Lo puedes ver o cambiar desde su papelito mientras el pedido siga abierto.')+'</p></div><button class="btn" id="enListo">Listo</button>';
+  }else if(ENTR.multi){
+    h+=entMultiHtml();
   }else if(ENTR.envio){
     h+='<div class="en-arch"><span class="t">'+entIcono(ENTR.clase)+'</span><div><b>'+esc(ENTR.nombre)+'</b><small>Enviando…</small></div></div><div class="en-barra"><i></i></div>';
   }else if(ENTR.cargando){
@@ -1579,6 +1582,7 @@ function pintaRec(){
        '<div class="en-fila"><button class="en-b" onclick="cerrarSala()">Cancelar</button></div>';}
   abrirC(h);
   var q=function(i){return $(i);};
+  if(ENTR.multi&&!ENTR.listo)entMultiWire();
   if(q('enCat'))q('enCat').onchange=function(){ENTR.cat=this.value;};
   if(q('enNota'))q('enNota').oninput=function(){ENTR.nota=this.value;};
   if(q('enListo'))q('enListo').onclick=function(){cerrar();ENTR.ped=null;};
@@ -1591,7 +1595,7 @@ function pintaRec(){
   if(z){
     z.ondragover=function(e){e.preventDefault();z.classList.add('sobre');};
     z.ondragleave=function(){z.classList.remove('sobre');};
-    z.ondrop=function(e){e.preventDefault();z.classList.remove('sobre');var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)entRecibe(f);};}}
+    z.ondrop=function(e){e.preventDefault();z.classList.remove('sobre');var fs=e.dataTransfer&&e.dataTransfer.files;if(fs&&fs.length)entLlegan(fs);};}}
 function entEnvia(){
   if(ENTR.envio||!ENTR.file||!ENTR.ped)return;
   if(ENTR.propio){
@@ -1602,12 +1606,73 @@ function entEnvia(){
   fr.onerror=function(){ENTR.envio=false;ENTR.err='No pude leer el archivo. Escógelo otra vez.';pintaRec();};
   fr.onload=function(){
     var b64=String(fr.result||'').split(',')[1]||'';
-    (ENTR.propio?llama('ent_enviar',{categoria:ENTR.cat,nota:String(ENTR.nota||'').trim(),nombre:ENTR.nombre,base64:b64}):llama('ent_subir',{pedido_id:ENTR.ped.id,nombre:ENTR.nombre,base64:b64})).then(function(r){
+    (ENTR.propio?llama('ent_enviar',{categoria:ENTR.cat,nota:String(ENTR.nota||'').trim(),nombre:ENTR.nombre,base64:b64}):llama('ent_subir',{pedido_id:ENTR.ped.id,nombre:ENTR.nombre,base64:b64,reemplaza:ENTR.reemp||''})).then(function(r){
       ENTR.envio=false;
       if(r&&r.ok){ENTR.listo=true;ENT.T=0;pintaRec();entCarga();}
       else{ENTR.err=(r&&r.error==='llave no valida')?'Tu llave ya no está activa. Pídele al director tu enlace nuevo.':('No se pudo enviar: '+((r&&r.error)||'respuesta rara')+'.');pintaRec();}
     }).catch(function(){ENTR.envio=false;ENTR.err='Sin señal. Revisa tu conexión e intenta otra vez.';pintaRec();});};
   fr.readAsDataURL(ENTR.file);}
+/* Ladrillo657: VARIOS ARCHIVOS por pedido (bodega v30). El docente escoge varios a la vez; se suben uno por uno. Con max_archivos = 1 todo sigue como antes. */
+function entFmCorto(f){return f==='pdf'?'Solo PDF.':(f==='pdf_word'?'PDF o Word.':(f==='foto'?'Solo fotos.':(f==='todo'?'PDF, foto o Word.':'PDF o foto.')));}
+function entAccMulti(x,id,es,N){
+  var h='';
+  es.forEach(function(e){h+='<div class="mo" style="width:100%;margin:6px 0 0">'+esc(entIcono(e.clase))+' '+esc(e.nombre)+' · '+esc(entKb(e.bytes))+'</div><button class="pm-b" data-en="verp" data-i="'+esc(e.id)+'">👁 Ver</button><button class="pm-b" data-en="repm" data-i="'+id+'" data-e="'+esc(e.id)+'">↻ Cambiar</button>';});
+  if(es.length<N)h+='<button class="pm-b ok" style="margin-top:8px" data-en="sub" data-i="'+id+'">'+(es.length?'⬆ Subir otro':'⬆ Subir')+' ('+es.length+' de '+N+')</button>';
+  return h;}
+function entPreparaM(f){
+  var P=ENTR.ped,c=entClase(f);
+  if(!c)return Promise.reject(new Error('este archivo no sirve aquí'));
+  if(!entPermite(P.formato,c))return Promise.reject(new Error('este pedido recibe '+entFmtTxt(P.formato)));
+  var base=String(f.name||'documento').replace(/\.[^.]*$/,'');
+  if(c==='foto')return entEncoge(f).then(function(b){return {b:b,nombre:base+'.jpg',clase:'foto'};},function(e){return Promise.reject(new Error((e&&e.message)||'no pude preparar la foto'));});
+  if(!f.size)return Promise.reject(new Error('está vacío'));
+  if(f.size>ENT_MAX)return Promise.reject(new Error('pesa '+entKb(f.size)+' y el límite es 2 MB'));
+  return Promise.resolve({b:f,nombre:String(f.name||('documento.'+(c==='word'?'docx':'pdf'))),clase:c});}
+function entLlegan(fs){
+  fs=Array.prototype.slice.call(fs||[]);if(!fs.length||ENTR.envio)return;
+  if(!ENTR.multi){entRecibe(fs[0]);return;}
+  ENTR.err='';var libre=(ENTR.cupo||0)-ENTR.cola.length;
+  if(libre<=0){ENTR.err='Ya tienes los '+ENTR.cupo+' archivos de este envío.';pintaRec();return;}
+  var extra=fs.length>libre,malos=[];fs=fs.slice(0,libre);
+  ENTR.cargando=true;pintaRec();
+  fs.reduce(function(p,f){return p.then(function(){return entPreparaM(f).then(function(a){ENTR.cola.push(a);},function(e){malos.push((f.name||'archivo')+': '+((e&&e.message)||'no sirvió'));});});},Promise.resolve())
+  .then(function(){ENTR.cargando=false;var m=[];if(malos.length)m.push(malos.join(' · '));if(extra)m.push('Solo cabían '+libre+'; el resto no se tomó.');ENTR.err=m.join(' ');pintaRec();});}
+function entMultiHtml(){
+  var P=ENTR.ped,c=ENTR.cola||[],cupo=ENTR.cupo||0,h='';
+  if(ENTR.envio)return '<div class="en-arch"><span class="t">📤</span><div><b>Enviando '+Math.min(ENTR.total,(ENTR.hechos||0)+1)+' de '+ENTR.total+'…</b><small>No cierres esta ventana</small></div></div><div class="en-barra"><i></i></div>';
+  c.forEach(function(a,i){h+='<div class="en-arch"><span class="t">'+entIcono(a.clase)+'</span><div><b>'+esc(a.nombre)+'</b><small>'+esc(entKb(a.b.size))+(a.clase==='word'?' · Word':(a.clase==='foto'?' · foto lista':' · PDF'))+'</small></div><button class="x" data-q="'+i+'" aria-label="Quitar">✕</button></div>';});
+  if(ENTR.cargando)h+='<p class="en-prep">Preparando…</p>';
+  if(ENTR.err)h+='<div class="en-mal">'+esc(ENTR.err)+'</div>';
+  if(!ENTR.cargando){
+    if(c.length<cupo){
+      if(!c.length)h+='<div class="en-zona" id="enZona"><div class="ic">📎</div><b>Arrastra aquí tus archivos</b><small>o pégalos con Ctrl + V</small></div>';
+      h+='<p class="pm-ayuda">'+(c.length?'Llevas '+c.length+' de '+cupo+'.':'Puedes mandar hasta '+cupo+(cupo===1?' archivo':' archivos')+' a la vez.')+'</p>'+
+         '<div class="en-fila"><button class="en-b oro" id="mEscoge">'+(c.length?'＋ Agregar otro':'📁 Escoger archivos')+'</button>'+(((P.formato==='pdf_foto'||P.formato==='foto')&&entTactil())?'<button class="en-b" id="mFoto">📷 Tomar foto</button>':'')+'</div>';}
+    else h+='<p class="pm-ayuda">Ya tienes los '+cupo+' archivos de este envío.</p>';
+    h+='<div class="en-fila">'+(c.length?'<button class="en-b ver" id="mEnvia">✓ Enviar '+c.length+(c.length===1?' archivo':' archivos')+' al director</button>':'')+'<button class="en-b" onclick="cerrarSala()">Cancelar</button></div>';}
+  return h;}
+function entMultiWire(){
+  var q=function(i){return $(i);};
+  if(q('mEscoge'))q('mEscoge').onclick=function(){entElige(false);};
+  if(q('mFoto'))q('mFoto').onclick=function(){entElige(true);};
+  if(q('mEnvia'))q('mEnvia').onclick=entEnviaM;
+  Array.prototype.forEach.call(cont.querySelectorAll('[data-q]'),function(b){b.onclick=function(){ENTR.cola.splice(+b.getAttribute('data-q'),1);ENTR.err='';pintaRec();};});}
+function entEnviaM(){
+  if(ENTR.envio||!ENTR.cola.length||!ENTR.ped)return;
+  var cola=ENTR.cola.slice();ENTR.envio=true;ENTR.err='';ENTR.hechos=0;ENTR.total=cola.length;pintaRec();
+  function falla(i,msg){ENTR.envio=false;ENTR.cola=cola.slice(i);ENTR.cupo=ENTR.cupo-i;ENTR.err=(i?'Se enviaron '+i+'. ':'')+msg+' Lo que falta sigue aquí para intentar otra vez.';ENT.T=0;pintaRec();if(i)entCarga();}
+  function una(i){
+    if(i>=cola.length){ENTR.envio=false;ENTR.cola=[];ENTR.listo=true;ENT.T=0;pintaRec();entCarga();return;}
+    var a=cola[i];ENTR.hechos=i;pintaRec();
+    var fr=new FileReader();
+    fr.onerror=function(){falla(i,'No pude leer «'+a.nombre+'».');};
+    fr.onload=function(){var b64=String(fr.result||'').split(',')[1]||'';
+      llama('ent_subir',{pedido_id:ENTR.ped.id,nombre:a.nombre,base64:b64}).then(function(r){
+        if(r&&r.ok)una(i+1);
+        else falla(i,(r&&r.error==='llave no valida')?'Tu llave ya no está activa. Pídele al director tu enlace nuevo.':('No se pudo enviar «'+a.nombre+'»: '+((r&&r.error)||'respuesta rara')+'.'));
+      }).catch(function(){falla(i,'Sin señal. Revisa tu conexión e intenta otra vez.');});};
+    fr.readAsDataURL(a.b);}
+  una(0);}
 function entVer(id,btn,propio){
   var P=propio?{id:id}:entPorId(id);if(!P)return;
   if(btn){btn.disabled=true;btn.textContent='Abriendo…';}
@@ -1635,9 +1700,9 @@ function entPropioCaja(x){
   return '<div class="pm-ped"><div class="cab"><span class="tp">'+esc(entIcono(x.clase))+' '+esc(cat.toUpperCase())+'</span><span class="en-chip ok">✓ Enviado</span></div>'+
     '<div class="fe">'+esc(x.nota||x.nombre)+'</div><div class="mo">Mandado el '+esc(horaPz(x.creado))+' · '+esc(x.nombre)+' · '+esc(entKb(x.bytes))+'</div>'+
     '<div class="ac"><button class="pm-b" data-en="verp" data-i="'+esc(x.id)+'">👁 Ver</button></div></div>';}
-function entPreguntaRep(id){
+function entPreguntaRep(id,eid){
   abrirC('<div class="obra"><div class="gr">🔄</div><h2>¿Cambiar tu archivo?</h2><p class="nota">El anterior se queda guardado con el director. Solo cambia el que verá como vigente.</p></div><button class="btn" id="enRepSi">Sí, cambiarlo</button><button class="btn sec2" onclick="cerrarSala()">No, dejarlo</button>');
-  var b=$('enRepSi');if(b)b.onclick=function(){entAbreRec(id);};}
+  var b=$('enRepSi');if(b)b.onclick=function(){entAbreRec(id,eid);};}
 /* DESCARGAS (ladrillo 538): lo que el director publica para los maestros. El maestro BAJA o VE; nada se borra. */
 var DES={cargando:false,err:'',lista:null,nuevos:0,T:0,filtro:'todos',q:''};
 function desEt(){if(!DES.lista)return 'Circulares y oficios';if(!DES.lista.length)return 'Nada por ahora';return DES.nuevos?(DES.nuevos===1?'1 nueva':DES.nuevos+' nuevas'):'Al día';}
